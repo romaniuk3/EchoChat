@@ -1,0 +1,22 @@
+﻿@page "/"
+@using InternshipChat.DAL.Entities;
+@using InternshipChat.WEB.Services.Contracts;
+@inject IMessageService messageService;
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+@code {
+    private List<Message> messages = new List<Message>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetMessages();
+    }
+
+    private async Task GetMessages()
+    {
+        messages = await messageService.GetMessages();
+    }
+}
