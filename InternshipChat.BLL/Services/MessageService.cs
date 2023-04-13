@@ -20,7 +20,6 @@ namespace InternshipChat.BLL.Services
         public bool SendMessage(Message message)
         {
             _unitOfWork.MessageRepository.Add(message);
-
             return true;
         }
     }

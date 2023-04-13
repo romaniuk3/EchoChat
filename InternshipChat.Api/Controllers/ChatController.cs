@@ -24,7 +24,7 @@ namespace InternshipChat.Api.Controllers
         {
             List<Message> messages = new List<Message>();
 
-            var msg1 = new Message();
+            /* var msg1 = new Message();
             msg1.Id = 1;
             msg1.Content = "First msg";
 
@@ -33,6 +33,7 @@ namespace InternshipChat.Api.Controllers
             msg2.Content = "Second msg";
             messages.Add(msg1);
             messages.Add(msg2);
+            _messageService.SendMessage(msg1);*/
 
             return Ok(messages);
         }
