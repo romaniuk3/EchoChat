@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace InternshipChat.BLL.DTO
 {
-    public class MessageDTO
+    public class AuthResponseDTO
     {
+        public int UserId { get; set; }
+        public string Token { get; set; }
     }
 }
