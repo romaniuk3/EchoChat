@@ -37,9 +37,11 @@ builder.Services.AddAuthentication(options =>
 
 });
 
-builder.Services.AddIdentityCore<User>()
-    .AddRoles<ApplicationRole>()
-    .AddEntityFrameworkStores<ChatContext>();
+builder.Services.AddIdentityCore<User>(opt =>
+{
+    opt.User.RequireUniqueEmail = true;
+}).AddRoles<ApplicationRole>()
+  .AddEntityFrameworkStores<ChatContext>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
@@ -58,7 +60,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

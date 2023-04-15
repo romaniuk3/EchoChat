@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using InternshipChat.BLL.DTO;
 using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;

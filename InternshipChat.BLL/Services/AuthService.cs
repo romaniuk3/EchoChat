@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using InternshipChat.BLL.DTO;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.DTO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -30,7 +30,7 @@ namespace InternshipChat.BLL.Services
 
         async public Task<AuthResponseDTO?> Login(LoginDto loginDto)
         {
-            var user = await _userManager.FindByNameAsync(loginDto.Username);
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
             bool isPasswordValid = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             
             if(user == null || !isPasswordValid)
@@ -50,12 +50,13 @@ namespace InternshipChat.BLL.Services
         public async Task<IEnumerable<IdentityError>> Register(UserDTO userDto)
         {
             var user = _mapper.Map<User>(userDto);
+            user.UserName = userDto.Email;
 
             var creatingResult = await _userManager.CreateAsync(user, userDto.Password);
 
             if (creatingResult.Succeeded)
             {
-                //await _userManager.AddToRoleAsync(user, "User");
+                await _userManager.AddToRoleAsync(user, "User");
             }
 
             return creatingResult.Errors;

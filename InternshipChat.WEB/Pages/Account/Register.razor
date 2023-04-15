@@ -1,0 +1,61 @@
+﻿@page "/register"
+@namespace InternshipChat.WEB
+@using Interfaces
+@using Services.Contracts
+@using InternshipChat.Shared.DTO
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h1>Register</h1>
+
+@if (ShowErrors)
+{
+    <div class="alert alert-danger" role="alert">
+        <h1>ERROR OCCURED</h1>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Please enter your details</h5>
+        <EditForm Model="userRegisterModel" OnValidSubmit="HandleRegistration">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <InputText Id="email" class="form-control" @bind-Value="userRegisterModel.Email" />
+                <ValidationMessage For="@(() => userRegisterModel.Email)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText Id="password" type="password" class="form-control" @bind-Value="userRegisterModel.Password" />
+                <ValidationMessage For="@(() => userRegisterModel.Password)" />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+
+    private UserDTO userRegisterModel = new UserDTO();
+    private bool ShowErrors;
+    private IEnumerable<string> Errors;
+
+    private async Task HandleRegistration()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.Register(userRegisterModel);
+        if (result.Successful)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            ShowErrors = true;
+        }
+    }
+
+}

@@ -5,18 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InternshipChat.BLL.DTO
+namespace InternshipChat.Shared.DTO
 {
     public class UserDTO
     {
         [Required]
-        public string Username { get; set; }
+        public string Password { get; set; }
+
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
 
         [Required]
-        public string Password { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-
         [EmailAddress]
         public string Email { get; set; }
     }

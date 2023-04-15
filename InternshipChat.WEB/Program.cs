@@ -1,6 +1,9 @@
+using Blazored.LocalStorage;
 using InternshipChat.WEB.Services;
+using InternshipChat.WEB.Services.Auth;
 using InternshipChat.WEB.Services.Contracts;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,11 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<MessageService>();
-builder.Services.AddHttpClient<IMessageService, MessageService>(client =>
+builder.Services.AddScoped<IMessageService, MessageService>();
+
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped(serviceProvider => new HttpClient
 {
-    client.BaseAddress = new Uri("https://localhost:7021/");
+    BaseAddress = new Uri(builder.Configuration["AppBase"])
 });
+
 
 var app = builder.Build();
 

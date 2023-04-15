@@ -1,5 +1,5 @@
-﻿using InternshipChat.BLL.DTO;
-using InternshipChat.DAL.Entities;
+﻿using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.DTO;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
