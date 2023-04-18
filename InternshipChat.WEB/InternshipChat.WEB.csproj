@@ -17,4 +17,8 @@
     <ProjectReference Include="..\InternshipChat.Shared\InternshipChat.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
 </Project>

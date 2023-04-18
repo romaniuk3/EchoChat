@@ -1,5 +1,5 @@
 ﻿using InternshipChat.Shared.DTO;
-using InternshipChat.WEB.Interfaces;
+using InternshipChat.Shared.Models;
 
 namespace InternshipChat.WEB.Services.Contracts
 {

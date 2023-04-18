@@ -1,5 +1,6 @@
 ﻿using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,6 @@ namespace InternshipChat.BLL.Services.Contracts
     public interface IAuthService
     {
         Task<IEnumerable<IdentityError>> Register(UserDTO user);
-        Task<AuthResponseDTO?> Login (LoginDto loginDto);
+        Task<LoginResult> Login (LoginDto loginDto);
     }
 }

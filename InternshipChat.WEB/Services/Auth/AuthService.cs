@@ -5,8 +5,8 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text;
-using InternshipChat.WEB.Interfaces;
 using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.Models;
 
 namespace InternshipChat.WEB.Services.Auth
 {
@@ -58,11 +58,9 @@ namespace InternshipChat.WEB.Services.Auth
 
         public async Task Logout()
         {
-            await Console.Out.WriteLineAsync("IM LOGGING OUT NOW");
             await _localStorage.RemoveItemAsync("authToken");
             ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
             _httpClient.DefaultRequestHeaders.Authorization = null;
-            await Console.Out.WriteLineAsync("IM LOGGED OUT NOW");
         }
     }
 }

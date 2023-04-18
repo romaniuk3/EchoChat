@@ -1,6 +1,7 @@
 ﻿using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Data;
 using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -31,14 +32,12 @@ namespace InternshipChat.Api.Controllers
 
             if (possibleErrors.Any())
             {
-                foreach (var error in possibleErrors)
-                {
-                    ModelState.AddModelError(error.Code, error.Description);
-                }
-                return BadRequest(ModelState);
+                var errors = possibleErrors.Select(x => x.Description);
+
+                return BadRequest(new RegisterResult { Successful = false, Errors = errors });
             }
 
-            return Ok();
+            return Ok(new RegisterResult { Successful = true });
         }
 
         [HttpPost]
@@ -50,9 +49,9 @@ namespace InternshipChat.Api.Controllers
         {
             var authResponse = await _authService.Login(loginDto);
 
-            if (authResponse == null)
+            if (!authResponse.Successful)
             {
-                return Unauthorized();
+                return BadRequest(authResponse);
             }
 
             return Ok(authResponse);

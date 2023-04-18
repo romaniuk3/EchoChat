@@ -2,6 +2,7 @@
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -28,22 +29,26 @@ namespace InternshipChat.BLL.Services
             _configuration = configuration;
         }
 
-        async public Task<AuthResponseDTO?> Login(LoginDto loginDto)
+        async public Task<LoginResult> Login(LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             bool isPasswordValid = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             
             if(user == null || !isPasswordValid)
             {
-                return null;
+                return new LoginResult
+                {
+                    Successful = false,
+                    Error = "Username and password are invalid."
+                };
             }
 
             var token = await GenerateToken(user);
 
-            return new AuthResponseDTO
+            return new LoginResult
             {
                 Token = token,
-                UserId = user.Id
+                Successful = true
             };
         }
 

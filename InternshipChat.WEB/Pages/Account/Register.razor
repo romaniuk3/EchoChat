@@ -1,6 +1,5 @@
 ﻿@page "/register"
 @namespace InternshipChat.WEB
-@using Interfaces
 @using Services.Contracts
 @using InternshipChat.Shared.DTO
 @inject IAuthService AuthService
@@ -11,7 +10,10 @@
 @if (ShowErrors)
 {
     <div class="alert alert-danger" role="alert">
-        <h1>ERROR OCCURED</h1>
+        @foreach(var error in Errors)
+        {
+            <p>@error</p>
+        }
     </div>
 }
 
@@ -41,7 +43,7 @@
 
     private UserDTO userRegisterModel = new UserDTO();
     private bool ShowErrors;
-    private IEnumerable<string> Errors;
+    private IEnumerable<string>? Errors;
 
     private async Task HandleRegistration()
     {
@@ -54,6 +56,7 @@
         }
         else
         {
+            Errors = result.Errors;
             ShowErrors = true;
         }
     }
