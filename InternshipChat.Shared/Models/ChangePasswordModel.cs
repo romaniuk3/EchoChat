@@ -10,8 +10,7 @@ namespace InternshipChat.Shared.Models
 {
     public class ChangePasswordModel
     {
-        [Required]
-        public int UserId { get; set; }
+        public string Email { get; set; }
 
         [Required, DataType(DataType.Password), Display(Name = "Current password")]
         public string CurrentPassword { get; set; }

@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.Models;
+using Azure;
 
 namespace InternshipChat.WEB.Services.Auth
 {
@@ -29,7 +30,7 @@ namespace InternshipChat.WEB.Services.Auth
         {
             var result = await _httpClient.PostAsJsonAsync("api/account/register", userModel);
             if (result.IsSuccessStatusCode)
-                return new RegisterResult { Successful = true, Errors = null };
+                return new RegisterResult { Successful = true };
 
             return new RegisterResult
             {
@@ -54,6 +55,20 @@ namespace InternshipChat.WEB.Services.Auth
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResult.Token);
 
             return loginResult;
+        }
+
+        public async Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model)
+        {
+            await Console.Out.WriteLineAsync("Curr " + model.CurrentPassword);
+            await Console.Out.WriteLineAsync("NEW " + model.NewPassword);
+            await Console.Out.WriteLineAsync("CONFIRM " + model.ConfirmNewPassword);
+            var response = await _httpClient.PostAsJsonAsync("api/account/change", model);
+
+            return new ChangePasswordResult
+            {
+                Successful = response.IsSuccessStatusCode,
+                Errors = { }
+            };
         }
 
         public async Task Logout()
