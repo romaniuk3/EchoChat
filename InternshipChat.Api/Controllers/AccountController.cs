@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace InternshipChat.Api.Controllers
 {
@@ -55,6 +56,23 @@ namespace InternshipChat.Api.Controllers
             }
 
             return Ok(authResponse);
+        }
+
+        [HttpPost]
+        [Route("change")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> ChangePassword(ChangePasswordModel model)
+        {
+            var changePasswordResult = await _authService.ChangePassword(model);
+
+            if(!changePasswordResult.Successful)
+            {
+                return BadRequest(changePasswordResult);
+            }
+
+            return Ok(changePasswordResult);
         }
     }
 }

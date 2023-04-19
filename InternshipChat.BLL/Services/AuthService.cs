@@ -3,7 +3,9 @@ using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -29,7 +31,7 @@ namespace InternshipChat.BLL.Services
             _configuration = configuration;
         }
 
-        async public Task<LoginResult> Login(LoginDto loginDto)
+        public async Task<LoginResult> Login(LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             bool isPasswordValid = await _userManager.CheckPasswordAsync(user, loginDto.Password);
@@ -48,6 +50,26 @@ namespace InternshipChat.BLL.Services
             return new LoginResult
             {
                 Token = token,
+                Successful = true
+            };
+        }
+
+        public async Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId.ToString());
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return new ChangePasswordResult
+                {
+                    Successful = false,
+                    Errors = result.Errors.Select(e => e.Description)
+                };
+            }
+
+            return new ChangePasswordResult
+            {
                 Successful = true
             };
         }
