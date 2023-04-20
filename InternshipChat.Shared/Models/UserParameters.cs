@@ -6,21 +6,13 @@ using System.Threading.Tasks;
 
 namespace InternshipChat.Shared.Models
 {
-    public class UserParameters
+    public class UserParameters : QueryStringParameters
     {
-        const int maxPageSize = 50;
-        public int PageNumber { get; set; } = 1;
-        private int _pageSize = 10;
-        public int PageSize
+        public UserParameters()
         {
-            get
-            {
-                return _pageSize;
-            }
-            set
-            {
-                _pageSize = (value > maxPageSize) ? maxPageSize : value;
-            }
+            OrderBy = "name";            
         }
+
+        public string? Email { get; set; }
     }
 }
