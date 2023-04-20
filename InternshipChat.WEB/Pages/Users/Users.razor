@@ -1,24 +1,81 @@
 ﻿@page "/users"
 @using InternshipChat.DAL.Entities
 @using InternshipChat.WEB.Services.Contracts
+@using MudBlazor;
 @inject IUserService userService
 
 <h3>Users</h3>
 
-<!-- <DataGrid TItem="User" Data="@users" Sortable="true" ShowDefaultSortIcon="true" ShowPager="true" PageSize="6">
-    <DataGridColumn TItem="User" Field="@nameof(User.Id)" Caption="Id"></DataGridColumn>
-    <DataGridColumn TItem="User" Field="@nameof(User.Email)" Caption="Email"></DataGridColumn>
-    <DataGridColumn TItem="User" Field="@nameof(User.FirstName)" Caption="First Name"></DataGridColumn>
-    <DataGridColumn TItem="User" Field="@nameof(User.LastName)" Caption="Last Name"></DataGridColumn>
-</DataGrid>
--->
+<MudTable ServerData="@(new Func<TableState, Task<TableData<User>>>(LoadUsers))"
+          Dense="false" Hover="true" @ref="table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="email_field" T="User">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="fname_field" T="User">First Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="sname_field" T="User">Last Name</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="First Name">@context.FirstName</MudTd>
+        <MudTd DataLabel="Last Name">@context.LastName</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
 
 @code {
-
     private IEnumerable<User> users;
+    private MudTable<User> table;
 
-    protected override async Task OnInitializedAsync()
+    private int totalItems;
+    private string searchString;
+
+    private async Task<TableData<User>> LoadUsers(TableState state)
     {
-        users = await userService.GetUsersAsync();
+        IEnumerable<User> allUsers = await userService.GetUsersAsync();
+
+        allUsers = allUsers.Where(element =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (element.FirstName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if (element.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            return false;
+        }).ToArray();
+        totalItems = allUsers.Count();
+        switch (state.SortLabel)
+        {
+            case "email_field":
+                allUsers = allUsers.OrderByDirection(state.SortDirection, o => o.Email);
+                break;
+            case "fname_field":
+                allUsers = allUsers.OrderByDirection(state.SortDirection, o => o.FirstName);
+                break;
+            case "sname_field":
+                allUsers = allUsers.OrderByDirection(state.SortDirection, o => o.LastName);
+                break;
+        }
+
+        users = allUsers.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new TableData<User>() { TotalItems = totalItems, Items = users };
+    }
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table.ReloadServerData();
     }
 }

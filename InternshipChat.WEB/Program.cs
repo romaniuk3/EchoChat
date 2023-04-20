@@ -5,6 +5,7 @@ using InternshipChat.WEB.Services.Contracts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using IMessageService = InternshipChat.WEB.Services.Contracts.IMessageService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,7 @@ builder.Services.AddScoped(serviceProvider => new HttpClient
 {
     BaseAddress = new Uri(builder.Configuration["AppBase"])
 });
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 
