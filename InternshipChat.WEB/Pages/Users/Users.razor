@@ -1,21 +1,20 @@
 ﻿@page "/users"
 @using InternshipChat.DAL.Entities
-@using Blazorise
-@using Blazorise.DataGrid
 @using InternshipChat.WEB.Services.Contracts
 @inject IUserService userService
 
 <h3>Users</h3>
 
-<DataGrid TItem="User" Data="@users">
+<!-- <DataGrid TItem="User" Data="@users" Sortable="true" ShowDefaultSortIcon="true" ShowPager="true" PageSize="6">
     <DataGridColumn TItem="User" Field="@nameof(User.Id)" Caption="Id"></DataGridColumn>
     <DataGridColumn TItem="User" Field="@nameof(User.Email)" Caption="Email"></DataGridColumn>
     <DataGridColumn TItem="User" Field="@nameof(User.FirstName)" Caption="First Name"></DataGridColumn>
     <DataGridColumn TItem="User" Field="@nameof(User.LastName)" Caption="Last Name"></DataGridColumn>
 </DataGrid>
-
+-->
 
 @code {
+
     private IEnumerable<User> users;
 
     protected override async Task OnInitializedAsync()

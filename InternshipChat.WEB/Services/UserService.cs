@@ -17,7 +17,6 @@ namespace InternshipChat.WEB.Services
         public async Task<IEnumerable<User>> GetUsersAsync()
         {
             await GetBearerToken();
-
             return await _httpClient.GetFromJsonAsync<IEnumerable<User>>("api/users/all");
         }
     }

@@ -1,7 +1,4 @@
 using Blazored.LocalStorage;
-using Blazorise;
-using Blazorise.Bootstrap;
-using Blazorise.Icons.FontAwesome;
 using InternshipChat.WEB.Services;
 using InternshipChat.WEB.Services.Auth;
 using InternshipChat.WEB.Services.Contracts;
@@ -25,8 +22,6 @@ builder.Services.AddScoped(serviceProvider => new HttpClient
 {
     BaseAddress = new Uri(builder.Configuration["AppBase"])
 });
-builder.Services.AddBlazorise().AddBootstrapProviders().AddFontAwesomeIcons();
-
 
 var app = builder.Build();
 
