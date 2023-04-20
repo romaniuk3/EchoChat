@@ -1,6 +1,7 @@
 ﻿using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.UnitOfWork;
+using InternshipChat.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,9 @@ namespace InternshipChat.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public IQueryable<User> GetAll()
+        public IEnumerable<User> GetAll(UserParameters userParameters)
         {
-            return _unitOfWork.UserRepository.GetAll();
+            return _unitOfWork.UserRepository.GetUsers(userParameters);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace InternshipChat.DAL.Repositories.Interfaces
 {
     public interface IUserRepository : IRepository<User>
     {
+        IEnumerable<User> GetUsers(UserParameters userParameters);
     }
 }

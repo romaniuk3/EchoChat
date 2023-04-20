@@ -1,4 +1,5 @@
 ﻿using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace InternshipChat.BLL.Services.Contracts
 {
     public interface IUserService
     {
-        public IQueryable<User> GetAll();
+        public IEnumerable<User> GetAll(UserParameters userParameters);
     }
 }
