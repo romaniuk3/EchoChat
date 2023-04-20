@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InternshipChat.DAL.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace InternshipChat.DAL.Repositories.Interfaces
     public interface IRepository<T> where T : class
     {
         T GetById(int id);
-        IEnumerable<T> GetAll();
+        IQueryable<User> GetAll();
         void Add(T entity);
         void AddRange(IEnumerable<T> entities);
         void Remove(T entity);

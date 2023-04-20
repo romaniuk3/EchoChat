@@ -1,4 +1,5 @@
 ﻿using InternshipChat.DAL.Data;
+using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -27,9 +28,9 @@ namespace InternshipChat.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public IEnumerable<T> GetAll()
+        public IQueryable<User> GetAll()
         {
-            throw new NotImplementedException();
+            return _chatContext.Users;
         }
 
         public T GetById(int id)

@@ -1,10 +1,14 @@
 using Blazored.LocalStorage;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
 using InternshipChat.WEB.Services;
 using InternshipChat.WEB.Services.Auth;
 using InternshipChat.WEB.Services.Contracts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
+using IMessageService = InternshipChat.WEB.Services.Contracts.IMessageService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<IMessageService, MessageService>();
-
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
@@ -21,6 +25,7 @@ builder.Services.AddScoped(serviceProvider => new HttpClient
 {
     BaseAddress = new Uri(builder.Configuration["AppBase"])
 });
+builder.Services.AddBlazorise().AddBootstrapProviders().AddFontAwesomeIcons();
 
 
 var app = builder.Build();
