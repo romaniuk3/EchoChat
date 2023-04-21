@@ -1,17 +1,20 @@
 ﻿@page "/users"
 @using InternshipChat.DAL.Entities
+@using InternshipChat.Shared.Models;
 @using InternshipChat.WEB.Services.Contracts
 @using MudBlazor;
 @inject IUserService userService
 
 <h3>Users</h3>
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<User>>>(LoadUsers))"
+<MudTable ServerData="@(new Func<TableState, Task<TableData<User>>>(GetServerData))"
           Dense="false" Hover="true" @ref="table">
     <ToolBarContent>
         <MudSpacer />
-        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+        <MudTextField T="string" Placeholder="Search" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <!--<MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>-->
     </ToolBarContent>
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="email_field" T="User">Email</MudTableSortLabel></MudTh>
@@ -30,18 +33,34 @@
         <MudText>Loading...</MudText>
     </LoadingContent>
     <PagerContent>
-        <MudTablePager />
+        <MudTablePager PageSizeOptions="@_pageSizeOption"/>
     </PagerContent>
 </MudTable>
 
 @code {
     private IEnumerable<User> users;
     private MudTable<User> table;
+    private UserParameters _userParameters = new UserParameters();
+    private readonly int[] _pageSizeOption = { 4, 6, 10 };
 
     private int totalItems;
     private string searchString;
 
-    private async Task<TableData<User>> LoadUsers(TableState state)
+    private async Task<TableData<User>> GetServerData(TableState state)
+    {
+        _userParameters.PageSize = state.PageSize;
+        _userParameters.PageNumber = state.Page + 1;
+
+        var response = await userService.GetUsersAsync(_userParameters);
+
+        return new TableData<User>()
+            {
+                Items = response.Items,
+                TotalItems = response.TotalCount
+            };
+    }
+
+    /*private async Task<TableData<User>> GetServerData(TableState state)
     {
         IEnumerable<User> allUsers = await userService.GetUsersAsync();
 
@@ -77,5 +96,5 @@
     {
         searchString = text;
         table.ReloadServerData();
-    }
+    }*/
 }

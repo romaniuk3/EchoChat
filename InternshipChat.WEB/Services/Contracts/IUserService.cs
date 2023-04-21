@@ -1,9 +1,11 @@
 ﻿using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.Models;
 
 namespace InternshipChat.WEB.Services.Contracts
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetUsersAsync(); 
+        Task<PagingResponseDTO<User>> GetUsersAsync(UserParameters userParameters); 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using InternshipChat.DAL.Entities;
+using InternshipChat.DAL.Helpers;
 using InternshipChat.Shared.DTO;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace InternshipChat.BLL.Mapping
             CreateMap<Message, MessageDTO>().ReverseMap();
 
             CreateMap<User, UserDTO>().ReverseMap();
+
+            CreateMap<PagingResponseDTO<User>, PagedList<User>>().ReverseMap();
         }
     }
 }
