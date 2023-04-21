@@ -11,10 +11,8 @@
           Dense="false" Hover="true" @ref="table">
     <ToolBarContent>
         <MudSpacer />
-        <MudTextField T="string" Placeholder="Search" Adornment="Adornment.Start"
+        <MudTextField T="string" ValueChanged="@(searchTerm=>OnSearch(searchTerm))" Placeholder="Search" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        <!--<MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
-                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>-->
     </ToolBarContent>
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="email_field" T="User">Email</MudTableSortLabel></MudTh>
@@ -60,41 +58,9 @@
             };
     }
 
-    /*private async Task<TableData<User>> GetServerData(TableState state)
+    private void OnSearch(string searchTerm)
     {
-        IEnumerable<User> allUsers = await userService.GetUsersAsync();
-
-        allUsers = allUsers.Where(element =>
-        {
-            if (string.IsNullOrWhiteSpace(searchString))
-                return true;
-            if (element.FirstName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if (element.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            return false;
-        }).ToArray();
-        totalItems = allUsers.Count();
-        switch (state.SortLabel)
-        {
-            case "email_field":
-                allUsers = allUsers.OrderByDirection(state.SortDirection, o => o.Email);
-                break;
-            case "fname_field":
-                allUsers = allUsers.OrderByDirection(state.SortDirection, o => o.FirstName);
-                break;
-            case "sname_field":
-                allUsers = allUsers.OrderByDirection(state.SortDirection, o => o.LastName);
-                break;
-        }
-
-        users = allUsers.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new TableData<User>() { TotalItems = totalItems, Items = users };
-    }
-
-    private void OnSearch(string text)
-    {
-        searchString = text;
+        _userParameters.searchTerm = searchTerm;
         table.ReloadServerData();
-    }*/
+    }
 }

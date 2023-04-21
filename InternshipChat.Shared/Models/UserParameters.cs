@@ -12,7 +12,7 @@ namespace InternshipChat.Shared.Models
         {
             OrderBy = "name";            
         }
-
+        public string? searchTerm { get; set; }
         public string? Email { get; set; }
     }
 }

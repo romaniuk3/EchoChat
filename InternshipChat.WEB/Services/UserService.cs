@@ -26,7 +26,8 @@ namespace InternshipChat.WEB.Services
             var queryStringParam = new Dictionary<string, string>
             {
                 ["pageNumber"] = userParameters.PageNumber.ToString(),
-                ["pageSize"] = userParameters.PageSize.ToString()
+                ["pageSize"] = userParameters.PageSize.ToString(),
+                ["searchTerm"] = userParameters.searchTerm ?? ""
             };
 
             return await _httpClient.GetFromJsonAsync<PagingResponseDTO<User>>(QueryHelpers.AddQueryString("api/users/all", queryStringParam), _options);
