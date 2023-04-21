@@ -11,13 +11,13 @@
           Dense="false" Hover="true" @ref="table">
     <ToolBarContent>
         <MudSpacer />
-        <MudTextField T="string" ValueChanged="@(searchTerm=>OnSearch(searchTerm))" Placeholder="Search" Adornment="Adornment.Start"
+        <MudTextField OnDebounceIntervalElapsed="OnSearch" DebounceInterval="500" T="string" Placeholder="Search" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="email_field" T="User">Email</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="fname_field" T="User">First Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="sname_field" T="User">Last Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="email" T="User">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="firstName" T="User">First Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="lastName" T="User">Last Name</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Email">@context.Email</MudTd>
@@ -48,6 +48,9 @@
     {
         _userParameters.PageSize = state.PageSize;
         _userParameters.PageNumber = state.Page + 1;
+        _userParameters.OrderBy = state.SortDirection == SortDirection.Descending ?
+            state.SortLabel + " desc" :
+            state.SortLabel;
 
         var response = await userService.GetUsersAsync(_userParameters);
 
@@ -60,7 +63,7 @@
 
     private void OnSearch(string searchTerm)
     {
-        _userParameters.searchTerm = searchTerm;
+        _userParameters.SearchTerm = searchTerm;
         table.ReloadServerData();
     }
 }

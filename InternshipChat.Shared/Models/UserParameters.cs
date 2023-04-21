@@ -10,9 +10,9 @@ namespace InternshipChat.Shared.Models
     {
         public UserParameters()
         {
-            OrderBy = "name";            
+            OrderBy = "email";            
         }
-        public string? searchTerm { get; set; }
+        public string? SearchTerm { get; set; }
         public string? Email { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace InternshipChat.DAL.Repositories
         public PagedList<User> GetUsers(UserParameters userParameters)
         {
             var users = GetAll();
-            users = SearchGlobal(users, userParameters.searchTerm);
+            users = SearchGlobal(users, userParameters.SearchTerm);
             users = SearchByEmail(users, userParameters.Email);
             users = ApplySort(users, userParameters.OrderBy);
 

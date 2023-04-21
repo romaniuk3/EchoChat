@@ -27,7 +27,8 @@ namespace InternshipChat.WEB.Services
             {
                 ["pageNumber"] = userParameters.PageNumber.ToString(),
                 ["pageSize"] = userParameters.PageSize.ToString(),
-                ["searchTerm"] = userParameters.searchTerm ?? ""
+                ["searchTerm"] = userParameters.SearchTerm ?? "",
+                ["orderBy"] = userParameters.OrderBy
             };
 
             return await _httpClient.GetFromJsonAsync<PagingResponseDTO<User>>(QueryHelpers.AddQueryString("api/users/all", queryStringParam), _options);
