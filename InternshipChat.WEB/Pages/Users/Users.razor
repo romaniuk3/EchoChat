@@ -2,8 +2,11 @@
 @using InternshipChat.DAL.Entities
 @using InternshipChat.Shared.Models;
 @using InternshipChat.WEB.Services.Contracts
+@using Microsoft.AspNetCore.WebUtilities;
 @using MudBlazor;
+@using InternshipChat.WEB.Helpers;
 @inject IUserService userService
+@inject NavigationManager Navigation
 
 <h3>Users</h3>
 
@@ -36,24 +39,31 @@
 </MudTable>
 
 @code {
-    private IEnumerable<User> users;
     private MudTable<User> table;
     private UserParameters _userParameters = new UserParameters();
     private readonly int[] _pageSizeOption = { 4, 6, 10 };
+    private string _queryParameters = string.Empty;
+    private bool serverDataLoaded = false;
 
     private int totalItems;
-    private string searchString;
 
     private async Task<TableData<User>> GetServerData(TableState state)
     {
+        if (!serverDataLoaded)
+        {
+            serverDataLoaded = true;
+            state = SetTableStateFromQueryParameters();
+        }
         _userParameters.PageSize = state.PageSize;
         _userParameters.PageNumber = state.Page + 1;
         _userParameters.OrderBy = state.SortDirection == SortDirection.Descending ?
             state.SortLabel + " desc" :
             state.SortLabel;
 
-        var response = await userService.GetUsersAsync(_userParameters);
+        UpdateQueryParameters();
 
+        var response = await userService.GetUsersAsync(_queryParameters);
+        
         return new TableData<User>()
             {
                 Items = response.Items,
@@ -61,9 +71,30 @@
             };
     }
 
+    private void UpdateQueryParameters()
+    {
+        var stringParams = userService.GenerateQueryStringParams(_userParameters);
+        _queryParameters = QueryHelpers.AddQueryString("", stringParams);
+
+        Navigation.NavigateTo("users/" + _queryParameters);
+    }
+
     private void OnSearch(string searchTerm)
     {
         _userParameters.SearchTerm = searchTerm;
         table.ReloadServerData();
+    }
+
+    private TableState SetTableStateFromQueryParameters()
+    {
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        var newTableState = new TableState
+            {
+                Page = QueryParamParser.ParseQueryParameter<int>(uri.Query, "pageNumber") - 1,
+                PageSize = QueryParamParser.ParseQueryParameter<int>(uri.Query, "pageSize")
+
+            };
+        _userParameters.SearchTerm = QueryParamParser.ParseQueryParameter<string>(uri.Query, "searchTerm");
+        return newTableState;
     }
 }
