@@ -57,7 +57,6 @@ namespace InternshipChat.Api.Controllers
             {
                 return NotFound();
             }
-
             _mapper.Map(updateUserDTO, user);
 
             var updatedUser = _userService.Update(user);

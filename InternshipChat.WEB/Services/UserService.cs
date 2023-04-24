@@ -3,8 +3,10 @@ using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;
+using InternshipChat.WEB.Services.Auth;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Identity.Client;
 using System.Text.Json;
@@ -14,11 +16,13 @@ namespace InternshipChat.WEB.Services
     public class UserService : BaseHttpService, IUserService
     {
         private readonly HttpClient _httpClient;
+        private readonly AuthenticationStateProvider _authStateProvider;
         private readonly JsonSerializerOptions _options;
 
-        public UserService(HttpClient httpClient, ILocalStorageService localStorage) : base(httpClient, localStorage)
+        public UserService(HttpClient httpClient, ILocalStorageService localStorage, AuthenticationStateProvider authStateProvider) : base(httpClient, localStorage)
         {
             _httpClient = httpClient;
+            _authStateProvider = authStateProvider;
             _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
 
@@ -43,11 +47,7 @@ namespace InternshipChat.WEB.Services
             await GetBearerToken();
             var uri = $"api/users/{id}";
 
-            var r = await _httpClient.PutAsJsonAsync(uri, updateUserDTO, _options);
-            if (r.IsSuccessStatusCode)
-            {
-                await Console.Out.WriteLineAsync("SUCCESFULL UPDATE");
-            }
+            await _httpClient.PutAsJsonAsync(uri, updateUserDTO, _options);
         }
 
         public Dictionary<string, string> GenerateQueryStringParams(UserParameters userParameters)

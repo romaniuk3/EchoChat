@@ -8,7 +8,9 @@
 @using InternshipChat.WEB.Helpers;
 @inject IUserService userService
 @inject AuthenticationStateProvider AuthState
+@inject NavigationManager Navigation
 
+<MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" OnClick="@NavigateBack"></MudIconButton>
 <h3>User Details</h3>
 
 <MudGrid>
@@ -51,6 +53,12 @@
     private async void UpdateUser()
     {
         await userService.UpdateUserAsync(UserId, UpdateDTO);
+        NavigateBack();
+    }
+
+    private void NavigateBack()
+    {
+        Navigation.NavigateTo("javascript:history.back()");
     }
 
     private async Task SetEditParameters(User chosenUser)
