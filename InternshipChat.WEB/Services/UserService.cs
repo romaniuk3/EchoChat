@@ -1,6 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
@@ -31,9 +32,22 @@ namespace InternshipChat.WEB.Services
 
         public async Task<User> GetUserAsync(int id)
         {
+            await GetBearerToken();
             var uri = $"api/users/{id}";
 
             return await _httpClient.GetFromJsonAsync<User>(uri, _options);
+        }
+
+        public async Task UpdateUserAsync(int id, UpdateUserDTO updateUserDTO)
+        {
+            await GetBearerToken();
+            var uri = $"api/users/{id}";
+
+            var r = await _httpClient.PutAsJsonAsync(uri, updateUserDTO, _options);
+            if (r.IsSuccessStatusCode)
+            {
+                await Console.Out.WriteLineAsync("SUCCESFULL UPDATE");
+            }
         }
 
         public Dictionary<string, string> GenerateQueryStringParams(UserParameters userParameters)

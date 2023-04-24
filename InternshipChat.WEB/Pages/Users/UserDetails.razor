@@ -2,57 +2,64 @@
 
 @using InternshipChat.DAL.Entities
 @using InternshipChat.Shared.Models;
+@using InternshipChat.Shared.DTO.UserDtos;
 @using InternshipChat.WEB.Services.Contracts
 @using MudBlazor;
 @using InternshipChat.WEB.Helpers;
 @inject IUserService userService
+@inject AuthenticationStateProvider AuthState
 
 <h3>User Details</h3>
 
 <MudGrid>
     <MudItem md="12" sm="12" Class="d-flex align-items-center">
         <MudInputLabel Class="mr-2">Email:</MudInputLabel>
-        <MudTextField @bind-Value="@User.Email"/>
+        <MudTextField Disabled="@(!CanEdit)" @bind-Value="@UpdateDTO.Email" />
     </MudItem>
     <MudItem md="12" sm="12" Class="d-flex align-items-center">
         <MudInputLabel Class="mr-2">First name:</MudInputLabel>
-        <MudTextField @bind-Value="@User.FirstName"/>
+        <MudTextField Disabled="@(!CanEdit)" @bind-Value="@UpdateDTO.FirstName" />
     </MudItem>
     <MudItem md="12" sm="12" Class="d-flex align-items-center">
         <MudInputLabel Class="mr-2">Last name:</MudInputLabel>
-        <MudTextField @bind-Value="@User.LastName" />
+        <MudTextField Disabled="@(!CanEdit)" @bind-Value="@UpdateDTO.LastName" />
     </MudItem>
-    <MudButton Class="ml-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="@UpdateUser">Save</MudButton>
-
-    <!-- <MudItem lg="4" md="6" sm="12">
-        <MudPaper Class="pa-4">
-            <MudText Typo="Typo.h4" Class="mb-4">First name: @User.FirstName</MudText>
-            <MudText Typo="Typo.h4">
-                Last name: @User.LastName
-            </MudText>
-        </MudPaper>
-    </MudItem> -->
+    @if (CanEdit)
+    {
+        <MudButton Class="ml-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="@UpdateUser">Save</MudButton>
+    }
 </MudGrid>
 
 @code {
-    public User User { get; set; } = new User();
+    public UpdateUserDTO UpdateDTO { get; set; } = new UpdateUserDTO();
 
     [Parameter]
     public int UserId { get; set; }
+    private bool CanEdit { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
-        User = await userService.GetUserAsync(UserId);
-        if (User != null)
-        {
-
-        }
+        var user = await userService.GetUserAsync(UserId);
+        //TODO: Refactor
+        UpdateDTO.Email = user.Email;
+        UpdateDTO.Id = user.Id;
+        UpdateDTO.FirstName = user.FirstName;
+        UpdateDTO.LastName = user.LastName;
+        await SetEditParameters(user);
     }
 
-    private void UpdateUser()
+    private async void UpdateUser()
     {
-        Console.WriteLine(User.FirstName);
-        Console.WriteLine(User.LastName);
-        Console.WriteLine(User.Email);
+        await userService.UpdateUserAsync(UserId, UpdateDTO);
+    }
+
+    private async Task SetEditParameters(User chosenUser)
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        var userName = authState.User.Identity.Name;
+        if (userName == chosenUser.UserName)
+        {
+            CanEdit = true;
+        }
     }
 }
