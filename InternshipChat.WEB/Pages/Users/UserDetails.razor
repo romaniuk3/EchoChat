@@ -9,26 +9,29 @@
 @inject IUserService userService
 @inject AuthenticationStateProvider AuthState
 @inject NavigationManager Navigation
+@inject ISnackbar Snackbar
 
-<MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" OnClick="@NavigateBack"></MudIconButton>
-<h3>User Details</h3>
+<div class="d-flex align-items-center">
+    <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" OnClick="@NavigateBack"></MudIconButton>
+    <h3 class="m-0">User Details</h3>
+</div>
 
 <MudGrid>
-    <MudItem md="12" sm="12" Class="d-flex align-items-center">
-        <MudInputLabel Class="mr-2">Email:</MudInputLabel>
+    <MudItem md="12" sm="12" Class="d-flex align-items-end">
+        <MudInputLabel Class="mr-2 details-label">Email:</MudInputLabel>
         <MudTextField Disabled="@(!CanEdit)" @bind-Value="@UpdateDTO.Email" />
     </MudItem>
-    <MudItem md="12" sm="12" Class="d-flex align-items-center">
-        <MudInputLabel Class="mr-2">First name:</MudInputLabel>
+    <MudItem md="12" sm="12" Class="d-flex align-items-end">
+        <MudInputLabel Class="mr-2 details-label">First name:</MudInputLabel>
         <MudTextField Disabled="@(!CanEdit)" @bind-Value="@UpdateDTO.FirstName" />
     </MudItem>
-    <MudItem md="12" sm="12" Class="d-flex align-items-center">
-        <MudInputLabel Class="mr-2">Last name:</MudInputLabel>
+    <MudItem md="12" sm="12" Class="d-flex align-items-end">
+        <MudInputLabel Class="mr-2 details-label">Last name:</MudInputLabel>
         <MudTextField Disabled="@(!CanEdit)" @bind-Value="@UpdateDTO.LastName" />
     </MudItem>
     @if (CanEdit)
     {
-        <MudButton Class="ml-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="@UpdateUser">Save</MudButton>
+        <MudButton Class="ml-2 m-4" Variant="Variant.Filled" Color="Color.Primary" OnClick="@UpdateUser">Save</MudButton>
     }
 </MudGrid>
 
@@ -53,6 +56,7 @@
     private async void UpdateUser()
     {
         await userService.UpdateUserAsync(UserId, UpdateDTO);
+        Snackbar.Add("Success", Severity.Success);
         NavigateBack();
     }
 

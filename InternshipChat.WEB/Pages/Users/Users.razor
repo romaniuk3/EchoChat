@@ -10,7 +10,7 @@
 
 <h3>Users</h3>
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<User>>>(GetServerData))"
+<MudTable OnRowClick="@ShowUserDetails" T="User" ServerData="@(new Func<TableState, Task<TableData<User>>>(GetServerData))"
           Dense="false" Hover="true" @ref="table">
     <ToolBarContent>
         <MudSpacer />
@@ -23,9 +23,7 @@
         <MudTh><MudTableSortLabel SortLabel="lastName" T="User">Last Name</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Email">
-            <MudLink Href="@($"users/{context.Id}")">@context.Email</MudLink>
-        </MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
         <MudTd DataLabel="First Name">@context.FirstName</MudTd>
         <MudTd DataLabel="Last Name">@context.LastName</MudTd>
     </RowTemplate>
@@ -71,6 +69,11 @@
                 Items = response.Items,
                 TotalItems = response.TotalCount
             };
+    }
+
+    public void ShowUserDetails(TableRowClickEventArgs<User> user)
+    {
+        Navigation.NavigateTo($"users/{user.Item.Id}");
     }
 
     private void UpdateQueryParameters()
