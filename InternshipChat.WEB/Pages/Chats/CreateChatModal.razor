@@ -1,0 +1,23 @@
+﻿@using InternshipChat.DAL.Entities;
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="@chat.Name" Label="Name"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    private Chat chat = new Chat();
+
+    void Submit()
+    {
+        MudDialog.Close();
+    }
+    //void Submit() => MudDialog.Close(DialogResult.Ok(chat));
+    void Cancel() => MudDialog.Cancel();
+}

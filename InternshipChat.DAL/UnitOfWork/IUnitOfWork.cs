@@ -11,6 +11,7 @@ namespace InternshipChat.DAL.UnitOfWork
     {
         IUserRepository UserRepository { get; }
         IMessageRepository MessageRepository { get; }
+        IChatRepository ChatRepository { get; }
         int Save();
     }
 }

@@ -18,9 +18,12 @@ namespace InternshipChat.DAL.Data
 
         public DbSet<User> AspNetUsers { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        //public DbSet<UserChats> UserChats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            //builder.Entity<UserChats>().HasKey(uc => new { uc.UserId, uc.ChatId });
             base.OnModelCreating(builder);
         }
     }

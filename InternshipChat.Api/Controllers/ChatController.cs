@@ -1,6 +1,7 @@
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.UnitOfWork;
+using InternshipChat.Shared.DTO.ChatDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,16 +9,26 @@ namespace InternshipChat.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class ChatController : ControllerBase
     {
         private readonly ILogger<ChatController> _logger;
         private readonly IMessageService _messageService;
+        private readonly IChatService _chatService;
 
-        public ChatController(ILogger<ChatController> logger, IMessageService messageService)
+        public ChatController(ILogger<ChatController> logger, IMessageService messageService, IChatService chatService)
         {
             _logger = logger;
             _messageService = messageService;
+            _chatService = chatService;
+        }
+
+        [HttpPost]
+        [Route("create")]
+        public IActionResult CreateChat(ChatDTO chat)
+        {
+            _chatService.CreateChat(chat);
+
+            return Ok();
         }
 
         [HttpGet]

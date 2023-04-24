@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(build
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
 builder.Services.AddTransient(typeof(IMessageService), typeof(MessageService));
 builder.Services.AddAuthentication(options =>

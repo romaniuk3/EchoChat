@@ -1,0 +1,50 @@
+﻿@page "/chats"
+@using InternshipChat.DAL.Entities
+@using InternshipChat.WEB.Services.Contracts
+@inject IDialogService DialogService
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudDataGrid T="Chat" Items="@chats" Bordered="false">
+        <ToolBarContent>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@OpenCreateChatModal">New Chat</MudButton>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="c => c.Name"/>
+        </Columns>
+    </MudDataGrid>
+</MudContainer>
+
+@code {
+    private IEnumerable<Chat> chats = new List<Chat>
+    {
+        new Chat
+        {
+
+            Id = 1,
+            Name = "First chat"
+        },
+         new Chat
+        {
+
+            Id = 2,
+            Name = "Second chat"
+        },
+        new Chat
+        {
+
+            Id = 3,
+            Name = "Third chat"
+        },
+
+    };
+
+    private void OpenCreateChatModal()
+    {
+        DialogService.Show<CreateChatModal>("Create chat");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+}
