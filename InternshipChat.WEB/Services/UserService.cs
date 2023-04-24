@@ -5,6 +5,7 @@ using InternshipChat.Shared.Models;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Identity.Client;
 using System.Text.Json;
 
 namespace InternshipChat.WEB.Services
@@ -26,6 +27,13 @@ namespace InternshipChat.WEB.Services
             //var queryStringParam = GenerateQueryStringParams(userParameters);
             var url = "api/users/all" + queryParameters;
             return await _httpClient.GetFromJsonAsync<PagingResponseDTO<User>>(url, _options);
+        }
+
+        public async Task<User> GetUserAsync(int id)
+        {
+            var uri = $"api/users/{id}";
+
+            return await _httpClient.GetFromJsonAsync<User>(uri, _options);
         }
 
         public Dictionary<string, string> GenerateQueryStringParams(UserParameters userParameters)

@@ -23,7 +23,9 @@
         <MudTh><MudTableSortLabel SortLabel="lastName" T="User">Last Name</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="Email">
+            <MudLink Href="@($"users/{context.Id}")">@context.Email</MudLink>
+        </MudTd>
         <MudTd DataLabel="First Name">@context.FirstName</MudTd>
         <MudTd DataLabel="Last Name">@context.LastName</MudTd>
     </RowTemplate>

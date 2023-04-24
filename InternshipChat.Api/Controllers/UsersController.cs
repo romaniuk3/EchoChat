@@ -2,6 +2,7 @@
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +29,40 @@ namespace InternshipChat.Api.Controllers
             var users = _userService.GetAll(userParameters);
             var response = _mapper.Map<PagingResponseDTO<User>>(users);
             response.Items = users.ToList();
-
             return Ok(response);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetUser(int id)
+        {
+            var user = _userService.GetUser(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateUser(int id, UpdateUserDTO updateUserDTO)
+        {
+            if (id != updateUserDTO.Id)
+            {
+                return BadRequest("Invalid record id.");
+            }
+            var user = _userService.GetUser(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(updateUserDTO, user);
+
+            var updatedUser = _userService.Update(user);
+
+            return Ok(updatedUser);
         }
     }
 }

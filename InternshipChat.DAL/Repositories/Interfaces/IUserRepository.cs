@@ -1,5 +1,7 @@
 ﻿using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Helpers;
+using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;
 using System;
 using System.Collections.Generic;

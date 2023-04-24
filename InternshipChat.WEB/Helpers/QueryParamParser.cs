@@ -21,11 +21,9 @@ namespace InternshipChat.WEB.Helpers
             {
                 var userParams = new QueryStringParameters();
                 var newParamName = Regex.Replace(paramName, @"\b\p{Ll}", match => match.Value.ToUpper());
-                Console.WriteLine("NEW PARAM " + newParamName);
                 var prop = typeof(QueryStringParameters).GetProperty(newParamName);
                 if (prop != null)
                 {
-                    Console.WriteLine("NOT NULL");
                     var defaultValue = (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFrom(prop.GetValue(userParams)?.ToString());
                     return defaultValue;
                 }

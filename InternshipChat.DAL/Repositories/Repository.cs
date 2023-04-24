@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,9 +35,14 @@ namespace InternshipChat.DAL.Repositories
             return _chatContext.Set<T>().AsNoTracking();
         }
 
-        public T GetById(int id)
+        public T Update(T entity)
         {
-            throw new NotImplementedException();
+            return _chatContext.Set<T>().Update(entity).Entity;
+        }
+
+        public T GetById(Expression<Func<T, bool>> expression)
+        {
+            return _chatContext.Set<T>().FirstOrDefault(expression);
         }
 
         public void Remove(T entity)

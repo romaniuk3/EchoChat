@@ -8,5 +8,6 @@ namespace InternshipChat.WEB.Services.Contracts
     {
         Task<PagingResponseDTO<User>> GetUsersAsync(string queryParameters);
         Dictionary<string, string> GenerateQueryStringParams(UserParameters userParameters);
+        Task<User> GetUserAsync(int id);
     }
 }
