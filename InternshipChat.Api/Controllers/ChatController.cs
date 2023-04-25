@@ -24,7 +24,7 @@ namespace InternshipChat.Api.Controllers
 
         [HttpPost]
         [Route("create")]
-        public IActionResult CreateChat(ChatDTO chat)
+        public IActionResult CreateChat([FromBody] ChatDTO chat)
         {
             _chatService.CreateChat(chat);
 

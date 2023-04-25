@@ -16,6 +16,7 @@ namespace InternshipChat.DAL.UnitOfWork
 
         public IMessageRepository MessageRepository { get; private set; }
         public IChatRepository ChatRepository { get; set; }
+        public IUserChatsRepository UserChatsRepository { get; set; }
 
         public UnitOfWork(ChatContext chatContext)
         {
@@ -24,6 +25,7 @@ namespace InternshipChat.DAL.UnitOfWork
             UserRepository = new UserRepository(chatContext);
             MessageRepository = new MessageRepository(chatContext);
             ChatRepository = new ChatRepository(chatContext);
+            UserChatsRepository = new UserChatsRepository(chatContext);
         }
 
         public void Dispose()

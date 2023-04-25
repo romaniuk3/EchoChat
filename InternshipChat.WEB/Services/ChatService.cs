@@ -21,13 +21,13 @@ namespace InternshipChat.WEB.Services
         public async Task CreateChat(ChatDTO chatDTO)
         {
             await GetBearerToken();
-            await _httpClient.PostAsJsonAsync("api/chats/create", chatDTO, _options);
+            await _httpClient.PostAsJsonAsync("api/chat/create", chatDTO, _options);
         }
 
-        public async Task<Chat> GetAllChats()
+        public async Task<IEnumerable<Chat>> GetAllChats()
         {
             await GetBearerToken();
-            return await _httpClient.GetFromJsonAsync<Chat>("api/chats/all", _options);
+            return await _httpClient.GetFromJsonAsync<IEnumerable<Chat>>("api/chat/all", _options);
         }
     }
 }

@@ -9,5 +9,6 @@ namespace InternshipChat.Shared.DTO.ChatDtos
     public class ChatDTO
     {
         public string Name { get; set; }
+        public List<int>? UserIds { get; set; }
     }
 }

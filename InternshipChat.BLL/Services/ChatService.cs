@@ -26,6 +26,20 @@ namespace InternshipChat.BLL.Services
         {
             var chat = _mapper.Map<Chat>(chatDto);
             _unitOfWork.ChatRepository.Add(chat);
+
+            foreach (var userId in chatDto.UserIds)
+            {
+                var user = _unitOfWork.UserRepository.GetById(u => u.Id == userId);
+                if (user != null)
+                {
+                    var userChat = new UserChats
+                    {
+                        Chat = chat,
+                        User = user
+                    };
+                    _unitOfWork.UserChatsRepository.Add(userChat);
+                }
+            }
             _unitOfWork.Save();
         }
 

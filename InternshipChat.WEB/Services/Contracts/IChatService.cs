@@ -6,6 +6,6 @@ namespace InternshipChat.WEB.Services.Contracts
     public interface IChatService
     {
         Task CreateChat(ChatDTO chatDTO);
-        Task<Chat> GetAllChats();
+        Task<IEnumerable<Chat>> GetAllChats();
     }
 }

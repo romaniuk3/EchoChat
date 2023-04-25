@@ -2,9 +2,10 @@
 @using InternshipChat.DAL.Entities
 @using InternshipChat.WEB.Services.Contracts
 @inject IDialogService DialogService
+@inject IChatService ChatService
 
 <MudContainer MaxWidth="MaxWidth.Small">
-    <MudDataGrid T="Chat" Items="@chats" Bordered="false">
+    <MudDataGrid T="Chat" Items="@chats" Bordered="false" @ref="dataGrid" ServerData="@(new Func<GridState<Chat>, Task<GridData<Chat>>>(GetServerData))">
         <ToolBarContent>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@OpenCreateChatModal">New Chat</MudButton>
         </ToolBarContent>
@@ -15,36 +16,26 @@
 </MudContainer>
 
 @code {
-    private IEnumerable<Chat> chats = new List<Chat>
+    private IEnumerable<Chat> chats;
+    private MudDataGrid<Chat> dataGrid;
+
+    private async void OpenCreateChatModal()
     {
-        new Chat
+        var dialog = DialogService.Show<CreateChatModal>("Create chat");
+        var result = await dialog.Result;
+        if (!result.Canceled)
         {
-
-            Id = 1,
-            Name = "First chat"
-        },
-         new Chat
-        {
-
-            Id = 2,
-            Name = "Second chat"
-        },
-        new Chat
-        {
-
-            Id = 3,
-            Name = "Third chat"
-        },
-
-    };
-
-    private void OpenCreateChatModal()
-    {
-        DialogService.Show<CreateChatModal>("Create chat");
+            await dataGrid.ReloadServerData();
+        }
     }
 
-    protected override async Task OnInitializedAsync()
+    private async Task<GridData<Chat>> GetServerData(GridState<Chat> state)
     {
+        chats = await ChatService.GetAllChats();
 
-    }
+        return new GridData<Chat>()
+            {
+                Items = chats
+            };
+       }
 }

@@ -1,8 +1,18 @@
 ﻿@using InternshipChat.DAL.Entities;
+@using InternshipChat.Shared.DTO.ChatDtos;
+@using InternshipChat.WEB.Services.Contracts;
+@inject IChatService ChatService
+@inject IUserService UsersService
 
 <MudDialog>
     <DialogContent>
         <MudTextField @bind-Value="@chat.Name" Label="Name"></MudTextField>
+        <MudSelect T="User" Label="Add users" MultiSelection="true" @bind-SelectedValues="selectedUsers">
+            @foreach (var u in users)
+            {
+                <MudSelectItem T="User" Value="@u">@u.FirstName</MudSelectItem>
+            }
+        </MudSelect>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -12,12 +22,21 @@
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    private Chat chat = new Chat();
+    private ChatDTO chat = new ChatDTO();
+    private IEnumerable<User> users = new List<User>();
+    private IEnumerable<User> selectedUsers = new List<User>();
 
-    void Submit()
+    protected override async Task OnInitializedAsync()
     {
-        MudDialog.Close();
+        var response = await UsersService.GetUsersAsync("");
+        users = response.Items;
     }
-    //void Submit() => MudDialog.Close(DialogResult.Ok(chat));
+
+    async void Submit()
+    {
+        await ChatService.CreateChat(chat);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
     void Cancel() => MudDialog.Cancel();
 }
