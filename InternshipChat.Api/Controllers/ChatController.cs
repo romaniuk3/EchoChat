@@ -32,6 +32,14 @@ namespace InternshipChat.Api.Controllers
         }
 
         [HttpGet]
+        [Route("all")]
+        public IActionResult GetAll()
+        {
+            var chats = _chatService.GetAllChats();
+            return Ok(chats);
+        }
+
+        [HttpGet]
         [Route("GetMessages")]
         public IActionResult GetMessages()
         {

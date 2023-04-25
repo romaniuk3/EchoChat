@@ -28,5 +28,10 @@ namespace InternshipChat.BLL.Services
             _unitOfWork.ChatRepository.Add(chat);
             _unitOfWork.Save();
         }
+
+        public IEnumerable<Chat> GetAllChats()
+        {
+            return _unitOfWork.ChatRepository.GetAll();
+        }
     }
 }
