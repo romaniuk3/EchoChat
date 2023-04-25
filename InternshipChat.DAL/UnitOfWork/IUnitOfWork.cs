@@ -10,10 +10,7 @@ namespace InternshipChat.DAL.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
-        IUserRepository UserRepository { get; }
-        IMessageRepository MessageRepository { get; }
-        IChatRepository ChatRepository { get; }
-        IUserChatsRepository UserChatsRepository { get; }
-        int Save();
+        T GetRepository<T>();
+        Task<int> SaveAsync();
     }
 }

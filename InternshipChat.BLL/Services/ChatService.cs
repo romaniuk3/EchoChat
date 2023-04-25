@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
+using InternshipChat.DAL.Repositories;
+using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
 using InternshipChat.Shared.DTO.ChatDtos;
 using System;
@@ -22,14 +24,18 @@ namespace InternshipChat.BLL.Services
             _mapper = mapper;
         }
 
-        public void CreateChat(ChatDTO chatDto)
+        public async void CreateChat(ChatDTO chatDto)
         {
             var chat = _mapper.Map<Chat>(chatDto);
-            _unitOfWork.ChatRepository.Add(chat);
+            var chatRepository = _unitOfWork.GetRepository<IChatRepository>();
+            var userChatsRepository = _unitOfWork.GetRepository<IUserChatsRepository>();
+            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
+
+            chatRepository.Add(chat);
 
             foreach (var userId in chatDto.UserIds)
             {
-                var user = _unitOfWork.UserRepository.GetById(u => u.Id == userId);
+                var user = userRepository.GetById(u => u.Id == userId);
                 if (user != null)
                 {
                     var userChat = new UserChats
@@ -37,15 +43,16 @@ namespace InternshipChat.BLL.Services
                         Chat = chat,
                         User = user
                     };
-                    _unitOfWork.UserChatsRepository.Add(userChat);
+                    userChatsRepository.Add(userChat);
                 }
             }
-            _unitOfWork.Save();
+            await _unitOfWork.SaveAsync();
         }
 
         public IEnumerable<Chat> GetAllChats()
         {
-            return _unitOfWork.ChatRepository.GetAll();
+            var repository = _unitOfWork.GetRepository<IChatRepository>();
+            return repository.GetAll();
         }
     }
 }

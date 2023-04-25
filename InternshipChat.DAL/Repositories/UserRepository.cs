@@ -19,14 +19,14 @@ namespace InternshipChat.DAL.Repositories
         public UserRepository(ChatContext chatContext) : base(chatContext)
         {}
 
-        public PagedList<User> GetUsers(UserParameters userParameters)
+        public async Task<PagedList<User>> GetUsersAsync(UserParameters userParameters)
         {
             var users = GetAll();
             users = SearchGlobal(users, userParameters.SearchTerm);
             users = SearchByEmail(users, userParameters.Email);
             users = ApplySort(users, userParameters.OrderBy);
 
-            return PagedList<User>.ToPagedList(users, userParameters.PageNumber, userParameters.PageSize);
+            return await PagedList<User>.ToPagedList(users, userParameters.PageNumber, userParameters.PageSize);
         }
 
         private IQueryable<User> SearchGlobal(IQueryable<User> users, string? searchTerm)

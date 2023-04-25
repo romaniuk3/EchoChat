@@ -13,8 +13,8 @@ namespace InternshipChat.BLL.Services.Contracts
 {
     public interface IUserService
     {
-        public PagedList<User> GetAll(UserParameters userParameters);
+        public Task<PagedList<User>> GetAllAsync(UserParameters userParameters);
         public User GetUser(int id);
-        public User Update(User user);
+        public Task<User> UpdateAsync(User user);
     }
 }

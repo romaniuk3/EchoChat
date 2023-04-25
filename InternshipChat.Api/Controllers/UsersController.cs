@@ -24,9 +24,9 @@ namespace InternshipChat.Api.Controllers
 
         [HttpGet]
         [Route("all")]
-        public IActionResult GetAll([FromQuery] UserParameters userParameters)
+        public async Task<IActionResult> GetAll([FromQuery] UserParameters userParameters)
         {
-            var users = _userService.GetAll(userParameters);
+            var users = await _userService.GetAllAsync(userParameters);
             var response = _mapper.Map<PagingResponseDTO<User>>(users);
             response.Items = users.ToList();
             return Ok(response);
@@ -45,7 +45,7 @@ namespace InternshipChat.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, UpdateUserDTO updateUserDTO)
+        public async Task<IActionResult> UpdateUser(int id, UpdateUserDTO updateUserDTO)
         {
             if (id != updateUserDTO.Id)
             {
@@ -59,7 +59,7 @@ namespace InternshipChat.Api.Controllers
             }
             _mapper.Map(updateUserDTO, user);
 
-            var updatedUser = _userService.Update(user);
+            var updatedUser = await _userService.UpdateAsync(user);
 
             return Ok(updatedUser);
         }

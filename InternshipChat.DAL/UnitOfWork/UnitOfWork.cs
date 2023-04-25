@@ -1,9 +1,11 @@
 ﻿using InternshipChat.DAL.Data;
 using InternshipChat.DAL.Repositories;
 using InternshipChat.DAL.Repositories.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,30 +14,50 @@ namespace InternshipChat.DAL.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ChatContext _chatContext;
-        public IUserRepository UserRepository { get; private set; }
+        private readonly IServiceProvider _serviceProvider;
+        private readonly Dictionary<string, object> _repositories = new();
+        private bool _isDisposed;
 
-        public IMessageRepository MessageRepository { get; private set; }
-        public IChatRepository ChatRepository { get; set; }
-        public IUserChatsRepository UserChatsRepository { get; set; }
-
-        public UnitOfWork(ChatContext chatContext)
+        public UnitOfWork(ChatContext chatContext, IServiceProvider serviceProvider)
         {
             _chatContext = chatContext;
-            
-            UserRepository = new UserRepository(chatContext);
-            MessageRepository = new MessageRepository(chatContext);
-            ChatRepository = new ChatRepository(chatContext);
-            UserChatsRepository = new UserChatsRepository(chatContext);
+            _serviceProvider = serviceProvider;
+        }
+
+        public T GetRepository<T>()
+        {
+            var typeName = typeof(T).Name;
+            if (!_repositories.ContainsKey(typeName))
+            {
+                T repository = _serviceProvider.GetService<T>() ??
+                    throw new ArgumentNullException($"Repository {typeName} was not found");
+
+                _repositories.Add(typeName, repository);
+            }
+
+            return (T)_repositories[typeName];
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Dispose(true);
         }
 
-        public int Save()
+        protected virtual void Dispose(bool disposing)
         {
-            return _chatContext.SaveChanges();
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    _chatContext.Dispose();
+                }
+                _isDisposed = true;
+            }
+        }
+
+        public async Task<int> SaveAsync()
+        {
+            return await _chatContext.SaveChangesAsync();
         }
     }
 }

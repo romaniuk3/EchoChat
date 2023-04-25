@@ -1,6 +1,7 @@
 ﻿using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Helpers;
+using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.DTO.UserDtos;
@@ -23,20 +24,24 @@ namespace InternshipChat.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public PagedList<User> GetAll(UserParameters userParameters)
+        public async Task<PagedList<User>> GetAllAsync(UserParameters userParameters)
         {
-            return _unitOfWork.UserRepository.GetUsers(userParameters);
+            var repository = _unitOfWork.GetRepository<IUserRepository>();
+
+            return await repository.GetUsersAsync(userParameters);
         }
 
         public User GetUser(int id)
         {
-            return _unitOfWork.UserRepository.GetById(u => u.Id == id);
+            var repository = _unitOfWork.GetRepository<IUserRepository>();
+            return repository.GetById(u => u.Id == id);
         }
 
-        public User Update(User user)
+        public async Task<User> UpdateAsync(User user)
         {
-            var updatedUser = _unitOfWork.UserRepository.Update(user);
-            _unitOfWork.Save();
+            var repository = _unitOfWork.GetRepository<IUserRepository>();
+            var updatedUser = repository.Update(user);
+            await _unitOfWork.SaveAsync();
             return updatedUser;
         }
     }
