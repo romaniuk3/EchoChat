@@ -7,10 +7,10 @@
 <MudDialog>
     <DialogContent>
         <MudTextField @bind-Value="@chat.Name" Label="Name"></MudTextField>
-        <MudSelect T="User" Label="Add users" MultiSelection="true" @bind-SelectedValues="selectedUsers">
+        <MudSelect Label="Add users" MultiSelection="true" @bind-SelectedValues="selectedUserIds">
             @foreach (var u in users)
             {
-                <MudSelectItem T="User" Value="@u">@u.FirstName</MudSelectItem>
+                <MudSelectItem Value="@u.Id">@u.FirstName</MudSelectItem>
             }
         </MudSelect>
     </DialogContent>
@@ -24,7 +24,7 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     private ChatDTO chat = new ChatDTO();
     private IEnumerable<User> users = new List<User>();
-    private IEnumerable<User> selectedUsers = new List<User>();
+    private IEnumerable<int> selectedUserIds = new List<int>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -34,6 +34,7 @@
 
     async void Submit()
     {
+        chat.UserIds = selectedUserIds.ToList();
         await ChatService.CreateChat(chat);
         MudDialog.Close(DialogResult.Ok(true));
     }
