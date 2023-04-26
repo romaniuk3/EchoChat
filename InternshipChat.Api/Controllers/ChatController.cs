@@ -40,6 +40,15 @@ namespace InternshipChat.Api.Controllers
         }
 
         [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetChat(int id)
+        {
+            var chat = await _chatService.GetChatAsync(id);
+            return Ok(chat);
+        }
+
+
+        [HttpGet]
         [Route("GetMessages")]
         public IActionResult GetMessages()
         {

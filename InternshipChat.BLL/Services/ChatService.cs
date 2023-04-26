@@ -46,13 +46,19 @@ namespace InternshipChat.BLL.Services
                     userChatsRepository.Add(userChat);
                 }
             }
-            await _unitOfWork.SaveAsync();
+            _unitOfWork.Save();
         }
 
         public IEnumerable<Chat> GetAllChats()
         {
             var repository = _unitOfWork.GetRepository<IChatRepository>();
             return repository.GetAll();
+        }
+
+        public async Task<Chat> GetChatAsync(int id)
+        {
+            var repository = _unitOfWork.GetRepository<IChatRepository>();
+            return await repository.GetChatById(id);
         }
     }
 }

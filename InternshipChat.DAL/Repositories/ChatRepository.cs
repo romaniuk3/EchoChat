@@ -1,6 +1,7 @@
 ﻿using InternshipChat.DAL.Data;
 using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,21 @@ namespace InternshipChat.DAL.Repositories
 {
     public class ChatRepository : Repository<Chat>, IChatRepository
     {
+        private readonly ChatContext chatContext;
+
         public ChatRepository(ChatContext chatContext) : base(chatContext)
         {
+            this.chatContext = chatContext;
         }
+
+        public async Task<Chat> GetChatById(int id)
+        {
+            var chad = await chatContext.Chats
+                .Include(x => x.UserChats)
+                .ThenInclude(y => y.User)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return chad;
+        } 
     }
 }

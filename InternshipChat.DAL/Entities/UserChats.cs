@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace InternshipChat.DAL.Entities
 {
-    [PrimaryKey(nameof(UserId), nameof(ChatId))]
     public class UserChats
     {
+        [Key]
+        public int Id { get; set; }
         public int UserId { get; set; }
         public int ChatId { get; set; }
         public User User { get; set; }

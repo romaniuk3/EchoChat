@@ -38,11 +38,17 @@ namespace InternshipChat.DAL.UnitOfWork
             return (T)_repositories[typeName];
         }
 
-        public void Dispose()
+        public int Save()
         {
-            Dispose(true);
+            return _chatContext.SaveChanges();
         }
 
+        public void Dispose()
+        {
+            //Dispose(true);
+        }
+
+        /*
         protected virtual void Dispose(bool disposing)
         {
             if (!_isDisposed)
@@ -51,13 +57,9 @@ namespace InternshipChat.DAL.UnitOfWork
                 {
                     _chatContext.Dispose();
                 }
-                _isDisposed = true;
             }
+            _isDisposed = true;
         }
-
-        public async Task<int> SaveAsync()
-        {
-            return await _chatContext.SaveChangesAsync();
-        }
+        */
     }
 }

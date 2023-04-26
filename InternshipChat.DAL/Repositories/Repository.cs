@@ -45,6 +45,11 @@ namespace InternshipChat.DAL.Repositories
             return _chatContext.Set<T>().FirstOrDefault(expression);
         }
 
+        public IQueryable<T> GetByCondition(Expression<Func<T, bool>> expression)
+        {
+            return _chatContext.Set<T>().Where(expression).AsNoTracking();
+        }
+
         public void Remove(T entity)
         {
             throw new NotImplementedException();

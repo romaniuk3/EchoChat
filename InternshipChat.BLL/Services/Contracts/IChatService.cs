@@ -12,5 +12,6 @@ namespace InternshipChat.BLL.Services.Contracts
     {
         void CreateChat(ChatDTO chat);
         IEnumerable<Chat> GetAllChats();
+        Task<Chat> GetChatAsync(int id);
     }
 }

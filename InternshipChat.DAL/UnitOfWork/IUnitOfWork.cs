@@ -11,6 +11,6 @@ namespace InternshipChat.DAL.UnitOfWork
     public interface IUnitOfWork : IDisposable
     {
         T GetRepository<T>();
-        Task<int> SaveAsync();
+        int Save();
     }
 }

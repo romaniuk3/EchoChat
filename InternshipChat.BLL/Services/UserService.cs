@@ -41,7 +41,7 @@ namespace InternshipChat.BLL.Services
         {
             var repository = _unitOfWork.GetRepository<IUserRepository>();
             var updatedUser = repository.Update(user);
-            await _unitOfWork.SaveAsync();
+            _unitOfWork.Save();
             return updatedUser;
         }
     }

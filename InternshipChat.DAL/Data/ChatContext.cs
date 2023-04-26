@@ -25,6 +25,16 @@ namespace InternshipChat.DAL.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<User>().
+                HasMany(x => x.UserChats)
+                .WithOne(y => y.User)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Chat>()
+                .HasMany(x => x.UserChats)
+                .WithOne(y => y.Chat)
+                .OnDelete(DeleteBehavior.Cascade);
+
             base.OnModelCreating(builder);
         }
     }
