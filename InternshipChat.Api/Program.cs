@@ -1,3 +1,4 @@
+using InternshipChat.Api.Hubs;
 using InternshipChat.BLL.Mapping;
 using InternshipChat.BLL.Services;
 using InternshipChat.BLL.Services.Contracts;
@@ -83,5 +84,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
