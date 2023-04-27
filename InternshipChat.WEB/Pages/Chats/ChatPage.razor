@@ -1,11 +1,13 @@
 ﻿@page "/chats/{Id:int}"
 @using InternshipChat.DAL.Entities;
+@using InternshipChat.WEB.Services.Contracts;
+@inject IChatService chatService
 
 <div class="d-flex flex-grow-1 flex-row">
     <MudPaper Elevation="25" Class="py-4 flex-grow-1">
         <MudToolBar Dense="true">
                 <MudIcon Icon="@Icons.Material.Outlined.ChatBubble" Style="margin-right:10px"></MudIcon>
-                <MudText Typo="Typo.h6">ChatWithUsers</MudText>
+                <MudText Typo="Typo.h6">@OpenedChat.Name</MudText>
         </MudToolBar>
         <div class="d-flex flex-column px-4 align-items-end" style="max-height:65vh;min-height:65vh; overflow:scroll; text-align:right;" id="chatContainer">
             @foreach (var message in messages)
@@ -33,27 +35,12 @@
     public int Id { get; set; }
     private string CurrentMessage { get; set; }
     private Chat OpenedChat { get; set; } = new();
+    private List<Message> messages { get; set; } = new();
 
-    private List<Message> messages = new List<Message>
+    protected async override Task OnInitializedAsync()
     {
-        new Message
-        {
-            Id = 1,
-            MessageContent = "First msg",
-            CreatedDate = DateTime.Now,
-        },
-                new Message
-        {
-            Id = 2,
-            MessageContent = "Second msg",
-            CreatedDate = DateTime.Now,
-        },
-                new Message
-        {
-            Id = 3,
-            MessageContent = "Third msg",
-            CreatedDate = DateTime.Now,
-        },
-    };
+        OpenedChat = await chatService.GetChatById(Id);
+        messages = OpenedChat.Messages.ToList();
+    }
 
 }

@@ -7,5 +7,6 @@ namespace InternshipChat.WEB.Services.Contracts
     {
         Task CreateChat(ChatDTO chatDTO);
         Task<IEnumerable<Chat>> GetAllChats();
+        Task<Chat> GetChatById(int chatId);
     }
 }
