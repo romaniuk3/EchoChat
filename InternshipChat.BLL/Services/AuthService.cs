@@ -101,6 +101,7 @@ namespace InternshipChat.BLL.Services
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim("id", user.Id.ToString(), ClaimValueTypes.Integer)
             };
 
             var token = new JwtSecurityToken(

@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.DTO.ChatDtos;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
 
@@ -18,6 +19,11 @@ namespace InternshipChat.WEB.Services
         {
             await GetBearerToken();
             return await _httpClient.GetFromJsonAsync<List<Message>>("api/Chat/GetMessages");
+        }
+
+        public async Task SaveMessageAsync(MessageDTO message)
+        {
+            await _httpClient.PostAsJsonAsync("api/message", message);
         }
     }
 }

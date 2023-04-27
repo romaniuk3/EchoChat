@@ -1,7 +1,12 @@
 ﻿@page "/chats/{Id:int}"
 @using InternshipChat.DAL.Entities;
+@using InternshipChat.Shared.DTO.ChatDtos;
 @using InternshipChat.WEB.Services.Contracts;
+@using Microsoft.AspNetCore.SignalR.Client;
 @inject IChatService chatService
+@inject IMessageService messageService
+@inject IConfiguration Configuration
+@inject AuthenticationStateProvider AuthState
 
 <div class="d-flex flex-grow-1 flex-row">
     <MudPaper Elevation="25" Class="py-4 flex-grow-1">
@@ -15,7 +20,7 @@
                 <div class="d-flex flex-row my-4">
 
                     <div>
-                        <MudText Typo="Typo.body1">@message.Id</MudText>
+                        <MudText Typo="Typo.body1">@message.UserId</MudText>
                         <MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@message.CreatedDate.ToString("dd MMM, yyyy hh:mm tt")</MudText>
                         <MudText Typo="Typo.body2" Style=" padding: 15px;background-color: var(--mud-palette-background-grey);border-radius: 5px;margin-top:5px">@message.MessageContent</MudText>
                     </div>
@@ -25,7 +30,7 @@
         <MudPaper Elevation="25" Class="d-flex flex-row px-2 mx-4" Style="">
             <MudTextField T="string" Placeholder="Enter your message..." DisableUnderLine="true" Class="mt-n2 mx-4"
                           @bind-Value="CurrentMessage" For="@(()=> CurrentMessage)" />
-            <MudButton StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" ButtonType="ButtonType.Button">Send</MudButton>
+            <MudButton OnClick="@SendMessageAsync" StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" ButtonType="ButtonType.Button">Send</MudButton>
         </MudPaper>
     </MudPaper>
 </div>
@@ -33,14 +38,72 @@
 @code {
     [Parameter]
     public int Id { get; set; }
+    [CascadingParameter] public HubConnection hubConnection { get; set; }
     private string CurrentMessage { get; set; }
     private Chat OpenedChat { get; set; } = new();
     private List<Message> messages { get; set; } = new();
+    private int UserId { get; set; }
+
+    private async Task SendMessageAsync()
+    {
+        if (!string.IsNullOrEmpty(CurrentMessage))
+        {
+            var msg = new MessageDTO()
+                {
+                    ChatId = Id,
+                    MessageContent = CurrentMessage
+                };
+
+            var authState = await AuthState.GetAuthenticationStateAsync();
+            var userIdClaim = authState.User.FindFirst("id");
+            var senderId = int.TryParse(userIdClaim.Value, out int userId);
+            if (senderId)
+            {
+                await messageService.SaveMessageAsync(msg);
+                await hubConnection.SendAsync("SendMessageAsync", msg, authState.User!.Identity!.Name);
+                CurrentMessage = string.Empty;
+            }
+
+        }
+    }
 
     protected async override Task OnInitializedAsync()
     {
+        if (hubConnection == null)
+        {
+            var url = Configuration["AppBase"] + "chathub";
+            hubConnection = new HubConnectionBuilder().WithUrl(url).Build();
+        }
+
+        if (hubConnection.State == HubConnectionState.Disconnected)
+        {
+            await hubConnection.StartAsync();
+        }
+
+        DefineUserId();
+
         OpenedChat = await chatService.GetChatById(Id);
         messages = OpenedChat.Messages.ToList();
+
+        hubConnection.On<Message, string>("ReceiveMessage", async (message, userName) =>
+        {
+            message.UserId = UserId;
+            Console.WriteLine("MSG UID " + message.UserId);
+            Console.WriteLine("MSG TEXT " + message.MessageContent);
+            Console.WriteLine("MSG ID " + message.Id);
+            messages.Add(message);
+            StateHasChanged();
+        });
     }
 
+    private async void DefineUserId()
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        var userIdClaim = authState.User.FindFirst("id");
+        var senderId = int.TryParse(userIdClaim.Value, out int userId);
+        if (senderId)
+        {
+            UserId = userId;
+        }
+    }
 }

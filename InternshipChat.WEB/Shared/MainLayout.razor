@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.SignalR.Client;
+@inject NavigationManager Navigation;
+@inject IConfiguration Configuration
 
 <PageTitle>InternshipChat.WEB</PageTitle>
 
@@ -16,10 +19,23 @@
         </div>
 
         <article class="content px-4">
+            <CascadingValue Value="hubConnection">
                 @Body
+            </CascadingValue>
         </article>
     </main>
 </div>
 <MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
+
+@code {
+    private HubConnection hubConnection;
+    public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
+    protected override async Task OnInitializedAsync()
+    {
+        var url = Configuration["AppBase"] + "chathub";
+        hubConnection = new HubConnectionBuilder().WithUrl(url).Build();
+        await hubConnection.StartAsync();
+    }
+}
