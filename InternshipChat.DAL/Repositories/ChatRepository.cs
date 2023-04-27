@@ -12,21 +12,21 @@ namespace InternshipChat.DAL.Repositories
 {
     public class ChatRepository : Repository<Chat>, IChatRepository
     {
-        private readonly ChatContext chatContext;
+        private readonly ChatContext _chatContext;
 
         public ChatRepository(ChatContext chatContext) : base(chatContext)
         {
-            this.chatContext = chatContext;
+            _chatContext = chatContext;
         }
 
         public async Task<Chat> GetChatById(int id)
         {
-            var chad = await chatContext.Chats
+            var chat = await _chatContext.Chats
                 .Include(x => x.UserChats)
                 .ThenInclude(y => y.User)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            return chad;
+            return chat;
         } 
     }
 }

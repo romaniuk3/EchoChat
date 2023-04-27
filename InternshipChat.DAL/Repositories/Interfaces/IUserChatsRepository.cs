@@ -9,5 +9,6 @@ namespace InternshipChat.DAL.Repositories.Interfaces
 {
     public interface IUserChatsRepository: IRepository<UserChats>
     {
+        Task<IEnumerable<Chat>> GetAllUserChats(int userId);
     }
 }

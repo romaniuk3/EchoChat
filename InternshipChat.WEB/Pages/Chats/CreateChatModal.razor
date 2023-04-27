@@ -4,14 +4,14 @@
 @inject IChatService ChatService
 @inject IUserService UsersService
 
-<MudDialog>
+<MudDialog Style="width: 650px">
     <DialogContent>
-        <MudTextField @bind-Value="@chat.Name" Label="Name"></MudTextField>
-        <MudTextField @bind-Value="@chat.Description" Label="Description"></MudTextField>
-        <MudSelect Label="Add users" MultiSelection="true" @bind-SelectedValues="selectedUserIds">
+        <MudTextField @bind-Value="@chat.Name" Label="Name" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.ContactPage"></MudTextField>
+        <MudTextField @bind-Value="@chat.Description" Label="Description" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Description"></MudTextField>
+        <MudSelect Label="Add users" MultiSelection="true" T="User" @bind-Value="value" @bind-SelectedValues="selectedUsers" AdornmentIcon="@Icons.Material.Filled.People">
             @foreach (var u in users)
             {
-                <MudSelectItem Value="@u.Id">@u.FirstName</MudSelectItem>
+                <MudSelectItem Value="@u">@u.FirstName</MudSelectItem>
             }
         </MudSelect>
     </DialogContent>
@@ -24,8 +24,9 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     private ChatDTO chat = new ChatDTO();
+    private User value { get; set; }
     private IEnumerable<User> users = new List<User>();
-    private IEnumerable<int> selectedUserIds = new List<int>();
+    private IEnumerable<User> selectedUsers = new List<User>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,9 +36,14 @@
 
     async void Submit()
     {
-        chat.UserIds = selectedUserIds.ToList();
+        chat.UserIds = GetSelectedUsersIds();
         await ChatService.CreateChat(chat);
         MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private List<int> GetSelectedUsersIds()
+    {
+        return selectedUsers.Select(u => u.Id).ToList();
     }
 
     void Cancel() => MudDialog.Cancel();

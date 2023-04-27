@@ -32,6 +32,8 @@
     [Parameter]
     public int Id { get; set; }
     private string CurrentMessage { get; set; }
+    private Chat OpenedChat { get; set; } = new();
+
     private List<Message> messages = new List<Message>
     {
         new Message

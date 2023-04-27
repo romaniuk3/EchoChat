@@ -3,21 +3,27 @@
 @using InternshipChat.WEB.Services.Contracts
 @inject IDialogService DialogService
 @inject IChatService ChatService
+@inject NavigationManager Navigation
 
-<MudContainer MaxWidth="MaxWidth.Small">
-    <MudDataGrid T="Chat" Items="@chats" Bordered="false" @ref="dataGrid" ServerData="@(new Func<GridState<Chat>, Task<GridData<Chat>>>(GetServerData))">
+<MudContainer MaxWidth="MaxWidth.Medium">
+    <MudTable T="Chat" OnRowClick="@OpenChat" Items="@chats" Bordered="false" @ref="dataGrid" ServerData="@(new Func<TableState, Task<TableData<Chat>>>(GetServerData))">
         <ToolBarContent>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@OpenCreateChatModal">New Chat</MudButton>
         </ToolBarContent>
-        <Columns>
-            <PropertyColumn Property="c => c.Name"/>
-        </Columns>
-    </MudDataGrid>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortLabel="name" T="Chat">Email</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="description" T="Chat">Description</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+        </RowTemplate>
+    </MudTable>
 </MudContainer>
 
 @code {
     private IEnumerable<Chat> chats;
-    private MudDataGrid<Chat> dataGrid;
+    private MudTable<Chat> dataGrid;
 
     private async void OpenCreateChatModal()
     {
@@ -29,13 +35,18 @@
         }
     }
 
-    private async Task<GridData<Chat>> GetServerData(GridState<Chat> state)
+    private async Task<TableData<Chat>> GetServerData(TableState state)
     {
         chats = await ChatService.GetAllChats();
 
-        return new GridData<Chat>()
+        return new TableData<Chat>()
             {
                 Items = chats
             };
-       }
+    }
+
+    private void OpenChat(TableRowClickEventArgs<Chat> chat)
+    {
+        Navigation.NavigateTo($"chats/{chat.Item.Id}");
+    }
 }

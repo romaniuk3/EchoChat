@@ -44,6 +44,18 @@ namespace InternshipChat.Api.Controllers
         }
 
         [HttpGet]
+        [Route("user/{userId}")]
+        public async Task<IActionResult> GetAllUserChats(int userId)
+        {
+            var userChats = await _chatService.GetUserChatsAsync(userId);
+            if (userChats == null)
+            {
+                return BadRequest("User doesn't have any chats.");
+            }
+            return Ok(userChats);
+        }
+
+        [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetChat(int id)
         {
