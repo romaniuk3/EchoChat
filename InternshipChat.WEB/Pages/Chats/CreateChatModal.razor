@@ -7,6 +7,7 @@
 <MudDialog>
     <DialogContent>
         <MudTextField @bind-Value="@chat.Name" Label="Name"></MudTextField>
+        <MudTextField @bind-Value="@chat.Description" Label="Description"></MudTextField>
         <MudSelect Label="Add users" MultiSelection="true" @bind-SelectedValues="selectedUserIds">
             @foreach (var u in users)
             {

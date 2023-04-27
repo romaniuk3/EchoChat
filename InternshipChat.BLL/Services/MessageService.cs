@@ -1,5 +1,6 @@
 ﻿using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
+using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,15 @@ namespace InternshipChat.BLL.Services
         {
             _unitOfWork = unitOfWork;
         }
-        public bool SendMessage(Message message)
+        public Message SendMessage(Message message, int userId)
         {
-            return true;
+            var repository = _unitOfWork.GetRepository<IMessageRepository>();
+            message.UserId = userId;
+
+            repository.Add(message);
+
+            _unitOfWork.Save();
+            return message;
         }
     }
 }

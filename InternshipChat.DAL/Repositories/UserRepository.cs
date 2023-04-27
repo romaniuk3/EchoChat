@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternshipChat.DAL.Repositories
 {
@@ -27,6 +28,11 @@ namespace InternshipChat.DAL.Repositories
             users = ApplySort(users, userParameters.OrderBy);
 
             return await PagedList<User>.ToPagedList(users, userParameters.PageNumber, userParameters.PageSize);
+        }
+
+        public async Task<User?> GetUserByNameAsync(string name)
+        {
+            return await GetAll().FirstOrDefaultAsync(u => u.NormalizedUserName == name.Normalize());
         }
 
         private IQueryable<User> SearchGlobal(IQueryable<User> users, string? searchTerm)

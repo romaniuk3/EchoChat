@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[Messages] (
-    [Id]           INT      NOT NULL,
+    [Id]           INT      NOT NULL IDENTITY,
     [CreatedDate]  DATETIME NOT NULL,
     [ModifiedDate] DATETIME NULL,
     [ChatId]       INT      NOT NULL,

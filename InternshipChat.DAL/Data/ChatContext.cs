@@ -35,6 +35,9 @@ namespace InternshipChat.DAL.Data
                 .WithOne(y => y.Chat)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<Message>()
+                .Property(m => m.CreatedDate).HasColumnType("datetime");
+
             base.OnModelCreating(builder);
         }
     }

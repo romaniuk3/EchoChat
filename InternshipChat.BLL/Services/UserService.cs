@@ -37,6 +37,14 @@ namespace InternshipChat.BLL.Services
             return repository.GetById(u => u.Id == id);
         }
 
+        public async Task<User> GetUserByNameAsync(string name)
+        {
+            var repository = _unitOfWork.GetRepository<IUserRepository>();
+            var user = await repository.GetUserByNameAsync(name);
+
+            return user;
+        }
+
         public async Task<User> UpdateAsync(User user)
         {
             var repository = _unitOfWork.GetRepository<IUserRepository>();

@@ -14,5 +14,6 @@ namespace InternshipChat.DAL.Repositories.Interfaces
     public interface IUserRepository : IRepository<User>
     {
         Task<PagedList<User>> GetUsersAsync(UserParameters userParameters);
+        Task<User?> GetUserByNameAsync(string name);
     }
 }
