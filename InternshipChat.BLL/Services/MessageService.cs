@@ -18,10 +18,9 @@ namespace InternshipChat.BLL.Services
         {
             _unitOfWork = unitOfWork;
         }
-        public Message SendMessage(Message message, int userId)
+        public Message SendMessage(Message message)
         {
             var repository = _unitOfWork.GetRepository<IMessageRepository>();
-            message.UserId = userId;
 
             repository.Add(message);
 

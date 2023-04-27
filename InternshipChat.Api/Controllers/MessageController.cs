@@ -31,7 +31,7 @@ namespace InternshipChat.Api.Controllers
             var user = await _userService.GetUserByNameAsync(userName);
 
             var message = _mapper.Map<Message>(messageDto);
-            var res = _messageService.SendMessage(message, user.Id);
+            var res = _messageService.SendMessage(message);
 
             return Ok(res);
         }

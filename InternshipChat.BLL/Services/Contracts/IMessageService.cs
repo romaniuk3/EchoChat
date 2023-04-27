@@ -9,6 +9,6 @@ namespace InternshipChat.BLL.Services.Contracts
 {
     public interface IMessageService
     {
-        Message SendMessage(Message message, int userId);
+        Message SendMessage(Message message);
     }
 }

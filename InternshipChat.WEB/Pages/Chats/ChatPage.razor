@@ -14,11 +14,10 @@
                 <MudIcon Icon="@Icons.Material.Outlined.ChatBubble" Style="margin-right:10px"></MudIcon>
                 <MudText Typo="Typo.h6">@OpenedChat.Name</MudText>
         </MudToolBar>
-        <div class="d-flex flex-column px-4 align-items-end" style="max-height:65vh;min-height:65vh; overflow:scroll; text-align:right;" id="chatContainer">
+        <div class="d-flex flex-column px-4" style="max-height:65vh;min-height:65vh; overflow:scroll;" id="chatContainer">
             @foreach (var message in messages)
             {
-                <div class="d-flex flex-row my-4">
-
+                <div class="d-flex flex-row my-4 @(UserId == message.UserId ? "align-self-end" : "align-self-start")">
                     <div>
                         <MudText Typo="Typo.body1">@message.UserId</MudText>
                         <MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@message.CreatedDate.ToString("dd MMM, yyyy hh:mm tt")</MudText>
@@ -50,6 +49,7 @@
         {
             var msg = new MessageDTO()
                 {
+                    UserId = this.UserId,
                     ChatId = Id,
                     MessageContent = CurrentMessage
                 };
