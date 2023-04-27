@@ -24,7 +24,7 @@ namespace InternshipChat.BLL.Services
             _mapper = mapper;
         }
 
-        public async void CreateChat(ChatDTO chatDto)
+        public async void CreateChat(CreateChatDTO chatDto)
         {
             var chat = _mapper.Map<Chat>(chatDto);
             var chatRepository = _unitOfWork.GetRepository<IChatRepository>();

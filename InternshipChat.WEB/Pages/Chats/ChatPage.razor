@@ -87,12 +87,11 @@
 
         hubConnection.On<Message, string>("ReceiveMessage", async (message, userName) =>
         {
-            message.UserId = UserId;
-            Console.WriteLine("MSG UID " + message.UserId);
-            Console.WriteLine("MSG TEXT " + message.MessageContent);
-            Console.WriteLine("MSG ID " + message.Id);
-            messages.Add(message);
-            StateHasChanged();
+            if (message.ChatId == Id)
+            {
+                messages.Add(message);
+                StateHasChanged();
+            }
         });
     }
 

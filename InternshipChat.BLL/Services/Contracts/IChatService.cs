@@ -10,7 +10,7 @@ namespace InternshipChat.BLL.Services.Contracts
 {
     public interface IChatService
     {
-        void CreateChat(ChatDTO chat);
+        void CreateChat(CreateChatDTO chat);
         IEnumerable<Chat> GetAllChats();
         Task<Chat> GetChatAsync(int id);
         Task<IEnumerable<Chat>> GetUserChatsAsync(int id);
