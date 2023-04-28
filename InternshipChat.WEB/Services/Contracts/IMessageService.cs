@@ -5,7 +5,7 @@ namespace InternshipChat.WEB.Services.Contracts
 {
     public interface IMessageService
     {
-        Task<List<Message>> GetMessages();
+        Task<List<MessageDTO>> GetMessagesAsync(int chatId);
         Task SaveMessageAsync(MessageDTO message);
     }
 }

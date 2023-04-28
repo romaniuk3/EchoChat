@@ -36,7 +36,7 @@ namespace InternshipChat.Api.Controllers
 
         [HttpGet]
         [Route("all")]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<ChatInfoView>> GetAll()
         {
             var chatInfoViews = await _chatService.GetAllChatsAsync();
             //var chats = _mapper.Map<ChatInfoDTO>(chatInfoViews);
@@ -46,19 +46,20 @@ namespace InternshipChat.Api.Controllers
 
         [HttpGet]
         [Route("user/{userId}")]
-        public async Task<IActionResult> GetAllUserChats(int userId)
+        public async Task<ActionResult<ChatDTO>> GetAllUserChats(int userId)
         {
             var userChats = await _chatService.GetUserChatsAsync(userId);
             if (userChats == null)
             {
                 return BadRequest("User doesn't have any chats.");
             }
-            return Ok(userChats);
+            var chatDtos = _mapper.Map<IEnumerable<ChatDTO>>(userChats);
+            return Ok(chatDtos);
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetChat(int id)
+        public async Task<ActionResult<ChatDTO>> GetChat(int id)
         {
             var chat = await _chatService.GetChatAsync(id);
             return Ok(chat);

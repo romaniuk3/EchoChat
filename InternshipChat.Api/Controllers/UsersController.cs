@@ -24,28 +24,29 @@ namespace InternshipChat.Api.Controllers
 
         [HttpGet]
         [Route("all")]
-        public async Task<IActionResult> GetAll([FromQuery] UserParameters userParameters)
+        public async Task<ActionResult<PagingResponseDTO<UserDTO>>> GetAll([FromQuery] UserParameters userParameters)
         {
             var users = await _userService.GetAllAsync(userParameters);
-            var response = _mapper.Map<PagingResponseDTO<User>>(users);
-            response.Items = users.ToList();
-            return Ok(response);
+            var mappedUsers = _mapper.Map<PagingResponseDTO<UserDTO>>(users);
+
+            return Ok(mappedUsers);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetUser(int id)
+        public ActionResult<UserDTO> GetUser(int id)
         {
             var user = _userService.GetUser(id);
+
             if (user == null)
             {
                 return NotFound();
             }
 
-            return Ok(user);
+            return Ok(_mapper.Map<UserDTO>(user));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, UpdateUserDTO updateUserDTO)
+        public async Task<ActionResult<UserDTO>> UpdateUser(int id, UpdateUserDTO updateUserDTO)
         {
             if (id != updateUserDTO.Id)
             {
@@ -61,7 +62,7 @@ namespace InternshipChat.Api.Controllers
 
             var updatedUser = await _userService.UpdateAsync(user);
 
-            return Ok(updatedUser);
+            return Ok(_mapper.Map<UserDTO>(updatedUser));
         }
     }
 }

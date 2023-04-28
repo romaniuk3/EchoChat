@@ -40,8 +40,8 @@ namespace InternshipChat.DAL.Repositories
             if (string.IsNullOrEmpty(searchTerm)) return users;
 
             return users.Where(u =>
-                u.FirstName.Contains(searchTerm) ||
-                u.LastName.Contains(searchTerm) ||
+                u.FirstName!.Contains(searchTerm) ||
+                u.LastName!.Contains(searchTerm) ||
                 u.Email.Contains(searchTerm));
         }
 

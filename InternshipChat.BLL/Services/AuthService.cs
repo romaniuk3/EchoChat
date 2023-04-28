@@ -2,6 +2,7 @@
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -74,12 +75,12 @@ namespace InternshipChat.BLL.Services
             };
         }
 
-        public async Task<IEnumerable<IdentityError>> Register(UserDTO userDto)
+        public async Task<IEnumerable<IdentityError>> Register(RegisterUserDTO registerUserDTO)
         {
-            var user = _mapper.Map<User>(userDto);
-            user.UserName = userDto.Email;
+            var user = _mapper.Map<User>(registerUserDTO);
+            user.UserName = registerUserDTO.Email;
 
-            var creatingResult = await _userManager.CreateAsync(user, userDto.Password);
+            var creatingResult = await _userManager.CreateAsync(user, registerUserDTO.Password);
 
             if (creatingResult.Succeeded)
             {
@@ -91,7 +92,7 @@ namespace InternshipChat.BLL.Services
 
         private async Task<string> GenerateToken(User user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var userClaims = await _userManager.GetClaimsAsync(user);

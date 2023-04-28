@@ -25,15 +25,25 @@ namespace InternshipChat.Api.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> SendMessage(MessageDTO messageDto)
+        public async Task<IActionResult> SendMessage(CreateMessageDTO createMessageDto)
         {
             var userName = HttpContext.User.Identity!.Name;
-            var user = await _userService.GetUserByNameAsync(userName);
+            //var user = await _userService.GetUserByNameAsync(userName);
 
-            var message = _mapper.Map<Message>(messageDto);
+            var message = _mapper.Map<Message>(createMessageDto);
             var res = _messageService.SendMessage(message);
 
             return Ok(res);
+        }
+
+        [HttpGet]
+        [Route("{chatId}")]
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetAllMessages(int chatId)
+        {
+            var messages = await _messageService.GetMessagesAsync(chatId);
+            var messageDtos = _mapper.Map<IEnumerable<MessageDTO>>(messages);
+
+            return Ok(messageDtos);
         }
     }
 }

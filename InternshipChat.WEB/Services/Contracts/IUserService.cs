@@ -7,9 +7,9 @@ namespace InternshipChat.WEB.Services.Contracts
 {
     public interface IUserService
     {
-        Task<PagingResponseDTO<User>> GetUsersAsync(string queryParameters);
+        Task<PagingResponseDTO<UserDTO>> GetUsersAsync(string queryParameters);
         Dictionary<string, string> GenerateQueryStringParams(UserParameters userParameters);
-        Task<User> GetUserAsync(int id);
+        Task<UserDTO> GetUserAsync(int id);
         Task UpdateUserAsync(int id, UpdateUserDTO updateUserDTO);
     }
 }

@@ -33,7 +33,7 @@ namespace InternshipChat.BLL.Services
 
             chatRepository.Add(chat);
 
-            foreach (var userId in chatDto.UserIds)
+            foreach (var userId in chatDto.UserIds!)
             {
                 var user = userRepository.GetById(u => u.Id == userId);
                 if (user != null)

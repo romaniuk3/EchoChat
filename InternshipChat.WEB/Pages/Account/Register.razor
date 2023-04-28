@@ -1,7 +1,7 @@
 ﻿@page "/register"
 @namespace InternshipChat.WEB
+@using InternshipChat.Shared.DTO.UserDtos;
 @using Services.Contracts
-@using InternshipChat.Shared.DTO
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
@@ -25,6 +25,16 @@
             <ValidationSummary />
 
             <div class="form-group">
+                <label for="fname">First Name</label>
+                <InputText Id="fname" class="form-control" @bind-Value="userRegisterModel.FirstName" />
+                <ValidationMessage For="@(() => userRegisterModel.FirstName)" />
+            </div>
+            <div class="form-group">
+                <label for="sname">Last Name</label>
+                <InputText Id="sname" class="form-control" @bind-Value="userRegisterModel.LastName" />
+                <ValidationMessage For="@(() => userRegisterModel.LastName)" />
+            </div>
+            <div class="form-group">
                 <label for="email">Email</label>
                 <InputText Id="email" class="form-control" @bind-Value="userRegisterModel.Email" />
                 <ValidationMessage For="@(() => userRegisterModel.Email)" />
@@ -46,7 +56,7 @@
 
 @code {
 
-    private UserDTO userRegisterModel = new UserDTO();
+    private RegisterUserDTO userRegisterModel = new ();
     private bool ShowErrors;
     private IEnumerable<string>? Errors;
 

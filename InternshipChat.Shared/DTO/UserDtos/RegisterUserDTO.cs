@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InternshipChat.Shared.DTO
+namespace InternshipChat.Shared.DTO.UserDtos
 {
-    public class UserDTO : BaseUserDTO
+    public class RegisterUserDTO : BaseUserDTO
     {
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]

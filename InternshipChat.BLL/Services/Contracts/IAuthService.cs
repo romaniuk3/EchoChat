@@ -1,5 +1,6 @@
 ﻿using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -13,7 +14,7 @@ namespace InternshipChat.BLL.Services.Contracts
 {
     public interface IAuthService
     {
-        Task<IEnumerable<IdentityError>> Register(UserDTO user);
+        Task<IEnumerable<IdentityError>> Register(RegisterUserDTO user);
         Task<LoginResult> Login (LoginDto loginDto);
         Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model);
     }

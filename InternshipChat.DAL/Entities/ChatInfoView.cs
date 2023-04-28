@@ -9,8 +9,8 @@ namespace InternshipChat.DAL.Entities
     public class ChatInfoView
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
         public int UsersCount { get; set; }
     }
 }

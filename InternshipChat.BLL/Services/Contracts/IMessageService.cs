@@ -9,6 +9,7 @@ namespace InternshipChat.BLL.Services.Contracts
 {
     public interface IMessageService
     {
-        Message SendMessage(Message message);
+        public Message SendMessage(Message message);
+        public Task<IEnumerable<Message>> GetMessagesAsync(int chatId);
     }
 }

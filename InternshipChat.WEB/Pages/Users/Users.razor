@@ -1,5 +1,6 @@
 ﻿@page "/users"
 @using InternshipChat.DAL.Entities
+@using InternshipChat.Shared.DTO.UserDtos;
 @using InternshipChat.Shared.Models;
 @using InternshipChat.WEB.Services.Contracts
 @using Microsoft.AspNetCore.WebUtilities;
@@ -10,7 +11,7 @@
 
 <h3>Users</h3>
 
-<MudTable OnRowClick="@ShowUserDetails" T="User" ServerData="@(new Func<TableState, Task<TableData<User>>>(GetServerData))"
+<MudTable OnRowClick="@ShowUserDetails" T="UserDTO" ServerData="@(new Func<TableState, Task<TableData<UserDTO>>>(GetServerData))"
           Dense="false" Hover="true" @ref="table">
     <ToolBarContent>
         <MudSpacer />
@@ -18,9 +19,9 @@
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="email" T="User">Email</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="firstName" T="User">First Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="lastName" T="User">Last Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="email" T="UserDTO">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="firstName" T="UserDTO">First Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="lastName" T="UserDTO">Last Name</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Email">@context.Email</MudTd>
@@ -39,7 +40,7 @@
 </MudTable>
 
 @code {
-    private MudTable<User> table;
+    private MudTable<UserDTO> table;
     private UserParameters _userParameters = new UserParameters();
     private readonly int[] _pageSizeOption = { 4, 6, 10 };
     private string _queryParameters = string.Empty;
@@ -47,7 +48,7 @@
 
     private int totalItems;
 
-    private async Task<TableData<User>> GetServerData(TableState state)
+    private async Task<TableData<UserDTO>> GetServerData(TableState state)
     {
         if (!serverDataLoaded)
         {
@@ -64,14 +65,14 @@
 
         var response = await userService.GetUsersAsync(_queryParameters);
         
-        return new TableData<User>()
+        return new TableData<UserDTO>()
             {
                 Items = response.Items,
                 TotalItems = response.TotalCount
             };
     }
 
-    public void ShowUserDetails(TableRowClickEventArgs<User> user)
+    public void ShowUserDetails(TableRowClickEventArgs<UserDTO> user)
     {
         Navigation.NavigateTo($"users/{user.Item.Id}");
     }

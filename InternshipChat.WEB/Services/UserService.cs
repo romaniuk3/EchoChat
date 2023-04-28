@@ -26,20 +26,20 @@ namespace InternshipChat.WEB.Services
             _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
 
-        public async Task<PagingResponseDTO<User>> GetUsersAsync(string queryParameters)
+        public async Task<PagingResponseDTO<UserDTO>> GetUsersAsync(string queryParameters)
         {
             await GetBearerToken();
             //var queryStringParam = GenerateQueryStringParams(userParameters);
             var url = "api/users/all" + queryParameters;
-            return await _httpClient.GetFromJsonAsync<PagingResponseDTO<User>>(url, _options);
+            return await _httpClient.GetFromJsonAsync<PagingResponseDTO<UserDTO>>(url, _options);
         }
 
-        public async Task<User> GetUserAsync(int id)
+        public async Task<UserDTO> GetUserAsync(int id)
         {
             await GetBearerToken();
             var uri = $"api/users/{id}";
 
-            return await _httpClient.GetFromJsonAsync<User>(uri, _options);
+            return await _httpClient.GetFromJsonAsync<UserDTO>(uri, _options);
         }
 
         public async Task UpdateUserAsync(int id, UpdateUserDTO updateUserDTO)

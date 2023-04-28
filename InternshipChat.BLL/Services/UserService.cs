@@ -42,7 +42,7 @@ namespace InternshipChat.BLL.Services
             var repository = _unitOfWork.GetRepository<IUserRepository>();
             var user = await repository.GetUserByNameAsync(name);
 
-            return user;
+            return user!;
         }
 
         public async Task<User> UpdateAsync(User user)

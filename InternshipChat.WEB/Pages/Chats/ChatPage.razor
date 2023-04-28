@@ -1,10 +1,12 @@
 ﻿@page "/chats/{Id:int}"
 @using InternshipChat.DAL.Entities;
 @using InternshipChat.Shared.DTO.ChatDtos;
+@using InternshipChat.Shared.DTO.UserDtos;
 @using InternshipChat.WEB.Services.Contracts;
 @using Microsoft.AspNetCore.SignalR.Client;
 @inject IChatService chatService
 @inject IMessageService messageService
+@inject IUserService userService
 @inject IConfiguration Configuration
 @inject AuthenticationStateProvider AuthState
 
@@ -19,7 +21,7 @@
             {
                 <div class="d-flex flex-row my-4 @(UserId == message.UserId ? "align-self-end" : "align-self-start")">
                     <div>
-                        <MudText Typo="Typo.body1">@message.UserId</MudText>
+                        <MudText Typo="Typo.body1">@message.User.Email</MudText>
                         <MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@message.CreatedDate.ToString("dd MMM, yyyy hh:mm tt")</MudText>
                         <MudText Typo="Typo.body2" Style=" padding: 15px;background-color: var(--mud-palette-background-grey);border-radius: 5px;margin-top:5px">@message.MessageContent</MudText>
                     </div>
@@ -39,9 +41,50 @@
     public int Id { get; set; }
     [CascadingParameter] public HubConnection hubConnection { get; set; }
     private string CurrentMessage { get; set; }
-    private Chat OpenedChat { get; set; } = new();
-    private List<Message> messages { get; set; } = new();
+    private ChatDTO OpenedChat { get; set; } = new();
+    private List<MessageDTO> messages { get; set; } = new();
     private int UserId { get; set; }
+    private UserDTO User { get; set; }
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (hubConnection == null)
+        {
+            var url = Configuration["AppBase"] + "chathub";
+            hubConnection = new HubConnectionBuilder().WithUrl(url).Build();
+        }
+
+        if (hubConnection.State == HubConnectionState.Disconnected)
+        {
+            await hubConnection.StartAsync();
+        }
+
+        DefineChatUser();
+        LoadChat();
+
+        hubConnection.On<MessageDTO, string>("ReceiveMessage", async (message, userName) =>
+        {
+            if (message.ChatId == Id)
+            {
+                messages.Add(message);
+                StateHasChanged();
+                await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");
+            }
+        });
+    }
+
+    private async void LoadChat()
+    {
+        OpenedChat = await chatService.GetChatById(Id);
+        messages = await messageService.GetMessagesAsync(Id);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");        
+    }
 
     private async Task SendMessageAsync()
     {
@@ -51,6 +94,7 @@
                 {
                     UserId = this.UserId,
                     ChatId = Id,
+                    User = this.User,
                     MessageContent = CurrentMessage
                 };
 
@@ -67,35 +111,7 @@
         }
     }
 
-    protected async override Task OnInitializedAsync()
-    {
-        if (hubConnection == null)
-        {
-            var url = Configuration["AppBase"] + "chathub";
-            hubConnection = new HubConnectionBuilder().WithUrl(url).Build();
-        }
-
-        if (hubConnection.State == HubConnectionState.Disconnected)
-        {
-            await hubConnection.StartAsync();
-        }
-
-        DefineUserId();
-
-        OpenedChat = await chatService.GetChatById(Id);
-        messages = OpenedChat.Messages.ToList();
-
-        hubConnection.On<Message, string>("ReceiveMessage", async (message, userName) =>
-        {
-            if (message.ChatId == Id)
-            {
-                messages.Add(message);
-                StateHasChanged();
-            }
-        });
-    }
-
-    private async void DefineUserId()
+    private async void DefineChatUser()
     {
         var authState = await AuthState.GetAuthenticationStateAsync();
         var userIdClaim = authState.User.FindFirst("id");
@@ -104,5 +120,6 @@
         {
             UserId = userId;
         }
+        User = await userService.GetUserAsync(userId);
     }
 }

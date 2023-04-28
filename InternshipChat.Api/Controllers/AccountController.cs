@@ -1,6 +1,9 @@
-﻿using InternshipChat.BLL.Services.Contracts;
+﻿using AutoMapper;
+using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Data;
+using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
+using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -27,9 +30,9 @@ namespace InternshipChat.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> Register(UserDTO userDTO)
+        public async Task<ActionResult> Register(RegisterUserDTO registerUserDTO)
         {
-            var possibleErrors = await _authService.Register(userDTO);
+            var possibleErrors = await _authService.Register(registerUserDTO);
 
             if (possibleErrors.Any())
             {

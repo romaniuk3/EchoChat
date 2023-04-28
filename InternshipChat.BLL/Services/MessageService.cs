@@ -27,5 +27,12 @@ namespace InternshipChat.BLL.Services
             _unitOfWork.Save();
             return message;
         }
+
+        public async Task<IEnumerable<Message>> GetMessagesAsync(int chatId)
+        {
+            var repository = _unitOfWork.GetRepository<IMessageRepository>();
+
+            return await repository.GetMessages(chatId);
+        }
     }
 }

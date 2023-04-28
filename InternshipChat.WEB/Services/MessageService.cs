@@ -15,15 +15,23 @@ namespace InternshipChat.WEB.Services
             _httpClient = httpClient;
         }
 
-        public async Task<List<Message>> GetMessages()
+        public async Task<List<MessageDTO>> GetMessagesAsync(int chatId)
         {
             await GetBearerToken();
-            return await _httpClient.GetFromJsonAsync<List<Message>>("api/Chat/GetMessages");
+            return await _httpClient.GetFromJsonAsync<List<MessageDTO>>($"api/message/{chatId}");
         }
 
-        public async Task SaveMessageAsync(MessageDTO message)
+        public async Task SaveMessageAsync(MessageDTO messageDTO)
         {
-            await _httpClient.PostAsJsonAsync("api/message", message);
+            var newMessage = new CreateMessageDTO()
+            {
+                ChatId = messageDTO.ChatId,
+                UserId = messageDTO.UserId,
+                MessageContent = messageDTO.MessageContent
+            };
+
+            await GetBearerToken();
+            await _httpClient.PostAsJsonAsync("api/message", newMessage);
         }
     }
 }

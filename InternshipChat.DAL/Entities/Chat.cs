@@ -14,9 +14,8 @@ namespace InternshipChat.DAL.Entities
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ICollection<Message> Messages { get; set; } = null!;
-        public ICollection<UserChats> UserChats { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public ICollection<UserChats>? UserChats { get; set; }
     }
 }

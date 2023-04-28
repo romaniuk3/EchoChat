@@ -24,10 +24,10 @@ namespace InternshipChat.WEB.Services
             await _httpClient.PostAsJsonAsync("api/chat/create", createChatDTO, _options);
         }
 
-        public async Task<Chat> GetChatById(int chatId)
+        public async Task<ChatDTO> GetChatById(int chatId)
         {
             await GetBearerToken();
-            return await _httpClient.GetFromJsonAsync<Chat>($"api/chat/{chatId}");
+            return await _httpClient.GetFromJsonAsync<ChatDTO>($"api/chat/{chatId}");
         }
 
         public async Task<IEnumerable<ChatInfoDTO>> GetAllChatsAsync()

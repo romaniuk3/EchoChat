@@ -14,7 +14,7 @@ namespace InternshipChat.WEB.Helpers
         public static T ParseQueryParameter<T> (string uri, string paramName)
         {
             Dictionary<string, string> queryParameters = QueryHelpers.ParseQuery(uri)
-                .ToDictionary(x => x.Key, x => x.Value.FirstOrDefault());
+                .ToDictionary(x => x.Key, x => x.Value.FirstOrDefault())!;
 
             string paramValue;
             if (!queryParameters.TryGetValue(paramName, out paramValue) || string.IsNullOrEmpty(paramValue))
@@ -24,27 +24,27 @@ namespace InternshipChat.WEB.Helpers
                 var prop = typeof(QueryStringParameters).GetProperty(newParamName);
                 if (prop != null)
                 {
-                    var defaultValue = (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFrom(prop.GetValue(userParams)?.ToString());
+                    var defaultValue = (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFrom(prop.GetValue(userParams)?.ToString()!)!;
                     return defaultValue;
                 }
 
-                return default(T);
+                return default(T)!;
             }
 
             TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
 
             if (converter == null || !converter.CanConvertFrom(typeof(string)))
             {
-                return default(T);
+                return default(T)!;
             }
 
             try
             {
-                return (T)converter.ConvertFrom(paramValue);
+                return (T)converter.ConvertFrom(paramValue)!;
             }
             catch
             {
-                return default(T);
+                return default(T)!;
             }
         }
     }

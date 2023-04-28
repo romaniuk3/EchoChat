@@ -24,7 +24,6 @@ namespace InternshipChat.DAL.Repositories
             var chat = await _chatContext.Chats
                 .Include(x => x.UserChats)
                 .ThenInclude(y => y.User)
-                .Include(c => c.Messages)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return chat;

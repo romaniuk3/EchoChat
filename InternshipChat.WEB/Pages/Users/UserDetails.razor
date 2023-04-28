@@ -65,7 +65,7 @@
         Navigation.NavigateTo("javascript:history.back()");
     }
 
-    private async Task SetEditParameters(User chosenUser)
+    private async Task SetEditParameters(UserDTO chosenUser)
     {
         var authState = await AuthState.GetAuthenticationStateAsync();
         var userName = authState.User.Identity.Name;

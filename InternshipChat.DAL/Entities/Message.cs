@@ -13,6 +13,7 @@ namespace InternshipChat.DAL.Entities
         public DateTime ModifiedDate { get; set; } = DateTime.Now;
         public int ChatId { get; set; }
         public int UserId { get; set; }
+        public User? User { get; set; }
         public string? MessageContent { get; set; }
     }
 }

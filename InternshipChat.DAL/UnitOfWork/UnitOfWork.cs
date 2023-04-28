@@ -16,7 +16,6 @@ namespace InternshipChat.DAL.UnitOfWork
         private readonly ChatContext _chatContext;
         private readonly IServiceProvider _serviceProvider;
         private readonly Dictionary<string, object> _repositories = new();
-        private bool _isDisposed;
 
         public UnitOfWork(ChatContext chatContext, IServiceProvider serviceProvider)
         {

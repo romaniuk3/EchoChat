@@ -17,10 +17,19 @@ namespace InternshipChat.BLL.Mapping
         public AutoMapperProfile()
         {
             CreateMap<Message, MessageDTO>().ReverseMap();
+            
+            CreateMap<Message, CreateMessageDTO>().ReverseMap();
+
+            CreateMap<User, RegisterUserDTO>().ReverseMap();
 
             CreateMap<User, UserDTO>().ReverseMap();
 
             CreateMap<PagingResponseDTO<User>, PagedList<User>>().ReverseMap();
+            CreateMap<PagedList<User>, PagingResponseDTO<UserDTO>>()
+                .ForMember(
+                    destination => destination.Items,
+                    options => options.MapFrom(src => src)
+                );
 
             CreateMap<User, UpdateUserDTO>().ReverseMap();
 

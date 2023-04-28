@@ -8,6 +8,7 @@ using System.Text;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.Models;
 using Azure;
+using InternshipChat.Shared.DTO.UserDtos;
 
 namespace InternshipChat.WEB.Services.Auth
 {
@@ -26,7 +27,7 @@ namespace InternshipChat.WEB.Services.Auth
             _localStorage = localStorage;
         }
 
-        public async Task<RegisterResult> Register(UserDTO userModel)
+        public async Task<RegisterResult> Register(RegisterUserDTO userModel)
         {
             var result = await _httpClient.PostAsJsonAsync("api/account/register", userModel);
             if (result.IsSuccessStatusCode)
