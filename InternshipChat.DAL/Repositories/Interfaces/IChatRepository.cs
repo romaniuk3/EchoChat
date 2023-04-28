@@ -10,5 +10,6 @@ namespace InternshipChat.DAL.Repositories.Interfaces
     public interface IChatRepository : IRepository<Chat>
     {
         Task<Chat> GetChatById(int id);
+        Task<IEnumerable<ChatInfoView>> GetAllChats();
     }
 }

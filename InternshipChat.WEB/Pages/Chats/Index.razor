@@ -1,29 +1,32 @@
 ﻿@page "/chats"
 @using InternshipChat.DAL.Entities
+@using InternshipChat.Shared.DTO.ChatDtos;
 @using InternshipChat.WEB.Services.Contracts
 @inject IDialogService DialogService
 @inject IChatService ChatService
 @inject NavigationManager Navigation
 
 <MudContainer MaxWidth="MaxWidth.Medium">
-    <MudTable T="Chat" OnRowClick="@OpenChat" Items="@chats" Bordered="false" @ref="dataGrid" ServerData="@(new Func<TableState, Task<TableData<Chat>>>(GetServerData))">
+    <MudTable T="ChatInfoDTO" OnRowClick="@OpenChat" Items="@chats" Bordered="false" @ref="dataGrid" ServerData="@(new Func<TableState, Task<TableData<ChatInfoDTO>>>(GetServerData))">
         <ToolBarContent>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@OpenCreateChatModal">New Chat</MudButton>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortLabel="name" T="Chat">Email</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortLabel="description" T="Chat">Description</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="name" T="ChatInfoDTO">Email</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="description" T="ChatInfoDTO">Description</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="userscn" T="ChatInfoDTO">Users</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Description">@context.Description</MudTd>
+            <MudTd DataLabel="Users">@context.UsersCount</MudTd>
         </RowTemplate>
     </MudTable>
 </MudContainer>
 
 @code {
-    private IEnumerable<Chat> chats;
-    private MudTable<Chat> dataGrid;
+    private IEnumerable<ChatInfoDTO> chats;
+    private MudTable<ChatInfoDTO> dataGrid;
 
     private async void OpenCreateChatModal()
     {
@@ -35,17 +38,17 @@
         }
     }
 
-    private async Task<TableData<Chat>> GetServerData(TableState state)
+    private async Task<TableData<ChatInfoDTO>> GetServerData(TableState state)
     {
-        chats = await ChatService.GetAllChats();
+        chats = await ChatService.GetAllChatsAsync();
 
-        return new TableData<Chat>()
+        return new TableData<ChatInfoDTO>()
             {
                 Items = chats
             };
     }
 
-    private void OpenChat(TableRowClickEventArgs<Chat> chat)
+    private void OpenChat(TableRowClickEventArgs<ChatInfoDTO> chat)
     {
         Navigation.NavigateTo($"chats/{chat.Item.Id}");
     }

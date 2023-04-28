@@ -1,3 +1,4 @@
+using AutoMapper;
 using InternshipChat.Api.Hubs;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
@@ -14,16 +15,14 @@ namespace InternshipChat.Api.Controllers
     public class ChatController : ControllerBase
     {
         private readonly ILogger<ChatController> _logger;
-        private readonly IMessageService _messageService;
         private readonly IChatService _chatService;
-        private readonly IHubContext<ChatHub> _hubContext;
+        private readonly IMapper _mapper;
 
-        public ChatController(ILogger<ChatController> logger, IMessageService messageService, IChatService chatService, IHubContext<ChatHub> hubContext)
+        public ChatController(ILogger<ChatController> logger, IChatService chatService, IMapper mapper)
         {
             _logger = logger;
-            _messageService = messageService;
             _chatService = chatService;
-            _hubContext = hubContext;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -37,10 +36,12 @@ namespace InternshipChat.Api.Controllers
 
         [HttpGet]
         [Route("all")]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var chats = _chatService.GetAllChats();
-            return Ok(chats);
+            var chatInfoViews = await _chatService.GetAllChatsAsync();
+            //var chats = _mapper.Map<ChatInfoDTO>(chatInfoViews);
+
+            return Ok(chatInfoViews);
         }
 
         [HttpGet]

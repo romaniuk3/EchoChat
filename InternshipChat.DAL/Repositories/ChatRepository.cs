@@ -29,5 +29,11 @@ namespace InternshipChat.DAL.Repositories
 
             return chat;
         } 
+
+        public async Task<IEnumerable<ChatInfoView>> GetAllChats()
+        {
+            var chats = await _chatContext.Set<ChatInfoView>().ToListAsync();
+            return chats;
+        }
     }
 }

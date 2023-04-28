@@ -30,10 +30,10 @@ namespace InternshipChat.WEB.Services
             return await _httpClient.GetFromJsonAsync<Chat>($"api/chat/{chatId}");
         }
 
-        public async Task<IEnumerable<Chat>> GetAllChats()
+        public async Task<IEnumerable<ChatInfoDTO>> GetAllChatsAsync()
         {
             await GetBearerToken();
-            return await _httpClient.GetFromJsonAsync<IEnumerable<Chat>>("api/chat/all", _options);
+            return await _httpClient.GetFromJsonAsync<IEnumerable<ChatInfoDTO>>("api/chat/all", _options);
         }
     }
 }

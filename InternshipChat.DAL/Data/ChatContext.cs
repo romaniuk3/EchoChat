@@ -23,6 +23,8 @@ namespace InternshipChat.DAL.Data
         public DbSet<Chat> Chats { get; set; }
         public DbSet<UserChats> UserChats { get; set; }
 
+        public virtual DbSet<ChatInfoView> ChatInfoViews { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<User>().
@@ -37,6 +39,10 @@ namespace InternshipChat.DAL.Data
 
             builder.Entity<Message>()
                 .Property(m => m.CreatedDate).HasColumnType("datetime");
+
+            builder.Entity<ChatInfoView>()
+                .ToView("ChatInfoView")
+                .HasKey(v => v.Id);
 
             base.OnModelCreating(builder);
         }
