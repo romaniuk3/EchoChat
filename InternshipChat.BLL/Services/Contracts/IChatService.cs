@@ -11,9 +11,9 @@ namespace InternshipChat.BLL.Services.Contracts
 {
     public interface IChatService
     {
-        void CreateChat(CreateChatDTO chat);
+        Task<Result> CreateChatAsync(CreateChatDTO chat);
         Task<IEnumerable<ChatInfoView>> GetAllChatsAsync();
         Task<Result<Chat>> GetChatAsync(int id);
-        Task<IEnumerable<Chat>> GetUserChatsAsync(int id);
+        Task<Result<IEnumerable<Chat>>> GetUserChatsAsync(int userId);
     }
 }

@@ -28,9 +28,13 @@ namespace InternshipChat.Api.Controllers
 
         [HttpPost]
         [Route("create")]
-        public IActionResult CreateChat([FromBody] CreateChatDTO chat)
+        public async Task<IActionResult> CreateChat([FromBody] CreateChatDTO chat)
         {
-            _chatService.CreateChat(chat);
+            var createResult = await _chatService.CreateChatAsync(chat);
+            if (createResult.IsFailure)
+            {
+                return this.FromError(createResult.Error);
+            }
 
             return Ok();
         }
@@ -49,12 +53,13 @@ namespace InternshipChat.Api.Controllers
         [Route("user/{userId}")]
         public async Task<ActionResult<ChatDTO>> GetAllUserChats(int userId)
         {
-            var userChats = await _chatService.GetUserChatsAsync(userId);
-            if (userChats == null)
+            var userChatsResult = await _chatService.GetUserChatsAsync(userId);
+            if (userChatsResult.IsFailure)
             {
-                return BadRequest("User doesn't have any chats.");
+                return this.FromError(userChatsResult.Error);
             }
-            var chatDtos = _mapper.Map<IEnumerable<ChatDTO>>(userChats);
+
+            var chatDtos = _mapper.Map<IEnumerable<ChatDTO>>(userChatsResult.Value);
             return Ok(chatDtos);
         }
 

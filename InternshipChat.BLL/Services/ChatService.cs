@@ -26,14 +26,20 @@ namespace InternshipChat.BLL.Services
             _mapper = mapper;
         }
 
-        public async void CreateChat(CreateChatDTO chatDto)
+        public async Task<Result> CreateChatAsync(CreateChatDTO chatDto)
         {
-            var chat = _mapper.Map<Chat>(chatDto);
+            var newChat = _mapper.Map<Chat>(chatDto);
             var chatRepository = _unitOfWork.GetRepository<IChatRepository>();
             var userChatsRepository = _unitOfWork.GetRepository<IUserChatsRepository>();
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
 
-            chatRepository.Add(chat);
+            var existedChat = await chatRepository.GetChatByName(chatDto.Name);
+            if (existedChat != null) 
+            {
+                return Result.Failure(DomainErrors.Chat.ChatExists);
+            }
+
+            chatRepository.Add(newChat);
 
             foreach (var userId in chatDto.UserIds!)
             {
@@ -42,13 +48,15 @@ namespace InternshipChat.BLL.Services
                 {
                     var userChat = new UserChats
                     {
-                        Chat = chat,
+                        Chat = newChat,
                         User = user
                     };
                     userChatsRepository.Add(userChat);
                 }
             }
             _unitOfWork.Save();
+
+            return Result.Success();
         }
 
         public async Task<IEnumerable<ChatInfoView>> GetAllChatsAsync()
@@ -58,13 +66,19 @@ namespace InternshipChat.BLL.Services
             return await repository.GetAllChats();
         }
 
-        public async Task<IEnumerable<Chat>> GetUserChatsAsync(int id)
+        public async Task<Result<IEnumerable<Chat>>> GetUserChatsAsync(int userId)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
-            userRepository.GetById(u => u.Id == id);
+            var user = userRepository.GetById(u => u.Id == userId);
+            if (user == null)
+            {
+                return Result.Failure<IEnumerable<Chat>>(DomainErrors.User.NotFound);
+            }
 
             var userChatsRepository = _unitOfWork.GetRepository<IUserChatsRepository>();
-            return await userChatsRepository.GetAllUserChats(id);
+            var userChats = await userChatsRepository.GetAllUserChats(userId);
+
+            return Result.Success(userChats);
         }
 
         public async Task<Result<Chat>> GetChatAsync(int id)
