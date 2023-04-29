@@ -4,15 +4,16 @@
 @using InternshipChat.WEB.Services.Contracts;
 @inject IChatService ChatService
 @inject IUserService UsersService
+@inject AuthenticationStateProvider AuthState
 
 <MudDialog Style="width: 650px">
     <DialogContent>
         <MudTextField @bind-Value="@chat.Name" Label="Name" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.ContactPage"></MudTextField>
         <MudTextField @bind-Value="@chat.Description" Label="Description" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Description"></MudTextField>
-        <MudSelect Label="Add users" MultiSelection="true" T="UserDTO" @bind-Value="value" @bind-SelectedValues="selectedUsers" AdornmentIcon="@Icons.Material.Filled.People">
+        <MudSelect MultiSelectionTextFunc="@(new Func<List<string>, string>(ShowSelectedUsers))" Label="Add users" MultiSelection="true" T="UserDTO" @bind-Value="value" @bind-SelectedValues="selectedUsers" AdornmentIcon="@Icons.Material.Filled.People">
             @foreach (var u in users)
             {
-                <MudSelectItem Value="@u">@u.FirstName</MudSelectItem>
+                <MudSelectItem T="UserDTO" Value="@u">@u.FirstName</MudSelectItem>
             }
         </MudSelect>
     </DialogContent>
@@ -28,11 +29,33 @@
     private UserDTO value { get; set; }
     private IEnumerable<UserDTO> users = new List<UserDTO>();
     private IEnumerable<UserDTO> selectedUsers = new List<UserDTO>();
+    private int CurrentUserId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var response = await UsersService.GetUsersAsync("");
-        users = response.Items;
+        users = await UsersExceptCurrentUser(response.Items);
+        SetCurrentUserId();
+    }
+
+    private async Task<List<UserDTO>> UsersExceptCurrentUser(List<UserDTO> users)
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        var userName = authState.User.Identity.Name;
+        return users.Where(u => u.UserName != userName).ToList();
+    }
+
+    private string ShowSelectedUsers(List<string> selectedValues)
+    {
+        return string.Join(", ", selectedUsers.Select(u => u.FirstName));
+    }
+
+    private async void SetCurrentUserId()
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        var userIdClaim = authState.User.FindFirst("id");
+        int.TryParse(userIdClaim.Value, out int userId);
+        CurrentUserId = userId;
     }
 
     async void Submit()
@@ -44,7 +67,9 @@
 
     private List<int> GetSelectedUsersIds()
     {
-        return selectedUsers.Select(u => u.Id).ToList();
+        var selected = selectedUsers.Select(u => u.Id).ToList();
+        selected.Add(CurrentUserId);
+        return selected;
     }
 
     void Cancel() => MudDialog.Cancel();

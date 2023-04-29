@@ -10,6 +10,8 @@
 @inject IConfiguration Configuration
 @inject AuthenticationStateProvider AuthState
 
+@if (IsAccessGranted)
+{
 <div class="d-flex flex-grow-1 flex-row">
     <MudPaper Elevation="25" Class="py-4 flex-grow-1">
         <MudToolBar Dense="true">
@@ -19,7 +21,7 @@
         <div class="d-flex flex-column px-4" style="max-height:65vh;min-height:65vh; overflow:scroll;" id="chatContainer">
             @foreach (var message in messages)
             {
-                <div class="d-flex flex-row my-4 @(UserId == message.UserId ? "align-self-end" : "align-self-start")">
+                <div class="d-flex flex-row my-4 @(CurrentUserId == message.UserId ? "align-self-end" : "align-self-start")">
                     <div>
                         <MudText Typo="Typo.body1">@message.User.Email</MudText>
                         <MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@message.CreatedDate.ToString("dd MMM, yyyy hh:mm tt")</MudText>
@@ -30,11 +32,17 @@
         </div>
         <MudPaper Elevation="25" Class="d-flex flex-row px-2 mx-4" Style="">
             <MudTextField T="string" Placeholder="Enter your message..." DisableUnderLine="true" Class="mt-n2 mx-4"
-                          @bind-Value="CurrentMessage" For="@(()=> CurrentMessage)" />
+                            @bind-Value="CurrentMessage" For="@(()=> CurrentMessage)" />
             <MudButton OnClick="@SendMessageAsync" StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" ButtonType="ButtonType.Button">Send</MudButton>
         </MudPaper>
     </MudPaper>
 </div>
+} else
+{
+    <MudPaper Elevation="25" Style="height: 75vh;" Class="d-flex align-center justify-content-center">
+        <MudButton Class="align-self-center" Color="Color.Primary" ButtonType="ButtonType.Button">Join chat</MudButton>
+    </MudPaper>
+}
 
 @code {
     [Parameter]
@@ -43,12 +51,17 @@
     private string CurrentMessage { get; set; }
     private ChatDTO OpenedChat { get; set; } = new();
     private List<MessageDTO> messages { get; set; } = new();
-    private int UserId { get; set; }
+    private int CurrentUserId { get; set; }
     private UserDTO User { get; set; }
-
+    private bool IsAccessGranted { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
+        await DefineChatUser();
+        await LoadChat();
+        CheckIfUserHasAccessToChat();
+        if (IsAccessGranted) LoadChatMessages();
+
         if (hubConnection == null)
         {
             var url = Configuration["AppBase"] + "chathub";
@@ -59,9 +72,6 @@
         {
             await hubConnection.StartAsync();
         }
-
-        DefineChatUser();
-        LoadChat();
 
         hubConnection.On<MessageDTO, string>("ReceiveMessage", async (message, userName) =>
         {
@@ -74,16 +84,23 @@
         });
     }
 
-    private async void LoadChat()
+    private async Task LoadChat()
     {
         OpenedChat = await chatService.GetChatById(Id);
+    }
+
+    private async void LoadChatMessages()
+    {
         messages = await messageService.GetMessagesAsync(Id);
         await InvokeAsync(StateHasChanged);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");        
+        if (IsAccessGranted)
+        {
+            await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");
+        }
     }
 
     private async Task SendMessageAsync()
@@ -92,7 +109,7 @@
         {
             var msg = new MessageDTO()
                 {
-                    UserId = this.UserId,
+                    UserId = CurrentUserId,
                     ChatId = Id,
                     User = this.User,
                     MessageContent = CurrentMessage
@@ -111,15 +128,20 @@
         }
     }
 
-    private async void DefineChatUser()
+    private async Task DefineChatUser()
     {
         var authState = await AuthState.GetAuthenticationStateAsync();
         var userIdClaim = authState.User.FindFirst("id");
         var senderId = int.TryParse(userIdClaim.Value, out int userId);
         if (senderId)
         {
-            UserId = userId;
+            CurrentUserId = userId;
         }
         User = await userService.GetUserAsync(userId);
+    }
+
+    public void CheckIfUserHasAccessToChat()
+    {
+        IsAccessGranted = OpenedChat.Users.Any(user => user.Id == CurrentUserId);
     }
 }

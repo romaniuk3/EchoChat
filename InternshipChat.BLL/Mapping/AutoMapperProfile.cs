@@ -33,7 +33,8 @@ namespace InternshipChat.BLL.Mapping
 
             CreateMap<User, UpdateUserDTO>().ReverseMap();
 
-            CreateMap<Chat, ChatDTO>().ReverseMap();
+            CreateMap<Chat, ChatDTO>()
+                .ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.UserChats.Select(uc => uc.User)));
 
             CreateMap<Chat, CreateChatDTO>().ReverseMap();
         }
