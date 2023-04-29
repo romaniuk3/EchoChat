@@ -1,4 +1,5 @@
 ﻿using InternshipChat.DAL.Entities;
+using InternshipChat.Domain.ServiceResult;
 using InternshipChat.Shared.DTO.ChatDtos;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace InternshipChat.BLL.Services.Contracts
     {
         void CreateChat(CreateChatDTO chat);
         Task<IEnumerable<ChatInfoView>> GetAllChatsAsync();
-        Task<Chat> GetChatAsync(int id);
+        Task<Result<Chat>> GetChatAsync(int id);
         Task<IEnumerable<Chat>> GetUserChatsAsync(int id);
     }
 }

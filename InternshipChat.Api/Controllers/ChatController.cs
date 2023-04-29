@@ -1,4 +1,5 @@
 using AutoMapper;
+using InternshipChat.Api.Extensions;
 using InternshipChat.Api.Hubs;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
@@ -61,8 +62,14 @@ namespace InternshipChat.Api.Controllers
         [Route("{id}")]
         public async Task<ActionResult<ChatDTO>> GetChat(int id)
         {
-            var chat = await _chatService.GetChatAsync(id);
-            return Ok(chat);
+            var chatResult = await _chatService.GetChatAsync(id);
+            if (chatResult.IsFailure)
+            {
+                return this.FromError(chatResult.Error);
+            }
+
+            var chatDto = _mapper.Map<ChatDTO>(chatResult.Value);
+            return Ok(chatDto);
         }
     }
 }

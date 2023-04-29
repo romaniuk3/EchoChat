@@ -4,6 +4,8 @@ using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Repositories;
 using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
+using InternshipChat.Domain.Errors;
+using InternshipChat.Domain.ServiceResult;
 using InternshipChat.Shared.DTO.ChatDtos;
 using System;
 using System.Collections.Generic;
@@ -56,12 +58,6 @@ namespace InternshipChat.BLL.Services
             return await repository.GetAllChats();
         }
 
-        /*public IEnumerable<Chat> GetAllChats()
-        {
-            var repository = _unitOfWork.GetRepository<IChatRepository>();
-            return repository.GetAll();
-        }*/
-
         public async Task<IEnumerable<Chat>> GetUserChatsAsync(int id)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
@@ -71,10 +67,16 @@ namespace InternshipChat.BLL.Services
             return await userChatsRepository.GetAllUserChats(id);
         }
 
-        public async Task<Chat> GetChatAsync(int id)
+        public async Task<Result<Chat>> GetChatAsync(int id)
         {
             var repository = _unitOfWork.GetRepository<IChatRepository>();
-            return await repository.GetChatById(id);
+            var chat = await repository.GetChatById(id);
+            if (chat == null)
+            {
+                return Result.Failure<Chat>(DomainErrors.Chat.NotFound);
+            }
+
+            return chat;
         }
     }
 }
