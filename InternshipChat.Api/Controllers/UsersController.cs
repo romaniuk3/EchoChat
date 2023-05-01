@@ -46,8 +46,7 @@ namespace InternshipChat.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        [RequestSizeLimit(5 * 1024 * 1024)]
-        public async Task<ActionResult<UserDTO>> UpdateUser(int id, UpdateUserDTO updateUserDTO)
+        public async Task<ActionResult<UserDTO>> UpdateUser(int id, [FromBody] UpdateUserDTO updateUserDTO)
         {
             var user = _userService.GetUser(id);
 

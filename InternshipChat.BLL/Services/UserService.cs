@@ -55,18 +55,13 @@ namespace InternshipChat.BLL.Services
         public async Task<User> UpdateAsync(int userId, UpdateUserDTO userDto)
         {
             var user = await _userManager.FindByNameAsync(userDto.Email);
-            await Console.Out.WriteLineAsync("RESULT " + userDto.AvatarImage);
-            //user.Email = userDto.Email;
-            //user.FirstName = userDto.FirstName;
-            //user.LastName = userDto.LastName;
-            //user.Avatar = userDto.Avatar;
+            user.Email = userDto.Email;
+            user.FirstName = userDto.FirstName;
+            user.LastName = userDto.LastName;
+            user.Avatar = userDto.Avatar;
 
-            if (userDto.AvatarImage != null)
-            {
-                //user.Avatar = await SaveUserImageAsync(userDto);
-            }
 
-            //var updatesUser = await _userManager.UpdateAsync(user);
+            await _userManager.UpdateAsync(user);
             return user;
         }
 

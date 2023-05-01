@@ -30,9 +30,11 @@
         <MudInputLabel Class="mr-2 details-label">Last name:</MudInputLabel>
         <MudTextField Disabled="@(!CanEdit)" @bind-Value="@UpdateDTO.LastName" />
     </MudItem>
+        <MudAvatar Style="height:250px; width:250px;"><MudImage Src="@UpdateDTO.Avatar"></MudImage></MudAvatar>
+
     @if (CanEdit)
     {
-        <MudFileUpload T="IFormFile" FilesChanged="UploadImage">
+        <MudFileUpload T="IBrowserFile" FilesChanged="UploadImage">
             <ButtonTemplate Context="image">
                 <MudFab HtmlTag="label"
                     Color="Color.Secondary"
@@ -41,7 +43,7 @@
                         for="@image" />
             </ButtonTemplate>
         </MudFileUpload>
-        <img src="@UpdateDTO.Avatar"/>
+
         <MudButton Class="ml-2 m-4" Variant="Variant.Filled" Color="Color.Primary" OnClick="@UpdateUser">Save</MudButton>
     }
 </MudGrid>
@@ -64,7 +66,7 @@
         await SetEditParameters(user);
     }
 
-    private async void UpdateUser()
+    private async Task UpdateUser()
     {
         await userService.UpdateUserAsync(UserId, UpdateDTO);
         Snackbar.Add("Success", Severity.Success);
@@ -86,8 +88,8 @@
         }
     }
 
-    private async Task UploadImage(IFormFile image)
+    private async Task UploadImage(IBrowserFile image)
     {
-        UpdateDTO.AvatarImage = image;
+        UpdateDTO.Avatar = await imageService.ToBase64(image);
     }
 }
