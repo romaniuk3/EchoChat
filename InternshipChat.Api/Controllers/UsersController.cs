@@ -46,21 +46,17 @@ namespace InternshipChat.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [RequestSizeLimit(5 * 1024 * 1024)]
         public async Task<ActionResult<UserDTO>> UpdateUser(int id, UpdateUserDTO updateUserDTO)
         {
-            if (id != updateUserDTO.Id)
-            {
-                return BadRequest("Invalid record id.");
-            }
             var user = _userService.GetUser(id);
 
             if (user == null)
             {
                 return NotFound();
             }
-            _mapper.Map(updateUserDTO, user);
 
-            var updatedUser = await _userService.UpdateAsync(user);
+            var updatedUser = await _userService.UpdateAsync(id, updateUserDTO);
 
             return Ok(_mapper.Map<UserDTO>(updatedUser));
         }

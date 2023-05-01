@@ -27,8 +27,8 @@ namespace InternshipChat.DAL.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<User>().
-                HasMany(x => x.UserChats)
+            builder.Entity<User>()
+                .HasMany(x => x.UserChats)
                 .WithOne(y => y.User)
                 .OnDelete(DeleteBehavior.Cascade);
 

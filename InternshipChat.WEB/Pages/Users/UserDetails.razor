@@ -10,6 +10,7 @@
 @inject AuthenticationStateProvider AuthState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject IImageService imageService
 
 <div class="d-flex align-items-center">
     <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" OnClick="@NavigateBack"></MudIconButton>
@@ -31,6 +32,16 @@
     </MudItem>
     @if (CanEdit)
     {
+        <MudFileUpload T="IFormFile" FilesChanged="UploadImage">
+            <ButtonTemplate Context="image">
+                <MudFab HtmlTag="label"
+                    Color="Color.Secondary"
+                    StartIcon="@Icons.Material.Filled.Image"
+                    Label="Load picture"
+                        for="@image" />
+            </ButtonTemplate>
+        </MudFileUpload>
+        <img src="@UpdateDTO.Avatar"/>
         <MudButton Class="ml-2 m-4" Variant="Variant.Filled" Color="Color.Primary" OnClick="@UpdateUser">Save</MudButton>
     }
 </MudGrid>
@@ -47,9 +58,9 @@
         var user = await userService.GetUserAsync(UserId);
         //TODO: Refactor
         UpdateDTO.Email = user.Email;
-        UpdateDTO.Id = user.Id;
         UpdateDTO.FirstName = user.FirstName;
         UpdateDTO.LastName = user.LastName;
+        UpdateDTO.Avatar = user.Avatar;
         await SetEditParameters(user);
     }
 
@@ -73,5 +84,10 @@
         {
             CanEdit = true;
         }
+    }
+
+    private async Task UploadImage(IFormFile image)
+    {
+        UpdateDTO.AvatarImage = image;
     }
 }
