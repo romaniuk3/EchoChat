@@ -21,8 +21,7 @@
     <div class="card-body">
         <h5 class="card-title">Please enter your details</h5>
         <EditForm Model="userRegisterModel" OnValidSubmit="HandleRegistration">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+            <FluentValidationValidator />
 
             <div class="form-group">
                 <label for="fname">First Name</label>
@@ -49,6 +48,8 @@
                 <InputText Id="confirm-password" type="password" class="form-control" @bind-Value="userRegisterModel.ConfirmPassword" />
                 <ValidationMessage For="@(() => userRegisterModel.ConfirmPassword)" />
             </div>
+            <MudDatePicker Label="Only Calendar" @bind-Date="userRegisterModel.Birthdate" DisableToolbar="true" />
+            <ValidationMessage For="@(() => userRegisterModel.Birthdate)" />
             <button type="submit" class="btn btn-primary">Submit</button>
         </EditForm>
     </div>
@@ -59,6 +60,7 @@
     private RegisterUserDTO userRegisterModel = new ();
     private bool ShowErrors;
     private IEnumerable<string>? Errors;
+    private DateTime? date = DateTime.Today;
 
     private async Task HandleRegistration()
     {

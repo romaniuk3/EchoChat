@@ -1,3 +1,6 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using InternshipChat.Api.Extensions;
 using InternshipChat.Api.Hubs;
 using InternshipChat.BLL.Mapping;
 using InternshipChat.BLL.Services;
@@ -7,6 +10,7 @@ using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Repositories;
 using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
+using InternshipChat.Shared.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -63,6 +67,7 @@ builder.Services.AddControllers()
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
 
+builder.Services.ConfigureValidators();
 
 builder.Services.AddSignalR();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

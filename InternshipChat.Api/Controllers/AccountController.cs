@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Data;
 using InternshipChat.DAL.Entities;
@@ -19,10 +20,14 @@ namespace InternshipChat.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IValidator<LoginDto> _loginValidator;
+        private readonly IValidator<RegisterUserDTO> _registerValidator;
 
-        public AccountController(IAuthService authService)
+        public AccountController(IAuthService authService, IValidator<LoginDto> loginValidator, IValidator<RegisterUserDTO> registerValidator)
         {
             _authService = authService;
+            _loginValidator = loginValidator;
+            _registerValidator = registerValidator;
         }
 
         [HttpPost]
@@ -32,6 +37,12 @@ namespace InternshipChat.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> Register(RegisterUserDTO registerUserDTO)
         {
+            var validation = await _registerValidator.ValidateAsync(registerUserDTO);
+            if (!validation.IsValid)
+            {
+                return BadRequest(validation.Errors);
+            }
+
             var possibleErrors = await _authService.Register(registerUserDTO);
 
             if (possibleErrors.Any())
@@ -51,8 +62,13 @@ namespace InternshipChat.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> Login(LoginDto loginDto)
         {
-            var authResponse = await _authService.Login(loginDto);
+            var validation = await _loginValidator.ValidateAsync(loginDto);
+            if (!validation.IsValid)
+            {
+                return BadRequest(validation.Errors);
+            }
 
+            var authResponse = await _authService.Login(loginDto);
             if (!authResponse.Successful)
             {
                 return BadRequest(authResponse);

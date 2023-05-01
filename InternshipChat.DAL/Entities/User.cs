@@ -13,6 +13,7 @@ namespace InternshipChat.DAL.Entities
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Avatar { get; set; }
+        public DateTime? Birthdate { get; set; } = DateTime.Today;
         public ICollection<UserChats>? UserChats { get; set; }
     }
 }

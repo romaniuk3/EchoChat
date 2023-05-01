@@ -26,7 +26,6 @@ builder.Services.AddScoped(serviceProvider => new HttpClient
     BaseAddress = new Uri(builder.Configuration["AppBase"])
 });
 builder.Services.AddMudServices();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

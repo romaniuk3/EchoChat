@@ -12,5 +12,6 @@ namespace InternshipChat.Shared.DTO.UserDtos
         public string? Email { get; set; }
         public string? UserName { get; set; }
         public string? Avatar { get; set; }
+        public DateTime Birhdate { get; set; }
     }
 }
