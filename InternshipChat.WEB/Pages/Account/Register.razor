@@ -48,8 +48,8 @@
                 <InputText Id="confirm-password" type="password" class="form-control" @bind-Value="userRegisterModel.ConfirmPassword" />
                 <ValidationMessage For="@(() => userRegisterModel.ConfirmPassword)" />
             </div>
-            <MudDatePicker Label="Only Calendar" @bind-Date="userRegisterModel.Birthdate" DisableToolbar="true" />
-            <ValidationMessage For="@(() => userRegisterModel.Birthdate)" />
+            <MudDatePicker Label="Birthdate" @bind-Date="userRegisterModel.Birthdate" DisableToolbar="true"
+                           Validation="@(() => userRegisterModel.Birthdate)" For="@(() => userRegisterModel.Birthdate)" />
             <button type="submit" class="btn btn-primary">Submit</button>
         </EditForm>
     </div>
@@ -60,7 +60,6 @@
     private RegisterUserDTO userRegisterModel = new ();
     private bool ShowErrors;
     private IEnumerable<string>? Errors;
-    private DateTime? date = DateTime.Today;
 
     private async Task HandleRegistration()
     {

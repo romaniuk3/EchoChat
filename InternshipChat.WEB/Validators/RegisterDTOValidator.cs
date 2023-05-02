@@ -17,7 +17,12 @@ namespace InternshipChat.WEB.Validators
             RuleFor(f => f.Email).EmailAddress();
             RuleFor(f => f.FirstName).NotEmpty().Length(2, 30).Must(isValidName).WithMessage("{PropertyName} must contain only letters");
             RuleFor(f => f.LastName).NotEmpty().Length(2, 30).Must(isValidName).WithMessage("{PropertyName} must contain only letters");
-            RuleFor(f => f.Birthdate).GreaterThan(DateTime.Now).WithMessage("{PropertyName} cannot be in the future");
+            RuleFor(x => x.Birthdate)
+                .LessThanOrEqualTo(DateTime.Now.Date)
+                .WithMessage("Birth date cannot be in the future.");
+            RuleFor(x => x.Birthdate)
+                .Must(date => date <= DateTime.Now.Date.AddYears(-14))
+                .WithMessage("You must be at least 14 years old to register.");
         }
 
         private bool isValidName(string name)

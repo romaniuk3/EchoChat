@@ -29,9 +29,11 @@
     {
         var authState = await AuthState.GetAuthenticationStateAsync();
         var userIdClaim = authState.User.FindFirst("id");
-        var idExists = int.TryParse(userIdClaim.Value, out int userId);
-
-        CurrentUser = await UserService.GetUserAsync(userId);
-        StateHasChanged();
+        if (userIdClaim != null)
+        {
+            var idExists = int.TryParse(userIdClaim.Value, out int userId);
+            CurrentUser = await UserService.GetUserAsync(userId);
+            StateHasChanged();
+        }
     }
 }

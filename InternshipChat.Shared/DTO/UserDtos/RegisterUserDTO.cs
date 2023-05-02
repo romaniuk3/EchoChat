@@ -13,7 +13,7 @@ namespace InternshipChat.Shared.DTO.UserDtos
         [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
-        public DateTime? Birthdate { get; set; } = DateTime.Today;
+        public DateTime? Birthdate { get; set; }
 
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
