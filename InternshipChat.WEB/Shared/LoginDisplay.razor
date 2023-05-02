@@ -1,11 +1,37 @@
-﻿<AuthorizeView>
+﻿@using InternshipChat.Shared.DTO.UserDtos;
+@using InternshipChat.WEB.Services.Contracts;
+
+@inject IUserService UserService
+@inject AuthenticationStateProvider AuthState
+
+<AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity!.Name!
+        @context.User.Identity!.Name!
+        @if (CurrentUser != null) {
+            <a href="users/@CurrentUser.Id" class="m-0 p-0">
+            <MudAvatar Style="margin-left: 20px;">
+                 <MudImage Src="@CurrentUser.Avatar"></MudImage>
+            </MudAvatar>
+            </a>
+        }
         <a href="LogOut">Log out</a>
-        <a href="change">Change Password</a>
     </Authorized>
     <NotAuthorized>
         <a href="Register">Register</a>
         <a href="Login">Login</a>
     </NotAuthorized>
 </AuthorizeView>
+
+@code {
+    private UserDTO CurrentUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        var userIdClaim = authState.User.FindFirst("id");
+        var idExists = int.TryParse(userIdClaim.Value, out int userId);
+
+        CurrentUser = await UserService.GetUserAsync(userId);
+        StateHasChanged();
+    }
+}

@@ -19,11 +19,21 @@
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
+        <MudTh>Avatar</MudTh>
         <MudTh><MudTableSortLabel SortLabel="email" T="UserDTO">Email</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortLabel="firstName" T="UserDTO">First Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortLabel="lastName" T="UserDTO">Last Name</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd DataLabel="Avatar">
+            @if (context.Avatar != null)
+            {
+                <MudAvatar Style="height:100px; width:100px;"><MudImage Src="@context.Avatar"></MudImage></MudAvatar>
+            } else
+            {
+                <MudAvatar Style="height:100px; width:100px;" Color="@GetRandomColor()">@GetAvatarFromName(context.UserName)</MudAvatar>
+            }
+        </MudTd>
         <MudTd DataLabel="Email">@context.Email</MudTd>
         <MudTd DataLabel="First Name">@context.FirstName</MudTd>
         <MudTd DataLabel="Last Name">@context.LastName</MudTd>
@@ -64,7 +74,7 @@
         UpdateQueryParameters();
 
         var response = await userService.GetUsersAsync(_queryParameters);
-        
+
         return new TableData<UserDTO>()
             {
                 Items = response.Items,
@@ -102,5 +112,28 @@
             };
         _userParameters.SearchTerm = QueryParamParser.ParseQueryParameter<string>(uri.Query, "searchTerm");
         return newTableState;
+    }
+
+    private string GetAvatarFromName(string name)
+    {
+        if (name != null)
+        {
+            return name.ToUpper().Substring(0, 1) + name.ToUpper().Substring(1, 1);
+        }
+
+        return default;
+    }
+
+    private Color GetRandomColor()
+    {
+        var colors = new List<Color>
+        {
+            Color.Primary,
+            Color.Secondary,
+            Color.Tertiary
+        };
+        var random = new Random();
+
+        return colors[random.Next(colors.Count)];
     }
 }

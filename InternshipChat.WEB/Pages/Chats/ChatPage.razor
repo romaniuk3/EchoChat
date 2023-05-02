@@ -22,6 +22,7 @@
             @foreach (var message in messages)
             {
                 <div class="d-flex flex-row my-4 @(CurrentUserId == message.UserId ? "align-self-end" : "align-self-start")">
+                    <MudAvatar Style="margin: 6px 10px 0 0;"><MudImage Src="@message.User.Avatar"></MudImage></MudAvatar>
                     <div>
                         <MudText Typo="Typo.body1">@message.User.Email</MudText>
                         <MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@message.CreatedDate.ToString("dd MMM, yyyy hh:mm tt")</MudText>

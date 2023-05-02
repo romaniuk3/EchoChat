@@ -13,8 +13,9 @@
 @inject IImageService imageService
 
 <div class="d-flex align-items-center">
-    <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" OnClick="@NavigateBack"></MudIconButton>
     <h3 class="m-0">User Details</h3>
+    <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos"></MudIconButton>
+    <h3 class="m-0"><a href="change">Change Password</a></h3>
 </div>
 
 <MudGrid>
@@ -30,7 +31,12 @@
         <MudInputLabel Class="mr-2 details-label">Last name:</MudInputLabel>
         <MudTextField Disabled="@(!CanEdit)" @bind-Value="@UpdateDTO.LastName" />
     </MudItem>
-        <MudAvatar Style="height:250px; width:250px;"><MudImage Src="@UpdateDTO.Avatar"></MudImage></MudAvatar>
+    @if (UpdateDTO.Avatar != null)
+    {
+        <MudItem md="12" sm="12">
+            <MudAvatar Style="height:250px; width:250px;"><MudImage Src="@UpdateDTO.Avatar"></MudImage></MudAvatar>
+        </MudItem>
+    }
 
     @if (CanEdit)
     {
@@ -44,7 +50,7 @@
             </ButtonTemplate>
         </MudFileUpload>
 
-        <MudButton Class="ml-2 m-4" Variant="Variant.Filled" Color="Color.Primary" OnClick="@UpdateUser">Save</MudButton>
+        <MudButton Class="ml-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="@UpdateUser">Save</MudButton>
     }
 </MudGrid>
 
