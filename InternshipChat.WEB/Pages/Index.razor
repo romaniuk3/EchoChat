@@ -34,7 +34,7 @@
 
     
     private async Task Connect()
-        {
+    {
         await hubConnection.SendAsync("JoinRoom", MyPeerId);
     }
 
