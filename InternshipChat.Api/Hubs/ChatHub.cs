@@ -18,10 +18,11 @@ namespace InternshipChat.Api.Hubs
             await Clients.Group(roomId).SendAsync("user-connected", userId);
         }
 
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            Clients.All.SendAsync("user-disconnected", ConnectedUsers.list[Context.ConnectionId]);
-            return base.OnDisconnectedAsync(exception);
+            await base.OnDisconnectedAsync(exception);
+
+            await Clients.All.SendAsync("user-disconnected", ConnectedUsers.list[Context.ConnectionId]);
         }
     }
 }

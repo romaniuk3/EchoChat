@@ -2,48 +2,34 @@
 let userId = null;
 let localStream = null;
 let videoGrid;
+let myPeer;
 const Peers = {};
 
-const connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://localhost:7021/chathub").build();
 
-const myPeer = new Peer()
+function createPeer() {
+    myPeer = new Peer();
+    subscribeOnPeerEvents();
 
-myPeer.on("open", id => {
-    userId = id;
-})
-
-myPeer.on("call", call => {
-    call.answer(localStream)
-
-    const userVideo = document.createElement('video');
-
-    call.on("stream", userVideoStream => {
-        addVideoStream(userVideo, userVideoStream);
+    return new Promise((res, rej) => {
+        myPeer.on("open", id => {
+            res(id);
+        })
     })
-})
-
-async function StartSignaling() {
-    const startSignalR = async () => {
-        await connection.start();
-        await connection.invoke("JoinRoom", roomId, userId)
-    }
-    startSignalR();
 }
 
-connection.on('user-connected', id => {
-    if (userId === id) return;
-    console.log(`User connected ${id}`);
-    connectNewUser(id, localStream)
-});
+function subscribeOnPeerEvents() {
+    myPeer.on("call", call => {
+        call.answer(localStream)
 
-connection.on('user-disconnected', id => {
-    console.log("disconnected user ", id);
+        const userVideo = document.createElement('video');
 
-    if (Peers[id]) Peers[id].close();
-})
+        call.on("stream", userVideoStream => {
+            addVideoStream(userVideo, userVideoStream);
+        })
+    })
+}
 
-async function StartLocalStream() {
+async function startLocalStream() {
     videoGrid = document.getElementById("my-video-grid");
     const myVideo = document.createElement('video')
     myVideo.muted = true;
@@ -65,7 +51,8 @@ const addVideoStream = (video, stream) => {
     videoGrid.appendChild(video)
 }
 
-const connectNewUser = (userId, localStream) => {
+
+function connectNewUser(userId) {
     const userVideo = document.createElement('video');
     const call = myPeer.call(userId, localStream)
 
@@ -78,4 +65,8 @@ const connectNewUser = (userId, localStream) => {
     })
 
     Peers[userId] = call;
+}
+
+function disconnectUser(userId) {
+    if (Peers[userId]) Peers[userId].close();
 }

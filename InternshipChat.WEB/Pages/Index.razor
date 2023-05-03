@@ -1,17 +1,23 @@
 ﻿@page "/"
 @using InternshipChat.DAL.Entities;
 @using InternshipChat.WEB.Services.Contracts;
+@using Microsoft.AspNetCore.SignalR.Client;
 @inject InternshipChat.WEB.Services.Contracts.IMessageService messageService;
+@inject IConfiguration Configuration
 
 <PageTitle>Index</PageTitle>
+
+<div>
+    <h4>My peer id @MyPeerId</h4>
+</div>
 
 <div class="form-group">
     <label>
         User:
-        <input @bind="UserInput" />
+        <input @bind="RemoteUserPeerId" />
     </label>
 </div>
-<button @onclick="Connect">Connect</button>
+<button @onclick="Connect">Connect to room</button>
 
 
 <div video-grid id="my-video-grid">
@@ -21,11 +27,57 @@
 <h2></h2>
 
 @code {
-    private string UserInput { get; set; }
+    [CascadingParameter] public HubConnection hubConnection { get; set; }
+
+    private string RemoteUserPeerId { get; set; }
+    private string MyPeerId { get; set; }
 
     private async Task Connect()
     {
-        await _jsRuntime.InvokeVoidAsync("StartSignaling");
-        await _jsRuntime.InvokeVoidAsync("StartLocalStream");
+        await hubConnection.SendAsync("JoinRoom", "room1", MyPeerId);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        MyPeerId = await _jsRuntime.InvokeAsync<string>("createPeer");
+        await OpenHubConnection();
+
+        SubscribeOnHubSignals();
+
+        await _jsRuntime.InvokeVoidAsync("startLocalStream");
+    }
+
+    private async Task OnReceiveUserConnected(string id)
+    {
+        if (id != MyPeerId)
+        {
+            await _jsRuntime.InvokeVoidAsync("connectNewUser", id);
+        }
+    }
+
+    private async Task OnReceiveUserDisconnected(string id)
+    {
+        Console.WriteLine("Client got disconnect signal! ");
+        await _jsRuntime.InvokeVoidAsync("disconnectUser", id);
+    }
+
+    private void SubscribeOnHubSignals()
+    {
+        hubConnection.On<string>("user-connected", this.OnReceiveUserConnected);
+        hubConnection.On<string>("user-disconnected", this.OnReceiveUserDisconnected);
+    }
+
+    private async Task OpenHubConnection()
+    {
+        if (hubConnection == null)
+        {
+            var url = Configuration["AppBase"] + "chathub";
+            hubConnection = new HubConnectionBuilder().WithUrl(url).Build();
+        }
+
+        if (hubConnection.State == HubConnectionState.Disconnected)
+        {
+            await hubConnection.StartAsync();
+        }
     }
 }
