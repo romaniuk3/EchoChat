@@ -5,18 +5,27 @@
 
 <PageTitle>Index</PageTitle>
 
+<div class="form-group">
+    <label>
+        User:
+        <input @bind="UserInput" />
+    </label>
+</div>
+<button @onclick="Connect">Connect</button>
+
+
+<div video-grid id="my-video-grid">
+
+</div>
+
 <h2></h2>
 
 @code {
-    private List<Message> messages = new List<Message>();
+    private string UserInput { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    private async Task Connect()
     {
-        //await GetMessages();
-    }
-
-    private async Task GetMessages()
-    {
-        //messages = await messageService.GetMessages();
+        await _jsRuntime.InvokeVoidAsync("StartSignaling");
+        await _jsRuntime.InvokeVoidAsync("StartLocalStream");
     }
 }
