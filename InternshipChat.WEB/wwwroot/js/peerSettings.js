@@ -1,5 +1,4 @@
-﻿const roomId = "room1";
-let userId = null;
+﻿let userId = null;
 let localStream = null;
 let videoGrid;
 let myPeer;
@@ -12,6 +11,7 @@ function createPeer() {
 
     return new Promise((res, rej) => {
         myPeer.on("open", id => {
+            console.log(id);
             res(id);
         })
     })

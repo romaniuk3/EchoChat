@@ -17,7 +17,7 @@
         <input @bind="RemoteUserPeerId" />
     </label>
 </div>
-<button @onclick="Connect">Connect to room</button>
+<button @onclick="Connect">Call user</button>
 
 
 <div video-grid id="my-video-grid">
@@ -32,39 +32,52 @@
     private string RemoteUserPeerId { get; set; }
     private string MyPeerId { get; set; }
 
+    
     private async Task Connect()
-    {
-        await hubConnection.SendAsync("JoinRoom", "room1", MyPeerId);
+        {
+        await hubConnection.SendAsync("JoinRoom", MyPeerId);
     }
 
+    /*
+    private async Task Call()
+    {
+        await hubConnection.SendAsync("Call", MyPeerId, RemoteUserPeerId);
+    }
+    */
     protected override async Task OnInitializedAsync()
     {
         MyPeerId = await _jsRuntime.InvokeAsync<string>("createPeer");
         await OpenHubConnection();
-
         SubscribeOnHubSignals();
+        await hubConnection.SendAsync("JoinToRoom", MyPeerId);
 
         await _jsRuntime.InvokeVoidAsync("startLocalStream");
+
     }
 
     private async Task OnReceiveUserConnected(string id)
     {
         if (id != MyPeerId)
         {
-            await _jsRuntime.InvokeVoidAsync("connectNewUser", id);
+            await _jsRuntime.InvokeVoidAsync("connectNewUser", RemoteUserPeerId);
         }
     }
 
     private async Task OnReceiveUserDisconnected(string id)
     {
-        Console.WriteLine("Client got disconnect signal! ");
         await _jsRuntime.InvokeVoidAsync("disconnectUser", id);
+    }
+
+    private async Task OnReceiveCall(string callerId)
+    {
+        Console.WriteLine("CALLER ID ", callerId);
     }
 
     private void SubscribeOnHubSignals()
     {
         hubConnection.On<string>("user-connected", this.OnReceiveUserConnected);
         hubConnection.On<string>("user-disconnected", this.OnReceiveUserDisconnected);
+        //hubConnection.On<string>("ReceiveCall", this.OnReceiveCall);
     }
 
     private async Task OpenHubConnection()

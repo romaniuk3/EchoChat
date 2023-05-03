@@ -6,16 +6,33 @@ namespace InternshipChat.Api.Hubs
 {
     public class ChatHub : Hub
     {
+        const string GroupName = "room";
         public async Task SendMessageAsync(MessageDTO message, string userName)
         {
             await Clients.All.SendAsync("ReceiveMessage", message, userName);
         }
 
-        public async Task JoinRoom(string roomId, string userId)
+        /*
+        public override async Task OnConnectedAsync()
+        {
+            await base.OnConnectedAsync();
+
+            ConnectedUsers.list.Add(Context.ConnectionId, Context.ConnectionId);
+        }
+        */
+        
+        public async Task JoinRoom(string userId)
         {
             ConnectedUsers.list.Add(Context.ConnectionId, userId);
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-            await Clients.Group(roomId).SendAsync("user-connected", userId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, GroupName);
+            await Clients.Group(GroupName).SendAsync("user-connected", userId);
+        }
+
+        public async Task Call(string callerId, string remoteUserId)
+        {
+            await Console.Out.WriteLineAsync("CALLER id " + callerId);
+            await Console.Out.WriteLineAsync("REMOTE id " + remoteUserId);
+            await Clients.Client(remoteUserId).SendAsync("ReceiveCall", callerId);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
