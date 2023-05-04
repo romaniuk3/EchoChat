@@ -4,20 +4,22 @@
 @using Microsoft.AspNetCore.SignalR.Client;
 @inject InternshipChat.WEB.Services.Contracts.IMessageService messageService;
 @inject IConfiguration Configuration
+@inject AuthenticationStateProvider AuthState
 
 <PageTitle>Index</PageTitle>
 
 <div>
     <h4>My peer id @MyPeerId</h4>
+    <h4>My userName @CurrentUserName</h4>
 </div>
 
 <div class="form-group">
     <label>
         User:
-        <input @bind="RemoteUserPeerId" />
+        <input @bind="RemoteUserName" />
     </label>
 </div>
-<button @onclick="Connect">Call user</button>
+<button @onclick="Call">Call user</button>
 
 
 <div video-grid id="my-video-grid">
@@ -29,55 +31,72 @@
 @code {
     [CascadingParameter] public HubConnection hubConnection { get; set; }
 
-    private string RemoteUserPeerId { get; set; }
+    private string RemoteUserName { get; set; }
     private string MyPeerId { get; set; }
-
-    
-    private async Task Connect()
-    {
-        await hubConnection.SendAsync("JoinRoom", MyPeerId);
-    }
+    private string CurrentUserName { get; set; }
 
     /*
+    private async Task Connect()
+        {
+        await hubConnection.SendAsync("JoinRoom", MyPeerId);
+    }*/
+
+
     private async Task Call()
     {
-        await hubConnection.SendAsync("Call", MyPeerId, RemoteUserPeerId);
+        if (CurrentUserName != RemoteUserName)
+        {
+            await hubConnection.SendAsync("Call", CurrentUserName, RemoteUserName, MyPeerId);
+        }
     }
-    */
+
     protected override async Task OnInitializedAsync()
     {
         MyPeerId = await _jsRuntime.InvokeAsync<string>("createPeer");
+        await DefineCurrentUser();
         await OpenHubConnection();
         SubscribeOnHubSignals();
-        await hubConnection.SendAsync("JoinToRoom", MyPeerId);
+        //await hubConnection.SendAsync("JoinToRoom", MyPeerId);
 
         await _jsRuntime.InvokeVoidAsync("startLocalStream");
 
     }
 
+    private async Task DefineCurrentUser()
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        CurrentUserName = authState.User.Identity!.Name!;
+    }
+
+    /*
     private async Task OnReceiveUserConnected(string id)
-    {
-        if (id != MyPeerId)
-        {
+            {
+            if (id != MyPeerId)
+            {
             await _jsRuntime.InvokeVoidAsync("connectNewUser", RemoteUserPeerId);
-        }
     }
+    }*/
 
+    /*
     private async Task OnReceiveUserDisconnected(string id)
-    {
+        {
         await _jsRuntime.InvokeVoidAsync("disconnectUser", id);
-    }
+    }*/
 
-    private async Task OnReceiveCall(string callerId)
+    private async Task OnReceiveCall(string callerEmail, string receiverEmail, string callerPeer)
     {
-        Console.WriteLine("CALLER ID ", callerId);
+        if (CurrentUserName == receiverEmail)
+        {
+            Console.WriteLine(callerEmail + " Is trying to call you");
+            await _jsRuntime.InvokeVoidAsync("connectNewUser", callerPeer);
+        }
     }
 
     private void SubscribeOnHubSignals()
     {
-        hubConnection.On<string>("user-connected", this.OnReceiveUserConnected);
-        hubConnection.On<string>("user-disconnected", this.OnReceiveUserDisconnected);
-        //hubConnection.On<string>("ReceiveCall", this.OnReceiveCall);
+        //hubConnection.On<string>("user-connected", this.OnReceiveUserConnected);
+        //hubConnection.On<string>("user-disconnected", this.OnReceiveUserDisconnected);
+        hubConnection.On<string, string, string>("ReceiveCall", this.OnReceiveCall);
     }
 
     private async Task OpenHubConnection()

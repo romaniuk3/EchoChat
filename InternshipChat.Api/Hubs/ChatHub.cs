@@ -20,19 +20,21 @@ namespace InternshipChat.Api.Hubs
             ConnectedUsers.list.Add(Context.ConnectionId, Context.ConnectionId);
         }
         */
-        
+
+        /*
         public async Task JoinRoom(string userId)
         {
             ConnectedUsers.list.Add(Context.ConnectionId, userId);
             await Groups.AddToGroupAsync(Context.ConnectionId, GroupName);
             await Clients.Group(GroupName).SendAsync("user-connected", userId);
-        }
+        } */
 
-        public async Task Call(string callerId, string remoteUserId)
+        public async Task Call(string callerUserName, string receiverUserName, string callerPeer)
         {
-            await Console.Out.WriteLineAsync("CALLER id " + callerId);
-            await Console.Out.WriteLineAsync("REMOTE id " + remoteUserId);
-            await Clients.Client(remoteUserId).SendAsync("ReceiveCall", callerId);
+            if (callerUserName != receiverUserName)
+            {
+                await Clients.All.SendAsync("ReceiveCall", callerUserName, receiverUserName, callerPeer);
+            }
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
