@@ -1,17 +1,38 @@
-﻿@page "/call"
+﻿@using InternshipChat.WEB.StateContainers;
 @using Microsoft.AspNetCore.SignalR.Client;
 
 @inject AuthenticationStateProvider AuthState
 @inject IConfiguration Configuration
 
-<h3>VideoCall</h3>
-
-<div video-grid id="my-video-grid">
-
-</div>
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Rounded.Call" Class="mr-3 mb-1"></MudIcon>
+            Call in progress
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <h5>My local video</h5>
+        <div style="height: 350px; width: 470px;">
+            <video id="local-video" autoplay style="width: 100%; height: 100%;"></video>
+        </div>
+        <h5>Remote video</h5>
+        <div style="height: 350px; width: 470px;">
+            <video id="remote-video" autoplay style="width: 100%; height: 100%;"></video>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <div class="d-flex align-items-center justify-content-center">
+            <MudButton Color="Color.Error" OnClick="HangUp">Hang Up</MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
 
 @code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [CascadingParameter] public HubConnection hubConnection { get; set; }
+    [Parameter] public string receiver { get; set; } = string.Empty;
+
     public string CurrentUserName { get; set; }
     public string MyPeerId { get; set; }
 
@@ -22,7 +43,11 @@
         await OpenHubConnection();
         await _jsRuntime.InvokeVoidAsync("startLocalStream");
         SubscribeOnHubSignals();
-        await hubConnection.SendAsync("AcceptCall", CurrentUserName, MyPeerId);
+
+        if (!string.IsNullOrEmpty(receiver))
+        {
+            await hubConnection.SendAsync("AcceptCall", CurrentUserName, MyPeerId);
+        }
     }
 
     private async Task OnReceiveAcceptance(string acceptedUserName, string acceptedPeerId)
@@ -31,6 +56,12 @@
         {
             await _jsRuntime.InvokeVoidAsync("connectNewUser", acceptedPeerId);
         }
+    }
+
+    private async Task OnReceiveEndCall()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+        await _jsRuntime.InvokeVoidAsync("destroyConnection");
     }
 
     private async Task OpenHubConnection()
@@ -47,9 +78,16 @@
         }
     }
 
+
+    private async Task HangUp()
+    {
+        await hubConnection.SendAsync("EndCall");
+    }
+
     private void SubscribeOnHubSignals()
     {
         hubConnection.On<string, string>("ReceiveAcceptCall", this.OnReceiveAcceptance);
+        hubConnection.On("ReceiveEndCall", this.OnReceiveEndCall);
     }
 
     private async Task DefineUser()

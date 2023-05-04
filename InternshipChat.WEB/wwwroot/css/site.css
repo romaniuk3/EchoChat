@@ -69,8 +69,8 @@ a, .btn-link {
 
 div[video-grid] {
     display: grid;
-    grid-template-columns: repeat(auto-fit, 300px);
-    grid-auto-rows: 300px;
+    grid-template-columns: repeat(auto-fit, 470px);
+    grid-auto-rows: 350px;
     gap: 25px;
 }
 

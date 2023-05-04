@@ -2,7 +2,6 @@
 let localStream = null;
 let videoGrid;
 let myPeer;
-const Peers = {};
 
 
 function createPeer() {
@@ -11,7 +10,6 @@ function createPeer() {
 
     return new Promise((res, rej) => {
         myPeer.on("open", id => {
-            console.log(id);
             res(id);
         })
     })
@@ -20,53 +18,46 @@ function createPeer() {
 function subscribeOnPeerEvents() {
     myPeer.on("call", call => {
         call.answer(localStream)
+        const remoteVideo = document.getElementById("remote-video");
 
-        const userVideo = document.createElement('video');
-
-        call.on("stream", userVideoStream => {
-            addVideoStream(userVideo, userVideoStream);
+        call.on("stream", remoteStream => {
+            remoteVideo.srcObject = remoteStream;
         })
     })
 }
 
 async function startLocalStream() {
-    videoGrid = document.getElementById("my-video-grid");
-    const myVideo = document.createElement('video')
-    myVideo.muted = true;
+    const localVideo = document.getElementById("local-video");
 
     await navigator.mediaDevices.getUserMedia({
-        video: true
+        video: true,
+        audio: false
     }).then(stream => {
-        addVideoStream(myVideo, stream);
+        localVideo.srcObject = stream;
+        //addVideoStream(myVideo, stream);
 
         localStream = stream;
     })
 }
 
-const addVideoStream = (video, stream) => {
-    video.srcObject = stream;
-    video.addEventListener("loadedmetadata", () => {
-        video.play();
-    })
-    videoGrid.appendChild(video)
-}
-
 
 function connectNewUser(userId) {
-    const userVideo = document.createElement('video');
+    const remoteVideo = document.getElementById("remote-video");
     const call = myPeer.call(userId, localStream)
 
-    call.on('stream', userVideoStream => {
-        addVideoStream(userVideo, userVideoStream)
+    call.on('stream', remoteStream => {
+        remoteVideo.srcObject = remoteStream;
     });
-
-    call.on('close', () => {
-        userVideo.remove();
-    })
-
-    Peers[userId] = call;
 }
 
-function disconnectUser(userId) {
-    if (Peers[userId]) Peers[userId].close();
+
+function destroyConnection() {
+    localStream.getTracks().forEach(function (track) {
+        if (track.readyState === 'live') {
+            track.stop();
+        }
+    });
+    myPeer.destroy();
+    myPeer = null;
+    localStream = null;
 }
