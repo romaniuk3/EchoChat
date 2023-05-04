@@ -34,7 +34,7 @@ async function startLocalStream() {
     const myVideo = document.createElement('video')
     myVideo.muted = true;
 
-    navigator.mediaDevices.getUserMedia({
+    await navigator.mediaDevices.getUserMedia({
         video: true
     }).then(stream => {
         addVideoStream(myVideo, stream);

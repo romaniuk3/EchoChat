@@ -4,6 +4,7 @@
 @using InternshipChat.Shared.Models;
 @using InternshipChat.Shared.DTO.UserDtos;
 @using InternshipChat.WEB.Services.Contracts
+@using InternshipChat.WEB.StateContainers;
 @using MudBlazor;
 @using InternshipChat.WEB.Helpers;
 @inject IUserService userService
@@ -11,6 +12,7 @@
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 @inject IImageService imageService
+@inject CallStateContainer CallContainer
 
 <div class="d-flex align-items-center">
     <h3 class="m-0">User Details</h3>
@@ -36,6 +38,10 @@
         <MudItem md="12" sm="12">
             <MudAvatar Style="height:250px; width:250px;"><MudImage Src="@UpdateDTO.Avatar"></MudImage></MudAvatar>
         </MudItem>
+    }
+    @if (!CanEdit)
+    {
+        <MudButton Class="ml-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="@CallUser"></MudButton>
     }
 
     @if (CanEdit)
@@ -97,5 +103,10 @@
     private async Task UploadImage(IBrowserFile image)
     {
         UpdateDTO.Avatar = await imageService.ToBase64(image);
+    }
+
+    private void CallUser()
+    {
+        CallContainer.ChangeCallState(Enums.CallState.Outgoing);
     }
 }

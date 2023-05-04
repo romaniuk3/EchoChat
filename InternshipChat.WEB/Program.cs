@@ -2,6 +2,7 @@ using Blazored.LocalStorage;
 using InternshipChat.WEB.Services;
 using InternshipChat.WEB.Services.Auth;
 using InternshipChat.WEB.Services.Contracts;
+using InternshipChat.WEB.StateContainers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -21,6 +22,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStatePr
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<CallStateContainer>();
 builder.Services.AddScoped(serviceProvider => new HttpClient
 {
     BaseAddress = new Uri(builder.Configuration["AppBase"])

@@ -1,5 +1,6 @@
 ﻿using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
+using InternshipChat.Shared.Enums;
 using Microsoft.AspNetCore.SignalR;
 
 namespace InternshipChat.Api.Hubs
@@ -29,12 +30,28 @@ namespace InternshipChat.Api.Hubs
             await Clients.Group(GroupName).SendAsync("user-connected", userId);
         } */
 
-        public async Task Call(string callerUserName, string receiverUserName, string callerPeer)
+        public async Task Call(string callerUserName, string receiverUserName)
         {
             if (callerUserName != receiverUserName)
             {
-                await Clients.All.SendAsync("ReceiveCall", callerUserName, receiverUserName, callerPeer);
+                ConnectedUsers.list.Add(callerUserName, CallInitiator.Caller);
+                ConnectedUsers.list.Add(receiverUserName, CallInitiator.Receiver);
+
+                await Clients.All.SendAsync("ReceiveCallOffer", callerUserName, receiverUserName);
             }
+        }
+
+        public async Task AcceptCall(string acceptedUserName, string acceptedPeerId)
+        {
+            ConnectedUsers.list.TryGetValue(acceptedUserName, out var initiator);
+
+            if (initiator == CallInitiator.Receiver)
+            {
+                await Clients.All.SendAsync("ReceiveAcceptCall", acceptedUserName, acceptedPeerId);
+
+            }
+
+            return;
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)

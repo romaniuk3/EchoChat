@@ -15,7 +15,7 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ChatDbProject", "ChatDbProj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternshipChat.Shared", "InternshipChat.Shared\InternshipChat.Shared.csproj", "{59E48189-7F3E-491D-819D-E02275907653}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternshipChat.Domain", "InternshipChat.Domain\InternshipChat.Domain.csproj", "{1ABA21EB-14F3-44EC-B3A1-3BDE1FC91DD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternshipChat.Domain", "InternshipChat.Domain\InternshipChat.Domain.csproj", "{1ABA21EB-14F3-44EC-B3A1-3BDE1FC91DD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,7 +1,11 @@
 ﻿@inherits LayoutComponentBase
+@using InternshipChat.WEB.Enums;
+@using InternshipChat.WEB.StateContainers;
 @using Microsoft.AspNetCore.SignalR.Client;
 @inject NavigationManager Navigation;
 @inject IConfiguration Configuration
+@inject CallStateContainer CallContainer
+@inject AuthenticationStateProvider AuthState
 
 <PageTitle>InternshipChat.WEB</PageTitle>
 
@@ -20,6 +24,11 @@
         <article class="content px-4">
             <CascadingValue Value="hubConnection">
                 @Body
+                @if (CallContainer.UserCallState == CallState.Incoming)
+                {
+                    <h1>SOMEONE IS CALLING YOU RIGHT NOW!!!</h1>
+                    <button @onclick="AcceptCall">Accept call</button>
+                }
             </CascadingValue>
         </article>
     </main>
@@ -31,10 +40,62 @@
 @code {
     private HubConnection hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
+    private string CurrentUserName { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        await DefineCurrentUser();
+        CallContainer.CallStateChanged += HandleStateChange;
+
         var url = Configuration["AppBase"] + "chathub";
         hubConnection = new HubConnectionBuilder().WithUrl(url).Build();
         await hubConnection.StartAsync();
+        SubscribeOnHubSignals();
+    }
+
+    private async void HandleStateChange()
+    {
+        if (CallContainer.UserCallState == CallState.Outgoing)
+        {
+            await hubConnection.SendAsync("Call", CurrentUserName, "aaa@example.com");
+            Navigation.NavigateTo("call");
+        }
+        if (CallContainer.UserCallState == CallState.InCall)
+        {
+            StateHasChanged();
+        }
+
+        Console.WriteLine(CallContainer.UserCallState);
+        Console.WriteLine("CALL STATE WAS CHANGED!!! ");
+    }
+
+    private async Task DefineCurrentUser()
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        CurrentUserName = authState.User.Identity!.Name!;
+    }
+
+    private void AcceptCall()
+    {
+        CallContainer.ChangeCallState(CallState.InCall);
+        Navigation.NavigateTo("call");
+    }
+
+    private async Task OnReceiveCallOffer(string callerUserName, string receiverUserName)
+    {
+        if (CurrentUserName == receiverUserName)
+        {
+            CallContainer.ChangeCallState(CallState.Incoming);
+            StateHasChanged();
+            //await _jsRuntime.InvokeVoidAsync("connectNewUser", callerPeer);
+        }
+    }
+
+    private void SubscribeOnHubSignals()
+    {
+        //hubConnection.On<string>("user-connected", this.OnReceiveUserConnected);
+        //hubConnection.On<string>("user-disconnected", this.OnReceiveUserDisconnected);
+        hubConnection.On<string, string>("ReceiveCallOffer", this.OnReceiveCallOffer);
+        //hubConnection.On<string, string>("ReceiveAcceptCall", this.OnReceiveAcceptance);
     }
 }

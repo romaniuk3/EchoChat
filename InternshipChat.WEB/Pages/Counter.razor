@@ -1,4 +1,7 @@
 ﻿@page "/counter"
+@using InternshipChat.WEB.Enums;
+@using InternshipChat.WEB.StateContainers;
+@inject CallStateContainer CallContainer
 
 <PageTitle>Counter</PageTitle>
 
@@ -7,12 +10,23 @@
 <p role="status">Current count: @currentCount</p>
 <AuthorizeView>
     <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+    <button @onclick="ChangeState">Show state</button>
 </AuthorizeView>
 @code {
     private int currentCount = 0;
 
+    protected override void OnInitialized()
+    {
+        CallContainer.CallStateChanged += StateHasChanged;
+    }
+
     private void IncrementCount()
     {
         currentCount++;
+    }
+
+    private void ChangeState()
+    {
+        CallContainer.ChangeCallState(CallState.InCall);
     }
 }

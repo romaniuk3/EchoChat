@@ -1,0 +1,60 @@
+﻿@page "/call"
+@using Microsoft.AspNetCore.SignalR.Client;
+
+@inject AuthenticationStateProvider AuthState
+@inject IConfiguration Configuration
+
+<h3>VideoCall</h3>
+
+<div video-grid id="my-video-grid">
+
+</div>
+
+@code {
+    [CascadingParameter] public HubConnection hubConnection { get; set; }
+    public string CurrentUserName { get; set; }
+    public string MyPeerId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        MyPeerId = await _jsRuntime.InvokeAsync<string>("createPeer");
+        await DefineUser();
+        await OpenHubConnection();
+        await _jsRuntime.InvokeVoidAsync("startLocalStream");
+        SubscribeOnHubSignals();
+        await hubConnection.SendAsync("AcceptCall", CurrentUserName, MyPeerId);
+    }
+
+    private async Task OnReceiveAcceptance(string acceptedUserName, string acceptedPeerId)
+    {
+        if (acceptedUserName != CurrentUserName)
+        {
+            await _jsRuntime.InvokeVoidAsync("connectNewUser", acceptedPeerId);
+        }
+    }
+
+    private async Task OpenHubConnection()
+    {
+        if (hubConnection == null)
+        {
+            var url = Configuration["AppBase"] + "chathub";
+            hubConnection = new HubConnectionBuilder().WithUrl(url).Build();
+        }
+
+        if (hubConnection.State == HubConnectionState.Disconnected)
+        {
+            await hubConnection.StartAsync();
+        }
+    }
+
+    private void SubscribeOnHubSignals()
+    {
+        hubConnection.On<string, string>("ReceiveAcceptCall", this.OnReceiveAcceptance);
+    }
+
+    private async Task DefineUser()
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        CurrentUserName = authState.User.Identity!.Name!;
+    }
+}
