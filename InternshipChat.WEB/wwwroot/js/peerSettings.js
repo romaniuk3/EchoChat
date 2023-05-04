@@ -34,8 +34,6 @@ async function startLocalStream() {
         audio: false
     }).then(stream => {
         localVideo.srcObject = stream;
-        //addVideoStream(myVideo, stream);
-
         localStream = stream;
     })
 }
