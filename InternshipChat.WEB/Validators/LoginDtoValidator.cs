@@ -14,7 +14,7 @@ namespace InternshipChat.WEB.Validators
         public LoginDtoValidator()
         {
             ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en");
-            RuleFor(f => f.Email).EmailAddress();
+            RuleFor(f => f.Email).NotEmpty().EmailAddress();
             RuleFor(f => f.Password).NotEmpty().Length(2, 50);
         }
     }

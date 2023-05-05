@@ -125,6 +125,7 @@
         if (response.IsSuccessStatusCode)
         {
             IsAccessGranted = true;
+            LoadChatMessages();
             StateHasChanged();
         }
         else

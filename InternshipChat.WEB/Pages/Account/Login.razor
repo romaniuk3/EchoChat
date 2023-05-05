@@ -18,8 +18,7 @@
     <div class="card-body">
         <h5 class="card-title">Please enter your details</h5>
         <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+            <FluentValidationValidator />
 
             <div class="form-group">
                 <label for="email">Email</label>
@@ -31,7 +30,7 @@
                 <InputText Id="password" type="password" Class="form-control" @bind-Value="loginModel.Password" />
                 <ValidationMessage For="@(() => loginModel.Password)" />
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button style="margin-top: 10px;" type="submit" class="btn btn-primary">Submit</button>
         </EditForm>
     </div>
 </div>

@@ -9,6 +9,6 @@ namespace InternshipChat.WEB.Services.Contracts
         public Task<RegisterResult> Register(RegisterUserDTO userModel);
         public Task<LoginResult> Login(LoginDto loginModel);
         public Task Logout();
-        public Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model);
+        Task<HttpResponseMessage> ChangePassword(ChangePasswordModel model);
     }
 }

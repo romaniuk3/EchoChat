@@ -86,3 +86,13 @@ div[video-grid] > video {
     align-items: center;
     height: 50vh;
 }
+
+.save-btn {
+    width: auto !important;
+    height: 48px !important;
+    padding: 0 16px !important;
+    min-width: 48px !important;
+    min-height: auto !important;
+    border-radius: 24px !important;
+    margin-top: 6px !important;
+}

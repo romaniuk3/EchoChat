@@ -58,15 +58,9 @@ namespace InternshipChat.WEB.Services.Auth
             return loginResult;
         }
 
-        public async Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model)
+        public async Task<HttpResponseMessage> ChangePassword(ChangePasswordModel model)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/account/change", model);
-
-            return new ChangePasswordResult
-            {
-                Successful = response.IsSuccessStatusCode,
-                Errors = { }
-            };
+            return await _httpClient.PostAsJsonAsync("api/account/change", model);
         }
 
         public async Task Logout()

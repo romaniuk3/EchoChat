@@ -16,8 +16,11 @@
 
 <div class="d-flex align-items-center">
     <h3 class="m-0">User Details</h3>
-    <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos"></MudIconButton>
-    <h3 class="m-0"><a href="change">Change Password</a></h3>
+    @if (CanEdit)
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos"></MudIconButton>
+        <h3 class="m-0"><a href="change">Change Password</a></h3>
+    }
 </div>
 
 <MudGrid>
@@ -56,7 +59,7 @@
             </ButtonTemplate>
         </MudFileUpload>
 
-        <MudButton Class="ml-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="@UpdateUser">Save</MudButton>
+        <MudButton Class="ml-2 save-btn" Variant="Variant.Filled" Color="Color.Primary" OnClick="@UpdateUser">Save</MudButton>
     }
 </MudGrid>
 
