@@ -12,6 +12,10 @@ namespace InternshipChat.Api.Hubs
             await Clients.All.SendAsync("ReceiveMessage", message, userName);
         }
 
+
+
+        //Video Calls
+
         public async Task Call(string callerUserName, string receiverUserName)
         {
             if (callerUserName != receiverUserName)

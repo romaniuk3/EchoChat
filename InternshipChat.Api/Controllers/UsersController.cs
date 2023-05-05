@@ -4,6 +4,7 @@ using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace InternshipChat.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;

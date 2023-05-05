@@ -41,7 +41,7 @@
     }
     @if (!CanEdit)
     {
-        <MudButton Class="ml-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="@CallUser"></MudButton>
+        <MudButton Class="ml-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="@CallUser">Call</MudButton>
     }
 
     @if (CanEdit)
@@ -62,6 +62,7 @@
 
 @code {
     public UpdateUserDTO UpdateDTO { get; set; } = new UpdateUserDTO();
+    public UserDTO UserDTO { get; set; }
 
     [Parameter]
     public int UserId { get; set; }
@@ -70,6 +71,7 @@
     protected async override Task OnInitializedAsync()
     {
         var user = await userService.GetUserAsync(UserId);
+        UserDTO = user;
         //TODO: Refactor
         UpdateDTO.Email = user.Email;
         UpdateDTO.FirstName = user.FirstName;
@@ -107,6 +109,6 @@
 
     private void CallUser()
     {
-        CallContainer.ChangeCallState(Enums.CallState.Outgoing);
+        CallContainer.ChangeCallState(Enums.CallState.Outgoing, UserDTO.UserName);
     }
 }

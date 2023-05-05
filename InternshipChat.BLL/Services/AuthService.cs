@@ -57,7 +57,7 @@ namespace InternshipChat.BLL.Services
 
         public async Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByIdAsync(model.Id.ToString());
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
 
             if (!result.Succeeded)

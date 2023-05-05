@@ -8,6 +8,10 @@
 
 <MudDialog Style="width: 650px">
     <DialogContent>
+        @if(Error != null)
+        {
+            <MudText Color="Color.Error">@Error</MudText>
+        }
         <MudTextField @bind-Value="@chat.Name" Label="Name" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.ContactPage"></MudTextField>
         <MudTextField @bind-Value="@chat.Description" Label="Description" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Description"></MudTextField>
         <MudSelect MultiSelectionTextFunc="@(new Func<List<string>, string>(ShowSelectedUsers))" Label="Add users" MultiSelection="true" T="UserDTO" @bind-Value="value" @bind-SelectedValues="selectedUsers" AdornmentIcon="@Icons.Material.Filled.People">
@@ -30,6 +34,7 @@
     private IEnumerable<UserDTO> users = new List<UserDTO>();
     private IEnumerable<UserDTO> selectedUsers = new List<UserDTO>();
     private int CurrentUserId { get; set; }
+    private string? Error { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,7 +46,7 @@
     private async Task<List<UserDTO>> UsersExceptCurrentUser(List<UserDTO> users)
     {
         var authState = await AuthState.GetAuthenticationStateAsync();
-        var userName = authState.User.Identity.Name;
+        var userName = authState.User.Identity!.Name!;
         return users.Where(u => u.UserName != userName).ToList();
     }
 
@@ -61,8 +66,16 @@
     async void Submit()
     {
         chat.UserIds = GetSelectedUsersIds();
-        await ChatService.CreateChat(chat);
-        MudDialog.Close(DialogResult.Ok(true));
+        var response = await ChatService.CreateChat(chat);
+        if (response.IsSuccessStatusCode)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        } else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            Error = error;
+            StateHasChanged();
+        }
     }
 
     private List<int> GetSelectedUsersIds()

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.SignalR;
 namespace InternshipChat.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class ChatController : ControllerBase
     {
@@ -75,6 +76,19 @@ namespace InternshipChat.Api.Controllers
 
             var chatDto = _mapper.Map<ChatDTO>(chatResult.Value);
             return Ok(chatDto);
+        }
+
+        [HttpPost]
+        [Route("{chatId}/add-user")]
+        public async Task<ActionResult> AddUserToChat(int chatId, [FromBody] int userId)
+        {
+            var addResult = await _chatService.AddUserToChatAsync(chatId, userId);
+            if (addResult.IsFailure)
+            {
+                return this.FromError(addResult.Error);
+            }
+
+            return Ok();
         }
     }
 }

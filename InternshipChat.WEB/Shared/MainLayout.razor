@@ -55,7 +55,7 @@
     {
         if (CallContainer.UserCallState == CallState.Outgoing)
         {
-            await hubConnection.SendAsync("Call", CurrentUserName, "aaa@example.com");
+            await hubConnection.SendAsync("Call", CurrentUserName, CallContainer.ReceiverUserName);
             CallContainer.ChangeCallState(CallState.InCall);
             OpenCallDialog(IsCallReceiver: false);
         }
@@ -82,12 +82,13 @@
     {
         var parameters = new DialogParameters { ["receiver"] = "aaa@example.com" };
         var options = new DialogOptions { DisableBackdropClick = true };
+        IDialogReference dialog;
         if (IsCallReceiver)
         {
-            var dialog = DialogService.Show<VideoCall>("In progress", parameters, options);
+             dialog = DialogService.Show<VideoCall>("In progress", parameters, options);
         } else
         {
-            var dialog = DialogService.Show<VideoCall>("In progress", options);
+             dialog = DialogService.Show<VideoCall>("In progress", options);
         }
     }
 

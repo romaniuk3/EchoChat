@@ -79,3 +79,10 @@ div[video-grid] > video {
     height: 100%;
     object-fit: cover;
 }
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+}

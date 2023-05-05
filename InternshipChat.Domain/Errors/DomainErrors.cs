@@ -11,13 +11,13 @@ namespace InternshipChat.Domain.Errors
     {
         public static class Chat
         {
-            public static readonly Error NotFound = new Error(ResultType.NotFound, "There is no chat with that id.");
-            public static readonly Error ChatExists = new Error(ResultType.Invalid, "Chat with that name already exists.");
+            public static readonly Error NotFound = new Error(ResultType.NotFound, "There is no chat with given id.");
+            public static readonly Error ChatExists = new Error(ResultType.Invalid, "Chat with given name already exists.");
         }
 
         public static class User
         {
-            public static readonly Error NotFound = new Error(ResultType.NotFound, "There is no user with that id.");
+            public static readonly Error NotFound = new Error(ResultType.NotFound, "There is no user with given id.");
         }
     }
 }

@@ -18,10 +18,16 @@ namespace InternshipChat.WEB.Services
             _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
 
-        public async Task CreateChat(CreateChatDTO createChatDTO)
+        public async Task<HttpResponseMessage> CreateChat(CreateChatDTO createChatDTO)
         {
             await GetBearerToken();
-            await _httpClient.PostAsJsonAsync("api/chat/create", createChatDTO, _options);
+            return await _httpClient.PostAsJsonAsync("api/chat/create", createChatDTO, _options);
+        }
+
+        public async Task<HttpResponseMessage> AddUserToChat(int chatId, int userId)
+        {
+            await GetBearerToken();
+            return await _httpClient.PostAsJsonAsync($"api/chat/{chatId}/add-user", userId, _options);
         }
 
         public async Task<ChatDTO> GetChatById(int chatId)

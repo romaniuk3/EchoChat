@@ -60,9 +60,6 @@ namespace InternshipChat.WEB.Services.Auth
 
         public async Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model)
         {
-            await Console.Out.WriteLineAsync("Curr " + model.CurrentPassword);
-            await Console.Out.WriteLineAsync("NEW " + model.NewPassword);
-            await Console.Out.WriteLineAsync("CONFIRM " + model.ConfirmNewPassword);
             var response = await _httpClient.PostAsJsonAsync("api/account/change", model);
 
             return new ChangePasswordResult

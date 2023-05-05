@@ -92,5 +92,34 @@ namespace InternshipChat.BLL.Services
 
             return chat;
         }
+
+        public async Task<Result> AddUserToChatAsync(int chatId, int userId)
+        {
+            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
+            var chatRepository = _unitOfWork.GetRepository<IChatRepository>();
+            var userChatsRepository = _unitOfWork.GetRepository<IUserChatsRepository>();
+
+            var user = userRepository.GetById(u => u.Id == userId);
+            if (user == null)
+            {
+                return Result.Failure<User>(DomainErrors.User.NotFound);
+            }
+            var chat = chatRepository.GetById(c => c.Id == chatId);
+            if (chat == null)
+            {
+                return Result.Failure<Chat>(DomainErrors.Chat.NotFound);
+            }
+
+            var userChat = new UserChats
+            {
+                Chat = chat,
+                User = user
+            };
+            userChatsRepository.Add(userChat);
+
+            _unitOfWork.Save();
+
+            return Result.Success();
+        }
     }
 }
