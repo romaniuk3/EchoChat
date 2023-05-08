@@ -95,9 +95,6 @@ namespace InternshipChat.BLL.Services
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var userClaims = await _userManager.GetClaimsAsync(user);
-            //var roles = await _userManager.GetRolesAsync(user);
-
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),

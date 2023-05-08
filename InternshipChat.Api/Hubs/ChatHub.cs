@@ -1,6 +1,5 @@
 ﻿using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
-using InternshipChat.Shared.Enums;
 using Microsoft.AspNetCore.SignalR;
 
 namespace InternshipChat.Api.Hubs
@@ -15,7 +14,6 @@ namespace InternshipChat.Api.Hubs
 
 
         //Video Calls
-
         public async Task Call(string callerUserName, string receiverUserName)
         {
             if (callerUserName != receiverUserName)
@@ -31,7 +29,6 @@ namespace InternshipChat.Api.Hubs
 
         public async Task EndCall()
         {
-            ConnectedUsers.list.Clear();
             await Clients.All.SendAsync("ReceiveEndCall");
          
         }

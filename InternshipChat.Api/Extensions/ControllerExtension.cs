@@ -16,7 +16,7 @@ namespace InternshipChat.Api.Extensions
                 case ResultType.Unathorized:
                     return controller.Unauthorized();
                 default:
-                    throw new Exception("Unhandled result has occured as a result of a service call.");
+                    throw new Exception("Unhandled error has occured as a result of a service call.");
             }
         }
     }

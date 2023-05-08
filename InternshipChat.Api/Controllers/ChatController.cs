@@ -45,7 +45,6 @@ namespace InternshipChat.Api.Controllers
         public async Task<ActionResult<ChatInfoView>> GetAll()
         {
             var chatInfoViews = await _chatService.GetAllChatsAsync();
-            //var chats = _mapper.Map<ChatInfoDTO>(chatInfoViews);
 
             return Ok(chatInfoViews);
         }

@@ -12,13 +12,11 @@ namespace InternshipChat.Api.Controllers
     [ApiController]
     public class MessageController : ControllerBase
     {
-        private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IMessageService _messageService;
 
-        public MessageController(IUserService userService, IMapper mapper, IMessageService messageService)
+        public MessageController(IMapper mapper, IMessageService messageService)
         {
-            _userService = userService;
             _mapper = mapper;
             _messageService = messageService;
         }
@@ -27,9 +25,6 @@ namespace InternshipChat.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> SendMessage(CreateMessageDTO createMessageDto)
         {
-            var userName = HttpContext.User.Identity!.Name;
-            //var user = await _userService.GetUserByNameAsync(userName);
-
             var message = _mapper.Map<Message>(createMessageDto);
             var res = _messageService.SendMessage(message);
 

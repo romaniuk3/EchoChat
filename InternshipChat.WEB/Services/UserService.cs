@@ -29,7 +29,6 @@ namespace InternshipChat.WEB.Services
         public async Task<PagingResponseDTO<UserDTO>> GetUsersAsync(string queryParameters)
         {
             await GetBearerToken();
-            //var queryStringParam = GenerateQueryStringParams(userParameters);
             var url = "api/users/all" + queryParameters;
             return await _httpClient.GetFromJsonAsync<PagingResponseDTO<UserDTO>>(url, _options);
         }

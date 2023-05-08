@@ -10,7 +10,6 @@
 <p role="status">Current count: @currentCount</p>
 <AuthorizeView>
     <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-    <button @onclick="ChangeState">Show state</button>
 </AuthorizeView>
 @code {
     private int currentCount = 0;
@@ -23,10 +22,5 @@
     private void IncrementCount()
     {
         currentCount++;
-    }
-
-    private void ChangeState()
-    {
-        CallContainer.ChangeCallState(CallState.InCall);
     }
 }

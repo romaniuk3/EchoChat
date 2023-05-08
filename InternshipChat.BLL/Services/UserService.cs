@@ -1,5 +1,4 @@
-﻿using InternshipChat.BLL.Helpers;
-using InternshipChat.BLL.Services.Contracts;
+﻿using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Helpers;
 using InternshipChat.DAL.Repositories.Interfaces;
@@ -21,13 +20,11 @@ namespace InternshipChat.BLL.Services
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IWebHostEnvironment _environment;
         private readonly UserManager<User> _userManager;
 
-        public UserService(IUnitOfWork unitOfWork, IWebHostEnvironment environment, UserManager<User> userManager)
+        public UserService(IUnitOfWork unitOfWork, UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
-            _environment = environment;
             _userManager = userManager;
         }
 
@@ -54,7 +51,6 @@ namespace InternshipChat.BLL.Services
 
         public async Task<User> UpdateAsync(int userId, UpdateUserDTO userDto)
         {
-            //var user = await _userManager.FindByNameAsync(userDto.Email);
             var user = await _userManager.FindByIdAsync(userId.ToString());
             user.UserName = userDto.Email;
             user.Email = userDto.Email;
@@ -65,19 +61,6 @@ namespace InternshipChat.BLL.Services
 
             await _userManager.UpdateAsync(user);
             return user;
-        }
-
-        
-        public async Task<string> SaveUserImageAsync(UpdateUserDTO userDto)
-        {
-            var uniqueFileName = FileHelper.GetUniqueFileName(userDto.AvatarImage.FileName);
-            var uploads = Path.Combine(_environment.WebRootPath, "users", userDto.Email);
-            var imagePath = Path.Combine(uploads, uniqueFileName);
-
-            Directory.CreateDirectory(Path.GetDirectoryName(imagePath));
-            await userDto.AvatarImage.CopyToAsync(new FileStream(imagePath, FileMode.Create));
-
-            return imagePath;
         }
     }
 }
