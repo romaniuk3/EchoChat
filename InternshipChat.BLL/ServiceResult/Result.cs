@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InternshipChat.Domain.ServiceResult
+namespace InternshipChat.BLL.ServiceResult
 {
     public class Result
     {

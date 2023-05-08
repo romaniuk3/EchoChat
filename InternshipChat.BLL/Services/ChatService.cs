@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
+using InternshipChat.BLL.Errors;
+using InternshipChat.BLL.ServiceResult;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Repositories;
 using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
-using InternshipChat.Domain.Errors;
-using InternshipChat.Domain.ServiceResult;
 using InternshipChat.Shared.DTO.ChatDtos;
 using System;
 using System.Collections.Generic;

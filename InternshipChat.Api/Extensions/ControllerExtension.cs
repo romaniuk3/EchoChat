@@ -1,4 +1,4 @@
-﻿using InternshipChat.Domain.ServiceResult;
+﻿using InternshipChat.BLL.ServiceResult;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InternshipChat.Api.Extensions

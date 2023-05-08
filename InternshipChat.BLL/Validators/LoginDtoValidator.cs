@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InternshipChat.Domain.Validators
+namespace InternshipChat.BLL.Validators
 {
     public class LoginDtoValidator : AbstractValidator<LoginDto>
     {

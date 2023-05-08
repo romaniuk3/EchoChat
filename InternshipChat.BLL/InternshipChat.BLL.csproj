@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\InternshipChat.DAL\InternshipChat.DAL.csproj" />
-    <ProjectReference Include="..\InternshipChat.Domain\InternshipChat.Domain.csproj" />
     <ProjectReference Include="..\InternshipChat.Shared\InternshipChat.Shared.csproj" />
   </ItemGroup>
 

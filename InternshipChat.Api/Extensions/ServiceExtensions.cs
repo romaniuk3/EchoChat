@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using InternshipChat.Domain.Validators;
+using InternshipChat.BLL.Validators;
 using System.Globalization;
 
 namespace InternshipChat.Api.Extensions

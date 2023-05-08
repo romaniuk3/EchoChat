@@ -1,5 +1,5 @@
-﻿using InternshipChat.DAL.Entities;
-using InternshipChat.Domain.ServiceResult;
+﻿using InternshipChat.BLL.ServiceResult;
+using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
 using System;
 using System.Collections.Generic;

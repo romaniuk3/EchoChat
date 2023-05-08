@@ -1,11 +1,11 @@
-﻿using InternshipChat.Domain.ServiceResult;
+﻿using InternshipChat.BLL.ServiceResult;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InternshipChat.Domain.Errors
+namespace InternshipChat.BLL.Errors
 {
     public static class DomainErrors
     {
