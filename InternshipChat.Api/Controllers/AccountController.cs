@@ -6,6 +6,7 @@ using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -77,6 +78,7 @@ namespace InternshipChat.Api.Controllers
             return Ok(authResponse);
         }
 
+        [Authorize]
         [HttpPost]
         [Route("change")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

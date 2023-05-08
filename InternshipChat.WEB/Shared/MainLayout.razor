@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @using InternshipChat.WEB.Enums;
 @using InternshipChat.WEB.Pages.VideoCall;
+@using InternshipChat.WEB.Services.Contracts;
 @using InternshipChat.WEB.StateContainers;
 @using Microsoft.AspNetCore.SignalR.Client;
 @inject NavigationManager Navigation;
@@ -8,6 +9,7 @@
 @inject CallStateContainer CallContainer
 @inject AuthenticationStateProvider AuthState
 @inject IDialogService DialogService
+@inject IAuthService AuthService
 
 <PageTitle>InternshipChat.WEB</PageTitle>
 
@@ -44,11 +46,23 @@
     {
         await DefineCurrentUser();
         CallContainer.CallStateChanged += HandleStateChange;
+        SetHubConnection();
+    }
 
-        var url = Configuration["AppBase"] + "chathub";
-        hubConnection = new HubConnectionBuilder().WithUrl(url).Build();
-        await hubConnection.StartAsync();
-        SubscribeOnHubSignals();
+    private async void SetHubConnection()
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        if (authState.User!.Identity!.IsAuthenticated)
+        {
+            var url = Configuration["AppBase"] + "chathub";
+            hubConnection = new HubConnectionBuilder().WithUrl(url, options =>
+            {
+                options.AccessTokenProvider = async () => await AuthService.GetTokenAsync();
+            }).Build();
+            await hubConnection.StartAsync();
+
+            SubscribeOnHubSignals();
+        }
     }
 
     private async void HandleStateChange()
@@ -72,7 +86,6 @@
                 OpenCallDialog(IsCallReceiver: true);
             } else
             {
-                //CallContainer.ChangeCallState(CallState.None);
                 await hubConnection.SendAsync("EndCall");
             }
         }

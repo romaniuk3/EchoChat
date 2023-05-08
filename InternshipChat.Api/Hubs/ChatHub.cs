@@ -1,16 +1,17 @@
 ﻿using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace InternshipChat.Api.Hubs
 {
+    [Authorize]
     public class ChatHub : Hub
     {
         public async Task SendMessageAsync(MessageDTO message, string userName)
         {
             await Clients.All.SendAsync("ReceiveMessage", message, userName);
         }
-
 
 
         //Video Calls

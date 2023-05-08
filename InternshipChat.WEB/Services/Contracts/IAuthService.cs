@@ -10,5 +10,6 @@ namespace InternshipChat.WEB.Services.Contracts
         public Task<LoginResult> Login(LoginDto loginModel);
         public Task Logout();
         Task<HttpResponseMessage> ChangePassword(ChangePasswordModel model);
+        Task<string> GetTokenAsync();
     }
 }

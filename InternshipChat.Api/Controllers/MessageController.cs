@@ -10,6 +10,7 @@ namespace InternshipChat.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MessageController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -21,7 +22,6 @@ namespace InternshipChat.Api.Controllers
             _messageService = messageService;
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> SendMessage(CreateMessageDTO createMessageDto)
         {

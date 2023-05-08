@@ -12,17 +12,15 @@ using Microsoft.AspNetCore.SignalR;
 namespace InternshipChat.Api.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("api/[controller]")]
+    [Authorize]
     public class ChatController : ControllerBase
     {
-        private readonly ILogger<ChatController> _logger;
         private readonly IChatService _chatService;
         private readonly IMapper _mapper;
 
-        public ChatController(ILogger<ChatController> logger, IChatService chatService, IMapper mapper)
+        public ChatController(IChatService chatService, IMapper mapper)
         {
-            _logger = logger;
             _chatService = chatService;
             _mapper = mapper;
         }

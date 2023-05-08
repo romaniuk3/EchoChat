@@ -69,5 +69,10 @@ namespace InternshipChat.WEB.Services.Auth
             ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
+        
+        public async Task<string> GetTokenAsync()
+        {
+            return await _localStorage.GetItemAsync<string>("authToken");
+        }
     }
 }
