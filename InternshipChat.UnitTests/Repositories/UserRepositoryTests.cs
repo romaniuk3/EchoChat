@@ -21,6 +21,7 @@ namespace InternshipChat.UnitTests.Repositories
     {
         private IUserRepository _userRepository;
         private ChatContext _chatContext;
+        private string UNIQUE_USERNAME = "UniqueUserName@3";
 
         private static DbContextOptions<ChatContext> dbContextOptions = new DbContextOptionsBuilder<ChatContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -50,14 +51,40 @@ namespace InternshipChat.UnitTests.Repositories
         }
 
         [Test]
-        public async Task GetAll_WithoutParameters_Returns_AllUsersInPagedList()
+        public async Task GetAll_WithoutParameters_Returns_AllUsersByPageSize()
         {
             var userParams = new UserParameters();
 
             var allUsersByParameters = await _userRepository.GetUsersAsync(userParams);
             var allUsers = _userRepository.GetAll().ToList();
 
-            Assert.AreEqual(allUsers.Count, allUsersByParameters.TotalCount);
+            Assert.AreEqual(userParams.PageSize, allUsersByParameters.Count);
+        }
+
+        [TestCase(1, 1)]
+        [TestCase(2, 2)]
+        [TestCase(4, 4)]
+        [TestCase(10, 10)]
+        public async Task GetAll_WithPageParameters_Returns_AllUserByPageSize(int pageSize, int expectedUsersCount)
+        {
+            var userParams = new UserParameters
+            {
+                PageSize = pageSize,
+            };
+
+            var allUsersByParameters = await _userRepository.GetUsersAsync(userParams);
+
+            Assert.AreEqual(expectedUsersCount, allUsersByParameters.Count);
+        }
+
+        [Test]
+        public void GetUserBy_ExistingId_Returns_User()
+        {
+            var expectedUser = _chatContext.Users.FirstOrDefault(u => u.Id == 2);
+            var user = _userRepository.GetById(u => u.Id == 2);
+
+            Assert.IsNotNull(user);
+            Assert.AreEqual(expectedUser.UserName, user.UserName);
         }
 
         [Test]
@@ -73,7 +100,7 @@ namespace InternshipChat.UnitTests.Repositories
         {
             var userParams = new UserParameters
             {
-                SearchTerm = "UniqueUserName@3"
+                SearchTerm = UNIQUE_USERNAME
             };
 
             int expectedCount = 2;
@@ -99,7 +126,7 @@ namespace InternshipChat.UnitTests.Repositories
 
         private User UserWithCustomNameForFilterTest(User user, int index)
         {
-            string newUserName = "UniqueUserName@3" + index;
+            string newUserName = UNIQUE_USERNAME + index;
             user.FirstName = newUserName;       
             user.LastName = newUserName;
             
