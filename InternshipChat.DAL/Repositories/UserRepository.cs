@@ -24,7 +24,6 @@ namespace InternshipChat.DAL.Repositories
         {
             var users = GetAll();
             users = SearchGlobal(users, userParameters.SearchTerm);
-            users = SearchByEmail(users, userParameters.Email);
             users = ApplySort(users, userParameters.OrderBy);
 
             return await PagedList<User>.ToPagedList(users, userParameters.PageNumber, userParameters.PageSize);
@@ -43,14 +42,6 @@ namespace InternshipChat.DAL.Repositories
                 u.FirstName!.Contains(searchTerm) ||
                 u.LastName!.Contains(searchTerm) ||
                 u.Email.Contains(searchTerm));
-        }
-
-        private IQueryable<User> SearchByEmail(IQueryable<User> users, string? userEmail)
-        {
-            if (string.IsNullOrEmpty(userEmail))
-                return users;
-
-            return users.Where(u => u.Email.ToLower().Contains(userEmail.Trim().ToLower()));
         }
 
         private IQueryable<User> ApplySort(IQueryable<User> users, string orderByQueryString)
