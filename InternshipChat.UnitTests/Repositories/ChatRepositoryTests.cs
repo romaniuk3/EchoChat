@@ -27,15 +27,53 @@ namespace InternshipChat.UnitTests.Repositories
         }
 
         [Test]
-        public void CreateChat_Should_AddChat_ToDb()
+        public async Task GetById_Returns_ChatWithUsers()
         {
-            
+            var chats = _chatRepository.GetAll();
+            var expectedChat = chats.FirstOrDefault();
+
+            var chat = await _chatRepository.GetChatById(expectedChat.Id);
+
+            Assert.NotNull(chat);
+            Assert.AreEqual(expectedChat.Id, chat.Id);
+            Assert.GreaterOrEqual(chat.UserChats.Count, 2);
         }
 
-        [OneTimeTearDown]
-        public void CleanUp()
+        [Test]
+        public async Task GetById_Returns_Null()
         {
-            _chatContext.Database.EnsureDeleted();
+            var chat = await _chatRepository.GetChatById(9999);
+
+            Assert.Null(chat);
+        }
+
+        [Test]
+        public async Task GetByName_Returns_Chat()
+        {
+            var chats = _chatRepository.GetAll();
+            var expectedChat = chats.FirstOrDefault();
+
+            var chatByName = await _chatRepository.GetChatByName(expectedChat.Name);
+
+            Assert.NotNull(chatByName);
+            Assert.AreEqual(expectedChat.Id, chatByName.Id);
+        }
+
+        [Test]
+        public async Task GetByName_Returns_Null()
+        {
+            var chatByName = await _chatRepository.GetChatByName("non@#existing@3chat");
+
+            Assert.Null(chatByName);
+        }
+
+        [Test]
+        public async Task GetAll_ChatInfos_Returns_ChatInfos()
+        {
+            var chatInfos = await _chatRepository.GetAllChats();
+
+            Assert.NotNull(chatInfos);
+            Assert.That(chatInfos.All(c => c.UsersCount >= 1));
         }
     }
 }

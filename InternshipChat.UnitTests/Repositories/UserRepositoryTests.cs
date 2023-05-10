@@ -33,9 +33,6 @@ namespace InternshipChat.UnitTests.Repositories
         [Test]
         public void Create_Should_AddUser_To_Db()
         {
-            Console.WriteLine("USERS COUNT " + _chatContext.Users.Count());
-            Console.WriteLine("CHAT COUNT " + _chatContext.Chats.Count());
-            Console.WriteLine("USERSCHAT COUNT " + _chatContext.UserChats.Count());
             var user = InMemoryDatabase.GenerateFakeUser();
 
             _userRepository.Add(user);
@@ -89,12 +86,6 @@ namespace InternshipChat.UnitTests.Repositories
             var user = _userRepository.GetById(u => u.Id == 9999);
 
             Assert.IsNull(user);
-        }
-
-        [OneTimeTearDown]
-        public void CleanUp()
-        {
-            _chatContext.Database.EnsureDeleted();
         }
     }
 }
