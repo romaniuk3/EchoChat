@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using InternshipChat.Api.Extensions;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
@@ -35,8 +36,13 @@ namespace InternshipChat.Api.Controllers
         [Route("{chatId}")]
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetAllMessages(int chatId)
         {
-            var messages = await _messageService.GetMessagesAsync(chatId);
-            var messageDtos = _mapper.Map<IEnumerable<MessageDTO>>(messages);
+            var messagesResult = await _messageService.GetMessagesAsync(chatId);
+            if (messagesResult.IsFailure)
+            {
+                return this.FromError(messagesResult.Error);
+            }
+
+            var messageDtos = _mapper.Map<IEnumerable<MessageDTO>>(messagesResult.Value);
 
             return Ok(messageDtos);
         }

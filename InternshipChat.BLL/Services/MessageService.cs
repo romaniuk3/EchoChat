@@ -1,4 +1,6 @@
-﻿using InternshipChat.BLL.Services.Contracts;
+﻿using InternshipChat.BLL.Errors;
+using InternshipChat.BLL.ServiceResult;
+using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
@@ -28,11 +30,19 @@ namespace InternshipChat.BLL.Services
             return message;
         }
 
-        public async Task<IEnumerable<Message>> GetMessagesAsync(int chatId)
+        public async Task<Result<IEnumerable<Message>>> GetMessagesAsync(int chatId)
         {
             var repository = _unitOfWork.GetRepository<IMessageRepository>();
+            var chatRepository = _unitOfWork.GetRepository<IChatRepository>();
+            var chat = await chatRepository.GetChatById(chatId);
+            if (chat == null)
+            {
+                return Result.Failure<IEnumerable<Message>>(DomainErrors.Chat.NotFound);
+            }
 
-            return await repository.GetMessages(chatId);
+            var messagesInChat = await repository.GetMessages(chatId);
+
+            return Result.Success(messagesInChat);
         }
     }
 }

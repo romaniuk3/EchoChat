@@ -1,4 +1,5 @@
-﻿using InternshipChat.DAL.Entities;
+﻿using InternshipChat.BLL.ServiceResult;
+using InternshipChat.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace InternshipChat.BLL.Services.Contracts
     public interface IMessageService
     {
         public Message SendMessage(Message message);
-        public Task<IEnumerable<Message>> GetMessagesAsync(int chatId);
+        Task<Result<IEnumerable<Message>>> GetMessagesAsync(int chatId);
     }
 }
