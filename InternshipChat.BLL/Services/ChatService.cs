@@ -19,7 +19,7 @@ namespace InternshipChat.BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
+        
         public ChatService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;

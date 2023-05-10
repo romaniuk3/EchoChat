@@ -28,7 +28,7 @@ namespace InternshipChat.UnitTests.Services
         private Mock<IUserRepository> _mockUserRepository;
         private Mock<UserManager<User>> _mockUserManager;
 
-        [OneTimeSetUp]
+        [SetUp]
         public void SetUp()
         {
             _mockUnitOfWork = new Mock<IUnitOfWork>();
