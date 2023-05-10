@@ -28,7 +28,7 @@ namespace InternshipChat.BLL.Validators
             RuleFor(x => x.Birthdate)
                 .LessThanOrEqualTo(DateTime.Now.Date)
                 .WithMessage("Birth date cannot be in the future.");
-            RuleFor(x => x.Birthdate)
+            RuleFor(x => x.Birthdate)   
                 .Must(date => date <= DateTime.Now.Date.AddYears(-14))
                 .WithMessage("You must be at least 14 years old to register.");
         }
