@@ -75,6 +75,22 @@ namespace InternshipChat.BLL.Services
             };
         }
 
+        public async Task<IdentityResult> Register(RegisterUserDTO registerUserDTO)
+        {
+            var user = _mapper.Map<User>(registerUserDTO);
+            user.UserName = registerUserDTO.Email;
+
+            var creatingResult = await _userManager.CreateAsync(user, registerUserDTO.Password);
+
+            if (creatingResult.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "User");
+            }
+
+            return creatingResult;
+        }
+
+        /*
         public async Task<IEnumerable<IdentityError>> Register(RegisterUserDTO registerUserDTO)
         {
             var user = _mapper.Map<User>(registerUserDTO);
@@ -88,7 +104,7 @@ namespace InternshipChat.BLL.Services
             }
 
             return creatingResult.Errors;
-        }
+        }*/
 
         private async Task<string> GenerateToken(User user)
         {

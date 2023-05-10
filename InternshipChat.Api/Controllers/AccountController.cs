@@ -44,11 +44,11 @@ namespace InternshipChat.Api.Controllers
                 return BadRequest(validation.Errors);
             }
 
-            var possibleErrors = await _authService.Register(registerUserDTO);
+            var registerResult = await _authService.Register(registerUserDTO);
 
-            if (possibleErrors.Any())
+            if (!registerResult.Succeeded)
             {
-                var errors = possibleErrors.Select(x => x.Description);
+                var errors = registerResult.Errors.Select(x => x.Description);
 
                 return BadRequest(new RegisterResult { Successful = false, Errors = errors });
             }

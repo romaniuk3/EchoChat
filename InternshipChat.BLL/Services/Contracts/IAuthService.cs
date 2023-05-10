@@ -14,7 +14,7 @@ namespace InternshipChat.BLL.Services.Contracts
 {
     public interface IAuthService
     {
-        Task<IEnumerable<IdentityError>> Register(RegisterUserDTO user);
+        Task<IdentityResult> Register(RegisterUserDTO registerUserDTO);
         Task<LoginResult> Login (LoginDto loginDto);
         Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model);
     }
