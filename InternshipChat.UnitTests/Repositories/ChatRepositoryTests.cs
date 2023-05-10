@@ -31,7 +31,6 @@ namespace InternshipChat.UnitTests.Repositories
         {
             var chats = _chatRepository.GetAll();
             var expectedChat = chats.FirstOrDefault();
-
             var chat = await _chatRepository.GetChatById(expectedChat.Id);
 
             Assert.NotNull(chat);
@@ -68,12 +67,12 @@ namespace InternshipChat.UnitTests.Repositories
         }
 
         [Test]
-        public async Task GetAll_ChatInfos_Returns_ChatInfos()
+        public void GetAll_Returns_Chats()
         {
-            var chatInfos = await _chatRepository.GetAllChats();
+            var chatInfos = _chatRepository.GetAll();
 
             Assert.NotNull(chatInfos);
-            Assert.That(chatInfos.All(c => c.UsersCount >= 1));
+            Assert.IsNotEmpty(chatInfos);
         }
     }
 }

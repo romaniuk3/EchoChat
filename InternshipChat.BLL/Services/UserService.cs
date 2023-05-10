@@ -1,4 +1,6 @@
-﻿using InternshipChat.BLL.Services.Contracts;
+﻿using InternshipChat.BLL.Errors;
+using InternshipChat.BLL.ServiceResult;
+using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Helpers;
 using InternshipChat.DAL.Repositories.Interfaces;
@@ -35,10 +37,17 @@ namespace InternshipChat.BLL.Services
             return await repository.GetUsersAsync(userParameters);
         }
 
-        public User GetUser(int id)
+        public Result<User> GetUser(int id)
         {
             var repository = _unitOfWork.GetRepository<IUserRepository>();
-            return repository.GetById(u => u.Id == id);
+            var user = repository.GetById(u => u.Id == id);
+
+            if (user == null)
+            {
+                return Result.Failure<User>(DomainErrors.User.NotFound);
+            }
+
+            return user;
         }
 
         public async Task<User> GetUserByNameAsync(string name)

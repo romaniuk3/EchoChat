@@ -11,7 +11,7 @@ namespace InternshipChat.DAL.Repositories.Interfaces
     public interface IRepository<T> where T : class
     {
         IQueryable<T> GetByCondition(Expression<Func<T, bool>> expression);
-        T GetById(Expression<Func<T, bool>> expression);
+        T? GetById(Expression<Func<T, bool>> expression);
         IQueryable<T> GetAll();
         void Add(T entity);
         void AddRange(IEnumerable<T> entities);

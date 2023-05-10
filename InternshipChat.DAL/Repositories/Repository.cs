@@ -40,7 +40,7 @@ namespace InternshipChat.DAL.Repositories
             return _chatContext.Set<T>().Update(entity).Entity;
         }
 
-        public T GetById(Expression<Func<T, bool>> expression)
+        public T? GetById(Expression<Func<T, bool>> expression)
         {
             return _chatContext.Set<T>().FirstOrDefault(expression);
         }

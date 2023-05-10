@@ -59,6 +59,17 @@ namespace InternshipChat.UnitTests
             return faker;
         }
 
+        public static Message GenerateFakeMessage(int chatId, int userId)
+        {
+            var faker = new Faker<Message>()
+                .RuleFor(m => m.Id, f => f.IndexGlobal + 1)
+                .RuleFor(m => m.MessageContent, f => f.Lorem.Word())
+                .RuleFor(m => m.ChatId, chatId)
+                .RuleFor(m => m.UserId, userId);
+
+            return faker;
+        }
+
         private static User UserWithCustomNameForFilterTest(User user, int index)
         {
             string newUserName = UNIQUE_USERNAME + index;
@@ -86,6 +97,7 @@ namespace InternshipChat.UnitTests
 
             var chats = new List<Chat>();
             var userChats = new List<UserChats>();
+            var messages = new List<Message>();
 
             for (int i = 0; i < 5; i++)
             {
@@ -102,10 +114,17 @@ namespace InternshipChat.UnitTests
 
                     userChats.Add(userChat);
                 }
+
+                for (int j = 0; j < 5; j++)
+                {
+                    var message = GenerateFakeMessage(chat.Id, j);
+                    messages.Add(message);
+                }
             }
 
             await _chatContext.Users.AddRangeAsync(users);
             await _chatContext.Chats.AddRangeAsync(chats);
+            await _chatContext.Messages.AddRangeAsync(messages);
             await _chatContext.UserChats.AddRangeAsync(userChats);
             await _chatContext.SaveChangesAsync();
         }

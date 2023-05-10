@@ -1,4 +1,5 @@
-﻿using InternshipChat.DAL.Entities;
+﻿using InternshipChat.BLL.ServiceResult;
+using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Helpers;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.DTO.UserDtos;
@@ -14,7 +15,7 @@ namespace InternshipChat.BLL.Services.Contracts
     public interface IUserService
     {
         public Task<PagedList<User>> GetAllAsync(UserParameters userParameters);
-        public User GetUser(int id);
+        public Result<User> GetUser(int id);
         public Task<User> UpdateAsync(int id, UpdateUserDTO user);
         public Task<User> GetUserByNameAsync(string name);
     }

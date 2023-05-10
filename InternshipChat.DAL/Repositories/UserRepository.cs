@@ -26,7 +26,7 @@ namespace InternshipChat.DAL.Repositories
             users = SearchGlobal(users, userParameters.SearchTerm);
             users = ApplySort(users, userParameters.OrderBy);
 
-            return await PagedList<User>.ToPagedList(users, userParameters.PageNumber, userParameters.PageSize);
+            return await PagedList<User>.ToPagedListAsync(users, userParameters.PageNumber, userParameters.PageSize);
         }
 
         public async Task<User?> GetUserByNameAsync(string name)

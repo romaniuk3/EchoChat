@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using InternshipChat.Api.Extensions;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
@@ -37,14 +38,14 @@ namespace InternshipChat.Api.Controllers
         [HttpGet("{id}")]
         public ActionResult<UserDTO> GetUser(int id)
         {
-            var user = _userService.GetUser(id);
+            var userResult = _userService.GetUser(id);
 
-            if (user == null)
+            if (userResult.IsFailure)
             {
-                return NotFound();
+                return this.FromError(userResult.Error);
             }
 
-            return Ok(_mapper.Map<UserDTO>(user));
+            return Ok(_mapper.Map<UserDTO>(userResult.Value));
         }
 
         [HttpPut("{id}")]
