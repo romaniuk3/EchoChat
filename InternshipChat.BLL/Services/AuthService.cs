@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using InternshipChat.BLL.Services.Contracts;
+using InternshipChat.DAL.Data;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.DTO.UserDtos;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -89,22 +91,6 @@ namespace InternshipChat.BLL.Services
 
             return creatingResult;
         }
-
-        /*
-        public async Task<IEnumerable<IdentityError>> Register(RegisterUserDTO registerUserDTO)
-        {
-            var user = _mapper.Map<User>(registerUserDTO);
-            user.UserName = registerUserDTO.Email;
-
-            var creatingResult = await _userManager.CreateAsync(user, registerUserDTO.Password);
-
-            if (creatingResult.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, "User");
-            }
-
-            return creatingResult.Errors;
-        }*/
 
         private async Task<string> GenerateToken(User user)
         {
