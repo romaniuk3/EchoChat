@@ -52,6 +52,9 @@ namespace InternshipChat.BLL.Services
                         User = user
                     };
                     userChatsRepository.Add(userChat);
+                } else
+                {
+                    return Result.Failure(DomainErrors.User.NotFound);
                 }
             }
             _unitOfWork.Save();
