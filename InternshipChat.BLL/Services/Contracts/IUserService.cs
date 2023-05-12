@@ -16,7 +16,6 @@ namespace InternshipChat.BLL.Services.Contracts
     {
         public Task<PagedList<User>> GetAllAsync(UserParameters userParameters);
         public Result<User> GetUser(int id);
-        public Task<User> UpdateAsync(int id, UpdateUserDTO user);
-        public Task<User> GetUserByNameAsync(string name);
+        public Task<Result<User>> UpdateAsync(int id, UpdateUserDTO user);
     }
 }

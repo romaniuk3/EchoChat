@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using InternshipChat.Api.Extensions;
 using InternshipChat.BLL.Services.Contracts;
+using InternshipChat.BLL.Validators;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.DTO.UserDtos;
@@ -18,11 +20,13 @@ namespace InternshipChat.Api.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly IValidator<UpdateUserDTO> _updateValidator;
 
-        public UsersController(IUserService userService, IMapper mapper)
+        public UsersController(IUserService userService, IMapper mapper, IValidator<UpdateUserDTO> updateValidator)
         {
             _userService = userService;
             _mapper = mapper;
+            _updateValidator = updateValidator;
         }
 
         [HttpGet]
@@ -51,16 +55,20 @@ namespace InternshipChat.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDTO>> UpdateUser(int id, [FromBody] UpdateUserDTO updateUserDTO)
         {
-            var user = _userService.GetUser(id);
-
-            if (user == null)
+            var validation = await _updateValidator.ValidateAsync(updateUserDTO);
+            if (!validation.IsValid)
             {
-                return NotFound();
+                return BadRequest(validation.Errors);
             }
 
-            var updatedUser = await _userService.UpdateAsync(id, updateUserDTO);
+            var updateUserResult = await _userService.UpdateAsync(id, updateUserDTO);
 
-            return Ok(_mapper.Map<UserDTO>(updatedUser));
+            if (updateUserResult.IsFailure)
+            {
+                return this.FromError(updateUserResult.Error);
+            }
+
+            return Ok(_mapper.Map<UserDTO>(updateUserResult.Value));
         }
     }
 }

@@ -81,23 +81,6 @@ namespace InternshipChat.UnitTests.Services
         }
 
         [Test]
-        public async Task GetUser_ByName_Returns_User()
-        {
-            var username = "Dan";
-            var expectedUser = new User
-            {
-                UserName = username,
-            };
-
-            _mockUserRepository.Setup(repo => repo.GetUserByNameAsync(username)).ReturnsAsync(expectedUser);
-
-            var user = await _userService.GetUserByNameAsync(username);
-
-            Assert.NotNull(user);
-            Assert.AreEqual(expectedUser.UserName, user.UserName);
-        }
-
-        [Test]
         public async Task GetAll_ByParameters_Returns_All()
         {
             var userParams = new UserParameters()

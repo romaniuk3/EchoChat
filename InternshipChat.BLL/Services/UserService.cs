@@ -50,23 +50,20 @@ namespace InternshipChat.BLL.Services
             return user;
         }
 
-        public async Task<User> GetUserByNameAsync(string name)
-        {
-            var repository = _unitOfWork.GetRepository<IUserRepository>();
-            var user = await repository.GetUserByNameAsync(name);
-
-            return user!;
-        }
-
-        public async Task<User> UpdateAsync(int userId, UpdateUserDTO userDto)
+        public async Task<Result<User>> UpdateAsync(int userId, UpdateUserDTO userDto)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+            {
+                return Result.Failure<User>(DomainErrors.User.NotFound);
+            }
+
             user.UserName = userDto.Email;
             user.Email = userDto.Email;
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;
             user.Avatar = userDto.Avatar;
-
 
             await _userManager.UpdateAsync(user);
             return user;

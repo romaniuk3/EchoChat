@@ -3,9 +3,11 @@ using InternshipChat.BLL.Mapping;
 using InternshipChat.BLL.Services;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Data;
+using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Repositories;
 using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -33,6 +35,18 @@ namespace InternshipChat.IntegrationTests.Helpers
             return chatService;
         }
 
+        public static IUserService GetUserService()
+        {
+            CreateDbContext();
+            var serviceProvider = SetupServiceProviders();
+
+            var unitOfWork = new UnitOfWork(_chatContext, serviceProvider);
+            var userManager = serviceProvider.GetService<UserManager<User>>();
+            var userService = new UserService(unitOfWork, userManager);
+
+            return userService;
+        }
+
         public static ChatContext GetDbContext()
         {
             return _chatContext;
@@ -55,6 +69,10 @@ namespace InternshipChat.IntegrationTests.Helpers
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IUserChatsRepository, UserChatsRepository>();
             services.AddScoped(_ => _chatContext);
+            services.AddIdentityCore<User>(opt =>
+            {
+                opt.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<ChatContext>();
 
             var serviceProvider = services.BuildServiceProvider();
 

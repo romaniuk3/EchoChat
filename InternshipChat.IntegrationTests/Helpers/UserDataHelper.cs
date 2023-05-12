@@ -18,7 +18,8 @@ namespace InternshipChat.IntegrationTests.Helpers
                 .RuleFor(u => u.UserName, f => f.Internet.Email())
                 .RuleFor(u => u.Email, (f, u) => u.UserName)
                 .RuleFor(u => u.NormalizedEmail, (f, u) => u.Email.ToUpper())
-                .RuleFor(u => u.NormalizedUserName, (f, u) => u.UserName.ToUpper());
+                .RuleFor(u => u.NormalizedUserName, (f, u) => u.UserName.ToUpper())
+                .RuleFor(u => u.SecurityStamp, f => Guid.NewGuid().ToString());
 
             return faker;
         }
