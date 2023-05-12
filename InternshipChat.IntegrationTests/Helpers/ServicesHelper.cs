@@ -47,6 +47,17 @@ namespace InternshipChat.IntegrationTests.Helpers
             return userService;
         }
 
+        public static IMessageService GetMessageService()
+        {
+            CreateDbContext();
+            var serviceProvider = SetupServiceProviders();
+
+            var unitOfWork = new UnitOfWork(_chatContext, serviceProvider);
+            var messageService = new MessageService(unitOfWork);
+
+            return messageService;
+        }
+
         public static ChatContext GetDbContext()
         {
             return _chatContext;

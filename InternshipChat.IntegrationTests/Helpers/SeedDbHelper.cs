@@ -56,6 +56,21 @@ namespace InternshipChat.IntegrationTests.Helpers
             return await chatContext.Chats.FirstOrDefaultAsync(c => c.Name == fakeChat.Name);
         } 
 
+        public static async Task<List<Message>> SeedFakeMessages(ChatContext chatContext, int userId, int chatId)
+        {
+            var messages = new List<Message>();
+            for (int i = 0; i < COUNT_OF_GENERATED_ENTITIES; i++)
+            {
+                var fakeMessage = MessageDataHelper.GenerateFakeMessage(chatId, userId);
+                messages.Add(fakeMessage);
+            }
+
+            await chatContext.Messages.AddRangeAsync(messages);
+            await chatContext.SaveChangesAsync();
+
+            return await chatContext.Messages.ToListAsync();
+        } 
+
         public static async Task<List<Chat>> SeedFakeChats(ChatContext chatContext)
         {
             var chats = new List<Chat>();
@@ -101,10 +116,10 @@ namespace InternshipChat.IntegrationTests.Helpers
             await chatContext.Database.ExecuteSqlRawAsync("DELETE FROM [AspNetUserLogins]");
             await chatContext.Database.ExecuteSqlRawAsync("DELETE FROM [AspNetUserRoles]");
             await chatContext.Database.ExecuteSqlRawAsync("DELETE FROM [UserChats]");
+            await chatContext.Database.ExecuteSqlRawAsync("DELETE FROM [Messages]");
             await chatContext.Database.ExecuteSqlRawAsync("DELETE FROM [AspNetUsers]");
             await chatContext.Database.ExecuteSqlRawAsync("DELETE FROM [AspNetUserTokens]");
             await chatContext.Database.ExecuteSqlRawAsync("DELETE FROM [Chats]");
-            await chatContext.Database.ExecuteSqlRawAsync("DELETE FROM [Messages]");
         }
     }
 }
