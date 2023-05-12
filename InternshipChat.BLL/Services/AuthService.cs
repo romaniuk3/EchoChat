@@ -60,6 +60,14 @@ namespace InternshipChat.BLL.Services
         public async Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
+            if (user == null)
+            {
+                return new ChangePasswordResult
+                {
+                    Successful = false
+                };
+            }
+
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
 
             if (!result.Succeeded)
@@ -84,10 +92,10 @@ namespace InternshipChat.BLL.Services
 
             var creatingResult = await _userManager.CreateAsync(user, registerUserDTO.Password);
 
-            if (creatingResult.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, "User");
-            }
+            //if (creatingResult.Succeeded)
+            //{
+            //    await _userManager.AddToRoleAsync(user, "User");
+            //}
 
             return creatingResult;
         }

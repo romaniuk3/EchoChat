@@ -9,6 +9,7 @@ using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -58,9 +59,32 @@ namespace InternshipChat.IntegrationTests.Helpers
             return messageService;
         }
 
+        public static IAuthService GetAuthService()
+        {
+            CreateDbContext();
+            var serviceProvider = SetupServiceProviders();
+
+            var userManager = serviceProvider.GetService<UserManager<User>>();
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(new AutoMapperProfile())));
+            var configuration = InitConfiguration();
+            var authService = new AuthService(mapper, userManager, configuration);
+
+            return authService;
+        }
+
         public static ChatContext GetDbContext()
         {
             return _chatContext;
+        }
+
+        private static IConfiguration InitConfiguration()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings-test.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            return config;
         }
 
         private static void CreateDbContext()

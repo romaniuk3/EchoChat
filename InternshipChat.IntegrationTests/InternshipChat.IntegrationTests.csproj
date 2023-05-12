@@ -30,4 +30,10 @@
     <ProjectReference Include="..\InternshipChat.DAL\InternshipChat.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings-test.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
