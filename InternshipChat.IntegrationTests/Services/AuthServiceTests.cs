@@ -1,4 +1,6 @@
-﻿using InternshipChat.BLL.Services.Contracts;
+﻿using InternshipChat.BLL.Errors;
+using InternshipChat.BLL.ServiceResult;
+using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Data;
 using InternshipChat.IntegrationTests.Helpers;
 using InternshipChat.Shared.DTO;
@@ -92,7 +94,7 @@ namespace InternshipChat.IntegrationTests.Services
             var changePasswordResult = await _authService.ChangePassword(changePasswordModel);
 
             Assert.That(registeredUser, Is.Not.Null);
-            Assert.That(changePasswordResult.Successful, Is.True);
+            Assert.That(changePasswordResult.IsSuccess, Is.True);
         }
 
         [Test]
@@ -126,10 +128,34 @@ namespace InternshipChat.IntegrationTests.Services
                 NewPassword = "P@ssword2",
                 ConfirmNewPassword = "P@ssword2"
             };
+            var expectedError = Result.Failure(DomainErrors.User.NotFound).Error;
 
             var changePasswordResult = await _authService.ChangePassword(changePasswordModel);
 
-            Assert.That(changePasswordResult.Successful, Is.False);
+            Assert.That(changePasswordResult.IsFailure, Is.True);
+            Assert.That(changePasswordResult.Error, Is.SameAs(expectedError));
+        }
+
+        [Test]
+        public async Task ChangePassword_Returns_IncorrectPasswordError()
+        {
+            await SeedDbHelper.ClearDb(_chatContext);
+
+            var user = await SeedDbHelper.AddUserToDb(_chatContext);
+
+            var changePasswordModel = new ChangePasswordModel
+            {
+                Id = user.Id,
+                CurrentPassword = "P@ssword1",
+                NewPassword = "P@ssword2",
+                ConfirmNewPassword = "P@ssword2"
+            };
+            var expectedError = Result.Failure(DomainErrors.User.IncorrectPassword).Error;
+
+            var changePasswordResult = await _authService.ChangePassword(changePasswordModel);
+
+            Assert.That(changePasswordResult.IsFailure, Is.True);
+            Assert.That(changePasswordResult.Error, Is.SameAs(expectedError));
         }
     }
 }

@@ -104,7 +104,7 @@ namespace InternshipChat.UnitTests.Services
 
             var changePasswordResult = await _authService.ChangePassword(new Shared.Models.ChangePasswordModel());
 
-            Assert.IsTrue(changePasswordResult.Successful);
+            Assert.IsTrue(changePasswordResult.IsSuccess);
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace InternshipChat.UnitTests.Services
 
             var changePasswordResult = await _authService.ChangePassword(new Shared.Models.ChangePasswordModel());
 
-            Assert.IsFalse(changePasswordResult.Successful);
+            Assert.IsTrue(changePasswordResult.IsFailure);
         }
 
         [Test]

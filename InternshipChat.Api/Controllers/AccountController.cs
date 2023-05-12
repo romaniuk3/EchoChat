@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using InternshipChat.Api.Extensions;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Data;
 using InternshipChat.DAL.Entities;
@@ -88,9 +89,9 @@ namespace InternshipChat.Api.Controllers
         {
             var changePasswordResult = await _authService.ChangePassword(model);
 
-            if(!changePasswordResult.Successful)
+            if (changePasswordResult.IsFailure)
             {
-                return BadRequest(changePasswordResult);
+                this.FromError(changePasswordResult.Error);
             }
 
             return Ok(changePasswordResult);

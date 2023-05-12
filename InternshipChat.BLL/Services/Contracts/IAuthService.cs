@@ -1,4 +1,5 @@
-﻿using InternshipChat.DAL.Entities;
+﻿using InternshipChat.BLL.ServiceResult;
+using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;
@@ -16,6 +17,6 @@ namespace InternshipChat.BLL.Services.Contracts
     {
         Task<IdentityResult> Register(RegisterUserDTO registerUserDTO);
         Task<LoginResult> Login (LoginDto loginDto);
-        Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model);
+        Task<Result> ChangePassword(ChangePasswordModel model);
     }
 }

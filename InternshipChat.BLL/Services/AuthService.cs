@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using InternshipChat.BLL.Errors;
+using InternshipChat.BLL.ServiceResult;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Data;
 using InternshipChat.DAL.Entities;
@@ -57,32 +59,23 @@ namespace InternshipChat.BLL.Services
             };
         }
 
-        public async Task<ChangePasswordResult> ChangePassword(ChangePasswordModel model)
+        public async Task<Result> ChangePassword(ChangePasswordModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
+
             if (user == null)
             {
-                return new ChangePasswordResult
-                {
-                    Successful = false
-                };
+                return Result.Failure(DomainErrors.User.NotFound);
             }
 
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
 
             if (!result.Succeeded)
             {
-                return new ChangePasswordResult
-                {
-                    Successful = false,
-                    Errors = result.Errors.Select(e => e.Description)
-                };
+                return Result.Failure(DomainErrors.User.IncorrectPassword);
             }
 
-            return new ChangePasswordResult
-            {
-                Successful = true
-            };
+            return Result.Success();
         }
 
         public async Task<IdentityResult> Register(RegisterUserDTO registerUserDTO)

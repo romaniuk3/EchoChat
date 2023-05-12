@@ -19,6 +19,7 @@ namespace InternshipChat.BLL.Errors
         {
             public static readonly Error NotFound = new Error(ResultType.NotFound, "There is no user with given id.");
             public static readonly Error UserExists = new Error(ResultType.Invalid, "User with given name already exists.");
+            public static readonly Error IncorrectPassword = new Error(ResultType.Invalid, "Make sure you have provided the correct password.");
         }
     }
 }
