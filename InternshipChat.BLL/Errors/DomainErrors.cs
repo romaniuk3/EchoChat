@@ -1,4 +1,5 @@
-﻿using InternshipChat.BLL.ServiceResult;
+﻿using FluentValidation.Results;
+using InternshipChat.BLL.ServiceResult;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,21 @@ namespace InternshipChat.BLL.Errors
             public static readonly Error NotFound = new Error(ResultType.NotFound, "There is no user with given id.");
             public static readonly Error UserExists = new Error(ResultType.Invalid, "User with given name already exists.");
             public static readonly Error IncorrectPassword = new Error(ResultType.Invalid, "Make sure you have provided the correct password.");
+        }
+
+        public static class Auth
+        {
+            public static readonly Error IncorrectData = new Error(ResultType.Invalid, "Incorrect login or password.");
+        }
+
+        public static class Validation
+        {
+            public static Error ValidationError(List<ValidationFailure> errors) => new Error(ResultType.ValidationErrors, ValidationErrorsToMessages(errors));
+
+            private static List<string> ValidationErrorsToMessages(List<ValidationFailure> errors)
+            {
+                return errors.Select(e => e.ErrorMessage).ToList();
+            }
         }
     }
 }

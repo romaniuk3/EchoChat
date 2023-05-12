@@ -10,6 +10,7 @@ namespace InternshipChat.BLL.ServiceResult
     {
         Ok,
         Invalid,
+        ValidationErrors,
         Unathorized,
         NotFound
     }

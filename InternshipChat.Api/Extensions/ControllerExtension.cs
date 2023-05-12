@@ -10,9 +10,11 @@ namespace InternshipChat.Api.Extensions
             switch (error.Code)
             {
                 case ResultType.NotFound:
-                    return controller.NotFound(error.Message);
+                    return controller.NotFound(error.Messages);
                 case ResultType.Invalid:
-                    return controller.BadRequest(error.Message);
+                    return controller.BadRequest(error.Messages);
+                case ResultType.ValidationErrors:
+                    return controller.BadRequest(error.Messages);
                 case ResultType.Unathorized:
                     return controller.Unauthorized();
                 default:

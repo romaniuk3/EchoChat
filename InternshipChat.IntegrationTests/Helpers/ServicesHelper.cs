@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using InternshipChat.BLL.Mapping;
 using InternshipChat.BLL.Services;
 using InternshipChat.BLL.Services.Contracts;
+using InternshipChat.BLL.Validators;
 using InternshipChat.DAL.Data;
 using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Repositories;
@@ -65,9 +67,11 @@ namespace InternshipChat.IntegrationTests.Helpers
             var serviceProvider = SetupServiceProviders();
 
             var userManager = serviceProvider.GetService<UserManager<User>>();
+            var loginValidator = serviceProvider.GetService<LoginDtoValidator>();
+            var registerValidator = serviceProvider.GetService<RegisterDTOValidator>();
             var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(new AutoMapperProfile())));
             var configuration = InitConfiguration();
-            var authService = new AuthService(mapper, userManager, configuration);
+            var authService = new AuthService(mapper, userManager, configuration, loginValidator, registerValidator);
 
             return authService;
         }
@@ -104,6 +108,9 @@ namespace InternshipChat.IntegrationTests.Helpers
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IUserChatsRepository, UserChatsRepository>();
             services.AddScoped(_ => _chatContext);
+            services.AddValidatorsFromAssemblyContaining<LoginDtoValidator>();
+            services.AddValidatorsFromAssemblyContaining<UserDTOValidator>();
+            services.AddValidatorsFromAssemblyContaining<RegisterDTOValidator>();
             services.AddIdentityCore<User>(opt =>
             {
                 opt.User.RequireUniqueEmail = true;

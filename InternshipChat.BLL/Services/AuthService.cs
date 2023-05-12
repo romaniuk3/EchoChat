@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using InternshipChat.BLL.Errors;
 using InternshipChat.BLL.ServiceResult;
 using InternshipChat.BLL.Services.Contracts;
@@ -28,26 +29,33 @@ namespace InternshipChat.BLL.Services
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IValidator<LoginDto> _loginValidator;
+        private readonly IValidator<RegisterUserDTO> _registerValidator;
 
-        public AuthService(IMapper mapper, UserManager<User> userManager, IConfiguration configuration)
+        public AuthService(IMapper mapper, UserManager<User> userManager, IConfiguration configuration, 
+            IValidator<LoginDto> loginValidator, IValidator<RegisterUserDTO> registerValidator)
         {
             _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
+            _loginValidator = loginValidator;
+            _registerValidator = registerValidator;
         }
 
-        public async Task<LoginResult> Login(LoginDto loginDto)
+        public async Task<Result<LoginResult>> Login(LoginDto loginDto)
         {
+            var validation = await _loginValidator.ValidateAsync(loginDto);
+            if (!validation.IsValid)
+            {
+                return Result.Failure<LoginResult>(DomainErrors.Validation.ValidationError(validation.Errors));
+            }
+
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             bool isPasswordValid = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             
             if(user == null || !isPasswordValid)
             {
-                return new LoginResult
-                {
-                    Successful = false,
-                    Error = "Username and password are invalid."
-                };
+                return Result.Failure<LoginResult>(DomainErrors.Auth.IncorrectData);
             }
 
             var token = await GenerateToken(user);
@@ -78,19 +86,20 @@ namespace InternshipChat.BLL.Services
             return Result.Success();
         }
 
-        public async Task<IdentityResult> Register(RegisterUserDTO registerUserDTO)
+        public async Task<Result> Register(RegisterUserDTO registerUserDTO)
         {
+            var validation = await _registerValidator.ValidateAsync(registerUserDTO);
+            if (!validation.IsValid)
+            {
+                return Result.Failure(DomainErrors.Validation.ValidationError(validation.Errors));
+            }
+
             var user = _mapper.Map<User>(registerUserDTO);
             user.UserName = registerUserDTO.Email;
 
-            var creatingResult = await _userManager.CreateAsync(user, registerUserDTO.Password);
+            await _userManager.CreateAsync(user, registerUserDTO.Password);
 
-            //if (creatingResult.Succeeded)
-            //{
-            //    await _userManager.AddToRoleAsync(user, "User");
-            //}
-
-            return creatingResult;
+            return Result.Success();
         }
 
         private async Task<string> GenerateToken(User user)

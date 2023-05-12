@@ -2,6 +2,7 @@
 using Bogus.DataSets;
 using InternshipChat.BLL.Services;
 using InternshipChat.BLL.Services.Contracts;
+using InternshipChat.BLL.Validators;
 using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
@@ -29,6 +30,8 @@ namespace InternshipChat.UnitTests.Services
         private Mock<UserManager<User>> _mockUserManager;
         private Mock<IMapper> _mockMapper;
         private Mock<IConfiguration> _mockConfiguration;
+        private Mock<LoginDtoValidator> _mockLoginValidator;
+        private Mock<RegisterDTOValidator> _mockRegisterValidator;
 
         [SetUp]
         public void SetUp() 
@@ -132,7 +135,7 @@ namespace InternshipChat.UnitTests.Services
 
             var result = await _authService.Register(registerModel);
 
-            Assert.IsTrue(result.Succeeded);
+            Assert.IsTrue(result.IsSuccess);
         }
 
         [Test]
@@ -149,7 +152,7 @@ namespace InternshipChat.UnitTests.Services
 
             var result = await _authService.Register(registerModel);
 
-            Assert.IsFalse(result.Succeeded);
+            Assert.IsFalse(result.IsSuccess);
         }
 
         public void SetUpTokenConfig()

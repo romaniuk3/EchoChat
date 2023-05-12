@@ -22,14 +22,10 @@ namespace InternshipChat.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly IValidator<LoginDto> _loginValidator;
-        private readonly IValidator<RegisterUserDTO> _registerValidator;
 
-        public AccountController(IAuthService authService, IValidator<LoginDto> loginValidator, IValidator<RegisterUserDTO> registerValidator)
+        public AccountController(IAuthService authService)
         {
             _authService = authService;
-            _loginValidator = loginValidator;
-            _registerValidator = registerValidator;
         }
 
         [HttpPost]
@@ -39,22 +35,14 @@ namespace InternshipChat.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> Register(RegisterUserDTO registerUserDTO)
         {
-            var validation = await _registerValidator.ValidateAsync(registerUserDTO);
-            if (!validation.IsValid)
-            {
-                return BadRequest(validation.Errors);
-            }
-
             var registerResult = await _authService.Register(registerUserDTO);
 
-            if (!registerResult.Succeeded)
+            if (registerResult.IsFailure)
             {
-                var errors = registerResult.Errors.Select(x => x.Description);
-
-                return BadRequest(new RegisterResult { Successful = false, Errors = errors });
+                return this.FromError(registerResult.Error);
             }
 
-            return Ok(new RegisterResult { Successful = true });
+            return Ok();
         }
 
         [HttpPost]
@@ -64,19 +52,13 @@ namespace InternshipChat.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> Login(LoginDto loginDto)
         {
-            var validation = await _loginValidator.ValidateAsync(loginDto);
-            if (!validation.IsValid)
+            var loginResult = await _authService.Login(loginDto);
+            if (loginResult.IsFailure)
             {
-                return BadRequest(validation.Errors);
+                return this.FromError(loginResult.Error);
             }
 
-            var authResponse = await _authService.Login(loginDto);
-            if (!authResponse.Successful)
-            {
-                return BadRequest(authResponse);
-            }
-
-            return Ok(authResponse);
+            return Ok(loginResult.Value);
         }
 
         [Authorize]
