@@ -24,9 +24,7 @@ steps:
   displayName: 'Publish packaging'
   inputs:
     command: publish
-    projects: |
-      **/*.csproj
-      !**/InternshipChat.WEB.csproj
+    publishWebProjects: false
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: false 
 
