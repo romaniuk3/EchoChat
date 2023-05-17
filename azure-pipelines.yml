@@ -6,5 +6,14 @@ pool:
   vmImage: 'komputer'
   
 steps:
-- script: dotnet build
-  displayName: 'dotnet Build'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: false
