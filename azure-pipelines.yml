@@ -1,0 +1,10 @@
+trigger:
+- master
+
+pool:
+  name: 'default'
+  vmImage: 'komputer'
+  
+steps:
+- script: echo Hello World!
+  displayName: 'Run one line script'
