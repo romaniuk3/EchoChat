@@ -6,5 +6,5 @@ pool:
   vmImage: 'komputer'
   
 steps:
-- script: echo Hello World!
-  displayName: 'Run one line script'
+- script: dotnet build
+  displayName: 'dotnet Build'
