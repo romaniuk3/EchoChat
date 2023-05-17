@@ -1,9 +1,21 @@
-# Example of how access the variables from Pipelines Library
-- stage: Development
-# [...]
-  variables:
-  - group: bookstore
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
 
-# Example of how the variables from Pipelines Library can be used in the pipeline:
-# $(Name-of-variable)
-# $(SqlServer-Password)
+trigger:
+- master
+
+pool:
+  name: default
+  vmImage: komputer
+
+steps:
+- script: pwd
+  displayName: 'what directory are we in ?'
+
+- script: ls -la
+  displayName: 'what files are in this folder?'
+
+- script: dotnet build
+  displayName: 'dotnet build'
