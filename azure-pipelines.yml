@@ -25,7 +25,8 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: InternshipChat.WEB.csproj
+    projects: |
+      **/InternshipChat.WEB.csproj
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: false 
 
