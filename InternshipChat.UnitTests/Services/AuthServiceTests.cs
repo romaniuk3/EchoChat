@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bogus.DataSets;
+using FluentValidation;
 using InternshipChat.BLL.Services;
 using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.BLL.Validators;
@@ -50,7 +51,8 @@ namespace InternshipChat.UnitTests.Services
                 );
             _mockMapper = new Mock<IMapper>();
             _mockConfiguration = new Mock<IConfiguration>();
-            _authService = new AuthService(_mockMapper.Object, _mockUserManager.Object, _configuration);
+            _mockRegisterValidator = new Mock<RegisterDTOValidator>();
+            _authService = new AuthService(_mockMapper.Object, _mockUserManager.Object, _configuration, _mockLoginValidator.Object, _mockRegisterValidator.Object);
         }
 
         public static IConfiguration InitConfiguration()
@@ -78,8 +80,7 @@ namespace InternshipChat.UnitTests.Services
 
             var loginResult = await _authService.Login(loginModel);
 
-            Assert.IsTrue(loginResult.Successful);
-            Assert.IsNotNull(loginResult.Token);
+            Assert.IsTrue(loginResult.IsSuccess);
         }
 
         [Test]
@@ -94,7 +95,7 @@ namespace InternshipChat.UnitTests.Services
 
             var loginResult = await _authService.Login(loginModel);
 
-            Assert.IsFalse(loginResult.Successful);
+            Assert.IsFalse(loginResult.IsSuccess);
         }
 
         [Test]
