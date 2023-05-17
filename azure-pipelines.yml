@@ -2,7 +2,8 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-latest'
+  name: 'default'
+  vmImage: 'komputer'
   
 steps:
 - script: echo Hello World!
