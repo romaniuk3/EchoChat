@@ -20,27 +20,19 @@ steps:
       **/*.csproj
       !**/InternshipChat.WEB.csproj
 
-- task: CopyFiles@2
-  displayName: Add dacpacs to artifact
-  inputs:
-    Contents: '**\*.dacpac'
-    TargetFolder: '$(build.artifactStagingDirectory)/dacpacs'
-    flattenFolders: true
+# - task: CopyFiles@2
+#   displayName: Add dacpacs to artifact
+#   inputs:
+#     Contents: '**\*.dacpac'
+#     TargetFolder: '$(build.artifactStagingDirectory)/dacpacs'
+#     flattenFolders: true
 
-- task: CmdLine@2
-  displayName: Starting MSSQLLocalDB
-  inputs:
-    script: |
-      sqllocaldb  start MSSQLLocalDB
-      sqllocaldb  info MSSQLLocalDB
-
-- task: SqlDacpacDeploymentOnMachineGroup@0
-  displayName: Publishing Database Project to MSSQLLocalDB
-  inputs:
-    TaskType: 'dacpac'
-    DacpacFile: '$(build.artifactStagingDirectory)/dacpacs/ChatDbProject.dacpac'
-    TargetMethod: 'connectionString'
-    ConnectionString: 'Server=(localdb)\MSSQLLocalDB;Integrated Security=true;Database=IntegrationTestsDb'
+# - task: CmdLine@2
+#   displayName: Starting MSSQLLocalDB
+#   inputs:
+#     script: |
+#       sqllocaldb  start MSSQLLocalDB
+#       sqllocaldb  info MSSQLLocalDB
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish packaging'
