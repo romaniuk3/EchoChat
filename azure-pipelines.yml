@@ -16,7 +16,9 @@ steps:
   displayName: 'Build'
   inputs:
     command: 'build'
-    projects: '!**/InternshipChat.WEB.csproj'
+    projects: |
+      **/*.csproj
+      !**/InternshipChat.WEB.csproj
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish packaging'
