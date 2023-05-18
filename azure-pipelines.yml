@@ -23,9 +23,7 @@ steps:
   displayName: 'Build'
   inputs:
     command: 'build'
-    projects: |
-      **/*.csproj
-      !**/InternshipChat.WEB.csproj
+    projects: '**/*.csproj'
 
 - task: MSBuild@1
   displayName: 'DB project build'
@@ -64,9 +62,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: |
-      **/*.csproj
-      !**/InternshipChat.WEB.csproj
+    projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: true 
 
