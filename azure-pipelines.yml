@@ -13,6 +13,13 @@ steps:
     version: '6.x'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Restore'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+
+- task: DotNetCoreCLI@2
   displayName: 'Build'
   inputs:
     command: 'build'
@@ -35,11 +42,10 @@ steps:
 - task: CmdLine@2
   displayName: 'Start LocalDb'
   inputs:
-    script: |
-      sqllocaldb  start MSSQLLocalDB
-      sqllocaldb  info MSSQLLocalDB
+    script: sqllocaldb  start MSSQLLocalDB
 
 - task: SqlDacpacDeploymentOnMachineGroup@0
+  displayName: 'Deploy DBProject to localDB'
   inputs:
     TaskType: 'dacpac'
     DacpacFile: '$(build.artifactStagingDirectory)/dacpacs/**.dacpac'
@@ -62,7 +68,7 @@ steps:
       **/*.csproj
       !**/InternshipChat.WEB.csproj
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: false 
+    zipAfterPublish: true 
 
 - task: PublishBuildArtifacts@1    
   displayName: 'Publish Artifact: drop'
