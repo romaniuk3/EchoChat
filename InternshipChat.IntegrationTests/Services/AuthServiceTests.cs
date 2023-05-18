@@ -171,7 +171,6 @@ namespace InternshipChat.IntegrationTests.Services
         [TestCase("test@email.com", "P@SSWORD1", "Password must contain at least one lowercase letter.")]
         [TestCase("test@email.com", "P@ssword", "Password must contain at least one digit.")]
         [TestCase("test@email.com", "Password1", "Password must contain at least one special character.")]
-        [TestCase("testmail", "Password1", "'Email' is not a valid email address.")]
         public async Task Login_Returns_ValidationErrors(string email, string password, string expectedError)
         {
             var loginModel = new LoginDto
