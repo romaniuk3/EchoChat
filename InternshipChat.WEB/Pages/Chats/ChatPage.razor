@@ -5,6 +5,7 @@
 @using InternshipChat.WEB.Services.Contracts;
 @using Microsoft.AspNetCore.SignalR.Client;
 @inject IChatService chatService
+@inject IAuthService AuthService
 @inject IMessageService messageService
 @inject IUserService userService
 @inject IConfiguration Configuration
@@ -81,7 +82,10 @@
         if (hubConnection == null)
         {
             var url = Configuration["AppBase"] + "chathub";
-            hubConnection = new HubConnectionBuilder().WithUrl(url).Build();
+            hubConnection = new HubConnectionBuilder().WithUrl(url, options =>
+            {
+                options.AccessTokenProvider = async () => await AuthService.GetTokenAsync();
+            }).Build();
         }
 
         if (hubConnection.State == HubConnectionState.Disconnected)
