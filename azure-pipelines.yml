@@ -16,12 +16,55 @@ steps:
   displayName: 'Build'
   inputs:
     command: 'build'
-    projects: '**/*.csproj'
+    projects: |
+      **/*.csproj
+      !**/InternshipChat.WEB.csproj
+
+- task: MSBuild@1
+  displayName: 'DB project build'
+  inputs:
+    solution: '**/ChatDbProject/ChatDbProject.sqlproj'
+
+- task: CopyFiles@2
+  displayName: 'Copy dacpac'
+  inputs:
+    Contents: '**/*.dacpac'
+    TargetFolder: '$(build.artifactStagingDirectory)/dacpacs'
+    flattenFolders: true
+
+- task: CmdLine@2
+  displayName: 'Start LocalDb'
+  inputs:
+    script: |
+      sqllocaldb  start MSSQLLocalDB
+      sqllocaldb  info MSSQLLocalDB
+
+- task: SqlDacpacDeploymentOnMachineGroup@0
+  inputs:
+    TaskType: 'dacpac'
+    DacpacFile: '$(build.artifactStagingDirectory)/dacpacs/**.dacpac'
+    TargetMethod: 'connectionString'
+    ConnectionString: 'Server=(localdb)\MSSQLLocalDB;Integrated Security=true;Database=InternshipChatLocal'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Publish'
+  displayName: 'Integration tests'
   inputs:
-    command: 'publish'
+    command: 'test'
+    projects: './InternshipChat.IntegrationTests/InternshipChat.IntegrationTests.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish packaging'
+  inputs:
+    command: publish
     publishWebProjects: false
-    arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: false
+    projects: |
+      **/*.csproj
+      !**/InternshipChat.WEB.csproj
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: false 
+
+- task: PublishBuildArtifacts@1    
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
