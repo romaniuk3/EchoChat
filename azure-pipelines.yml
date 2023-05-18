@@ -44,7 +44,7 @@ steps:
     TaskType: 'dacpac'
     DacpacFile: '$(build.artifactStagingDirectory)/dacpacs/**.dacpac'
     TargetMethod: 'connectionString'
-    ConnectionString: 'Data Source=(localdb)\\LocalDB;Initial Catalog=InternshipChatLocal;Integrated Security=true;'
+    ConnectionString: 'Server=(localdb)\LocalDB;Initial Catalog=InternshipChatLocal;Integrated Security=true;'
 
 - task: DotNetCoreCLI@2
   displayName: 'Integration tests'
