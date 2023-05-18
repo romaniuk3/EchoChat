@@ -20,12 +20,12 @@ steps:
       **/*.csproj
       !**/InternshipChat.WEB.csproj
 
-# - task: CopyFiles@2
-#   displayName: Add dacpacs to artifact
-#   inputs:
-#     Contents: '**\*.dacpac'
-#     TargetFolder: '$(build.artifactStagingDirectory)/dacpacs'
-#     flattenFolders: true
+- task: CopyFiles@2
+  displayName: 'Copy dacpac'
+  inputs:
+    Contents: '**/*.dacpac'
+    TargetFolder: '$(build.artifactStagingDirectory)/dacpacs'
+    flattenFolders: true
 
 # - task: CmdLine@2
 #   displayName: Starting MSSQLLocalDB
