@@ -23,7 +23,7 @@ steps:
 - task: MSBuild@1
   displayName: 'DB project build'
   inputs:
-    solution: '/ChatDbProject/ChatDbProject.sqlproj'
+    solution: '**/ChatDbProject/ChatDbProject.sqlproj'
 
 - task: CopyFiles@2
   displayName: 'Copy dacpac'
