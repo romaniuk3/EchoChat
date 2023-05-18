@@ -9,6 +9,7 @@ using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.Models;
 using Azure;
 using InternshipChat.Shared.DTO.UserDtos;
+using System.Text.Json.Serialization;
 
 namespace InternshipChat.WEB.Services.Auth
 {
@@ -44,12 +45,18 @@ namespace InternshipChat.WEB.Services.Auth
         {
             var loginAsJson = JsonSerializer.Serialize(loginModel);
             var response = await _httpClient.PostAsync("api/account/login", new StringContent(loginAsJson, Encoding.UTF8, "application/json"));
-            var loginResult = JsonSerializer.Deserialize<LoginResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             if (!response.IsSuccessStatusCode)
             {
-                return loginResult;
+                return new LoginResult
+                {
+                    Successful = false,
+                    Error = "Username or password is incorrect."
+                };
             }
+
+            var loginResult = JsonSerializer.Deserialize<LoginResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
 
             await _localStorage.SetItemAsync("authToken", loginResult.Token);
             ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
