@@ -32,12 +32,26 @@ steps:
     TargetFolder: '$(build.artifactStagingDirectory)/dacpacs'
     flattenFolders: true
 
-# - task: CmdLine@2
-#   displayName: Starting MSSQLLocalDB
-#   inputs:
-#     script: |
-#       sqllocaldb  start MSSQLLocalDB
-#       sqllocaldb  info MSSQLLocalDB
+- task: CmdLine@2
+  displayName: 'Start LocalDb'
+  inputs:
+    script: |
+      sqllocaldb  start MSSQLLocalDB
+      sqllocaldb  info MSSQLLocalDB
+
+- task: SqlDacpacDeploymentOnMachineGroup@0
+  inputs:
+    TaskType: 'dacpac'
+    DacpacFile: '$(build.artifactStagingDirectory)/dacpacs/**.dacpac'
+    TargetMethod: 'connectionString'
+    ConnectionString: 'Server=(localdb)\MSSQLLocalDB;Integrated Security=true;Database=IntegrationTestsDb'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Integration tests'
+  inputs:
+    command: 'test'
+    projects: './InternshipChat.IntegrationTests/InternshipChat.IntegrationTests.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish packaging'
