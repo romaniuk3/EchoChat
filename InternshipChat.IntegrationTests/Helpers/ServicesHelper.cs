@@ -23,7 +23,7 @@ namespace InternshipChat.IntegrationTests.Helpers
 {
     public class ServicesHelper
     {
-        private static readonly string LOCALDB_CONNECTION_STRING = "Data Source=(localdb)\\LocalDB;Initial Catalog=InternshipChatLocal;Integrated Security=true;";
+        private static readonly string LOCALDB_CONNECTION_STRING = "Server=(localdb)\\MSSQLLocalDB;Integrated Security=true;Database=InternshipChatLocal";
         private static ChatContext _chatContext;
 
         public static IChatService GetChatService()
