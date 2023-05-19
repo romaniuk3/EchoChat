@@ -1,0 +1,119 @@
+﻿@using InternshipChat.WEB.Enums;
+@using InternshipChat.WEB.Pages.VideoCall;
+@using InternshipChat.WEB.Services.Contracts;
+@using InternshipChat.WEB.StateContainers;
+@using Microsoft.AspNetCore.Components.Authorization;
+@using Microsoft.AspNetCore.SignalR.Client;
+@using MudBlazor;
+@inject IConfiguration Configuration
+@inject CallStateContainer CallContainer
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IDialogService DialogService
+@inject IAuthService AuthService
+@implements IDisposable
+
+@code {
+    private HubConnection hubConnection;
+    public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
+    private string CurrentUserName { get; set; }
+    private string CallerUserName { get; set; } = string.Empty;
+    private List<IDisposable> subscriptions = new();
+    private AuthenticationState authState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        CurrentUserName = authState.User.Identity!.Name!;
+        await SetHubConnection();
+    }
+
+    private async Task SetHubConnection()
+    {
+        if (authState.User!.Identity!.IsAuthenticated)
+        {
+            var url = Configuration["AppBase"] + "chathub";
+            hubConnection = new HubConnectionBuilder().WithUrl(url, options =>
+            {
+                options.AccessTokenProvider = async () => await AuthService.GetTokenAsync();
+            }).Build();
+            await hubConnection.StartAsync();
+
+            SubscribeToHubSignals();
+            CallContainer.CallStateChanged += HandleStateChange;
+        }
+    }
+
+    private async void HandleStateChange()
+    {
+        if (CallContainer.UserCallState == CallState.Outgoing)
+        {
+            await hubConnection.SendAsync("Call", CurrentUserName, CallContainer.ReceiverUserName);
+            CallContainer.ChangeCallState(CallState.InCall);
+            OpenCallDialog(IsCallReceiver: false);
+        }
+
+        if (CallContainer.UserCallState == CallState.Incoming)
+        {
+            var parameters = new DialogParameters { ["caller"] = CallerUserName };
+            var options = new DialogOptions { DisableBackdropClick = true };
+            var dialog = DialogService.Show<CallModal>("Incoming Call", parameters, options);
+            var result = await dialog.Result;
+            if (!result.Canceled)
+            {
+                CallContainer.ChangeCallState(CallState.InCall);
+                OpenCallDialog(IsCallReceiver: true);
+            }
+            else
+            {
+                await hubConnection.SendAsync("EndCall");
+            }
+        }
+    }
+
+    private void OpenCallDialog(bool IsCallReceiver)
+    {
+        var parameters = new DialogParameters { ["receiver"] = "aaa@example.com" };
+        var options = new DialogOptions { DisableBackdropClick = true };
+        IDialogReference dialog;
+        if (IsCallReceiver)
+        {
+            dialog = DialogService.Show<VideoCall>("In progress", parameters, options);
+        }
+        else
+        {
+            dialog = DialogService.Show<VideoCall>("In progress", options);
+        }
+    }
+
+    private IDisposable SubscribeToCallOffer()
+    {
+        return hubConnection.On<string, string>("ReceiveCallOffer", async (string callerUserName, string receiverUserName) =>
+        {
+            if (CurrentUserName == receiverUserName)
+            {
+                CallerUserName = callerUserName;
+                CallContainer.ChangeCallState(CallState.Incoming);
+                StateHasChanged();
+            }
+        });
+    }
+
+    private void SubscribeToHubSignals()
+    {
+        subscriptions.Add(SubscribeToCallOffer());
+    }
+
+    public void Dispose()
+    {
+        subscriptions.ForEach(s => s.Dispose());
+        InvokeAsync(async () =>
+        {
+            if (hubConnection != null)
+            {
+                await hubConnection.StopAsync();
+            }
+        });
+
+        CallContainer.CallStateChanged -= HandleStateChange;
+    }
+}
