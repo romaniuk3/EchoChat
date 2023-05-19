@@ -11,7 +11,7 @@ using MudBlazor.Services;
 using IMessageService = InternshipChat.WEB.Services.Contracts.IMessageService;
 
 var builder = WebApplication.CreateBuilder(args);
-string appBase = builder.Configuration["AppBase"];
+string appBase = string.Empty;
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -26,13 +26,16 @@ builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<CallStateContainer>();
 
-//if (builder.Environment.IsProduction())
-//{
-//    var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
-//    var azureCredential = new DefaultAzureCredential();
-//    builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
-//    appBase = builder.Configuration.GetSection("apiappbase").Value!;
-//}
+if (builder.Environment.IsProduction())
+{
+    var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
+    var azureCredential = new DefaultAzureCredential();
+    builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+    appBase = builder.Configuration.GetSection("apiappbase").Value!;
+} else if (builder.Environment.IsDevelopment())
+{
+    appBase = builder.Configuration["AppBase"];
+}
 
 builder.Services.AddScoped(serviceProvider => new HttpClient
 {
