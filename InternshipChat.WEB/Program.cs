@@ -26,13 +26,13 @@ builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<CallStateContainer>();
 
-if (builder.Environment.IsProduction())
-{
-    var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
-    var azureCredential = new DefaultAzureCredential();
-    builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
-    appBase = builder.Configuration.GetSection("apiappbase").Value!;
-}
+//if (builder.Environment.IsProduction())
+//{
+//    var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
+//    var azureCredential = new DefaultAzureCredential();
+//    builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+//    appBase = builder.Configuration.GetSection("apiappbase").Value!;
+//}
 
 builder.Services.AddScoped(serviceProvider => new HttpClient
 {
