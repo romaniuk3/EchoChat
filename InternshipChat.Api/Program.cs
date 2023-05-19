@@ -1,3 +1,4 @@
+using Azure.Identity;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using InternshipChat.Api.Extensions;
@@ -20,7 +21,13 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
+var azureCredential = new DefaultAzureCredential();
+builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+
+var connectionString = builder.Configuration.GetSection("azuresqlconnectionstring").Value;
+builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(connectionString));
+//builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
