@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Blazored.LocalStorage;
 using InternshipChat.WEB.Services;
 using InternshipChat.WEB.Services.Auth;
@@ -10,6 +11,7 @@ using MudBlazor.Services;
 using IMessageService = InternshipChat.WEB.Services.Contracts.IMessageService;
 
 var builder = WebApplication.CreateBuilder(args);
+string appBase = builder.Configuration["AppBase"];
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -23,10 +25,20 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<CallStateContainer>();
+
+if (builder.Environment.IsProduction())
+{
+    var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
+    var azureCredential = new DefaultAzureCredential();
+    builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+    appBase = builder.Configuration.GetSection("apiappbase").Value!;
+}
+
 builder.Services.AddScoped(serviceProvider => new HttpClient
 {
-    BaseAddress = new Uri(builder.Configuration["AppBase"])
+    BaseAddress = new Uri(appBase)
 });
+
 builder.Services.AddMudServices();
 var app = builder.Build();
 

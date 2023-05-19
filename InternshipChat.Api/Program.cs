@@ -21,13 +21,21 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
-var azureCredential = new DefaultAzureCredential();
-builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
 
-var connectionString = builder.Configuration.GetSection("azuresqlconnectionstring").Value;
+string connectionString = string.Empty;
+
+if (builder.Environment.IsProduction())
+{
+    var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
+    var azureCredential = new DefaultAzureCredential();
+    builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+    connectionString = builder.Configuration.GetSection("azuresqlconnectionstring").Value!;
+} else if (builder.Environment.IsDevelopment())
+{
+    connectionString = builder.Configuration.GetConnectionString("Default")!;
+}
+
 builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(connectionString));
-//builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
