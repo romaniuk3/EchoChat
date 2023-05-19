@@ -26,17 +26,6 @@ builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<CallStateContainer>();
 
-//if (builder.Environment.IsProduction())
-//{
-//    var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
-//    var azureCredential = new DefaultAzureCredential();
-//    builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
-//    appBase = builder.Configuration.GetSection("apiappbase").Value!;
-//} else if (builder.Environment.IsDevelopment())
-//{
-//    appBase = builder.Configuration["AppBase"];
-//}
-
 builder.Services.AddScoped(serviceProvider => new HttpClient
 {
     BaseAddress = new Uri(appBase)
