@@ -7,9 +7,10 @@
 @inject NavigationManager Navigation;
 @inject IConfiguration Configuration
 @inject CallStateContainer CallContainer
-@inject AuthenticationStateProvider AuthState
+@inject AuthenticationStateProvider AuthStateProvider
 @inject IDialogService DialogService
 @inject IAuthService AuthService
+@implements IDisposable
 
 <PageTitle>InternshipChat.WEB</PageTitle>
 
@@ -41,17 +42,19 @@
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
     private string CurrentUserName { get; set; }
     private string CallerUserName { get; set; } = string.Empty;
+    private List<IDisposable> subscriptions = new();
+    private AuthenticationState authState;
+
 
     protected override async Task OnInitializedAsync()
     {
-        await DefineCurrentUser();
-        CallContainer.CallStateChanged += HandleStateChange;
-        SetHubConnection();
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        CurrentUserName = authState.User.Identity!.Name!;
+        await SetHubConnection();
     }
 
-    private async void SetHubConnection()
+    private async Task SetHubConnection()
     {
-        var authState = await AuthState.GetAuthenticationStateAsync();
         if (authState.User!.Identity!.IsAuthenticated)
         {
             var url = Configuration["AppBase"] + "chathub";
@@ -61,7 +64,8 @@
             }).Build();
             await hubConnection.StartAsync();
 
-            SubscribeOnHubSignals();
+            SubscribeToHubSignals();
+            CallContainer.CallStateChanged += HandleStateChange;
         }
     }
 
@@ -98,31 +102,40 @@
         IDialogReference dialog;
         if (IsCallReceiver)
         {
-             dialog = DialogService.Show<VideoCall>("In progress", parameters, options);
+            dialog = DialogService.Show<VideoCall>("In progress", parameters, options);
         } else
         {
-             dialog = DialogService.Show<VideoCall>("In progress", options);
+            dialog = DialogService.Show<VideoCall>("In progress", options);
         }
     }
 
-    private async Task DefineCurrentUser()
+    private IDisposable SubscribeToCallOffer()
     {
-        var authState = await AuthState.GetAuthenticationStateAsync();
-        CurrentUserName = authState.User.Identity!.Name!;
-    }
-
-    private async Task OnReceiveCallOffer(string callerUserName, string receiverUserName)
-    {
-        if (CurrentUserName == receiverUserName)
+        return hubConnection.On<string, string>("ReceiveCallOffer", async (string callerUserName, string receiverUserName) =>
         {
-            CallerUserName = callerUserName;
-            CallContainer.ChangeCallState(CallState.Incoming);
-            StateHasChanged();
-        }
+            if (CurrentUserName == receiverUserName)
+            {
+                CallerUserName = callerUserName;
+                CallContainer.ChangeCallState(CallState.Incoming);
+                StateHasChanged();
+            }
+        });
     }
 
-    private void SubscribeOnHubSignals()
+    private void SubscribeToHubSignals()
     {
-        hubConnection.On<string, string>("ReceiveCallOffer", this.OnReceiveCallOffer);
+        subscriptions.Add(SubscribeToCallOffer());
+    }
+
+    public void Dispose()
+    {
+        subscriptions.ForEach(s => s.Dispose());
+        InvokeAsync(async () =>
+        {
+            if (hubConnection != null)
+            {
+                await hubConnection.StopAsync();
+            }
+        });
     }
 }

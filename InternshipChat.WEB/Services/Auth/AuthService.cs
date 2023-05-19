@@ -59,7 +59,9 @@ namespace InternshipChat.WEB.Services.Auth
 
 
             await _localStorage.SetItemAsync("authToken", loginResult.Token);
+            ((ApiAuthenticationStateProvider)_authenticationStateProvider).NotifyAuthStateChanged();
             ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
+
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResult.Token);
 
             return loginResult;

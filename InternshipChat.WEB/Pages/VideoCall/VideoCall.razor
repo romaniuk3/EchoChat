@@ -5,6 +5,7 @@
 @inject AuthenticationStateProvider AuthState
 @inject IConfiguration Configuration
 @inject IAuthService AuthService
+@implements IDisposable
 
 <MudDialog>
     <TitleContent>
@@ -34,6 +35,7 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [CascadingParameter] public HubConnection hubConnection { get; set; }
     [Parameter] public string receiver { get; set; } = string.Empty;
+    private List<IDisposable> subscriptions = new();
 
     public string CurrentUserName { get; set; }
     public string MyPeerId { get; set; }
@@ -44,26 +46,12 @@
         await DefineUser();
         await OpenHubConnection();
         await _jsRuntime.InvokeVoidAsync("startLocalStream");
-        SubscribeOnHubSignals();
+        SubscribeToHubSignals();
 
         if (!string.IsNullOrEmpty(receiver))
         {
             await hubConnection.SendAsync("AcceptCall", CurrentUserName, MyPeerId);
         }
-    }
-
-    private async Task OnReceiveAcceptance(string acceptedUserName, string acceptedPeerId)
-    {
-        if (acceptedUserName != CurrentUserName)
-        {
-            await _jsRuntime.InvokeVoidAsync("connectNewUser", acceptedPeerId);
-        }
-    }
-
-    private async Task OnReceiveEndCall()
-    {
-        MudDialog.Close(DialogResult.Ok(true));
-        await _jsRuntime.InvokeVoidAsync("destroyConnection");
     }
 
     private async Task OpenHubConnection()
@@ -83,21 +71,53 @@
         }
     }
 
+    private IDisposable SubscribeToAcceptance()
+    {
+        return hubConnection.On<string, string>("ReceiveAcceptCall", async (string acceptedUserName, string acceptedPeerId) =>
+        {
+            if (acceptedUserName != CurrentUserName)
+            {
+                await _jsRuntime.InvokeVoidAsync("connectNewUser", acceptedPeerId);
+            }
+        });
+    }
+
+    private IDisposable SubscribeToEndCall()
+    {
+        return hubConnection.On("ReceiveEndCall", async () =>
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+            await _jsRuntime.InvokeVoidAsync("destroyConnection");
+        });
+    }
+
 
     private async Task HangUp()
     {
         await hubConnection.SendAsync("EndCall");
     }
 
-    private void SubscribeOnHubSignals()
+    private void SubscribeToHubSignals()
     {
-        hubConnection.On<string, string>("ReceiveAcceptCall", this.OnReceiveAcceptance);
-        hubConnection.On("ReceiveEndCall", this.OnReceiveEndCall);
+        subscriptions.Add(SubscribeToAcceptance());
+        subscriptions.Add(SubscribeToEndCall());
     }
 
     private async Task DefineUser()
     {
         var authState = await AuthState.GetAuthenticationStateAsync();
         CurrentUserName = authState.User.Identity!.Name!;
+    }
+
+    public void Dispose()
+    {
+        subscriptions.ForEach(s => s.Dispose());
+        InvokeAsync(async () =>
+        {
+            if (hubConnection != null)
+            {
+                await hubConnection.StopAsync();
+            }
+        });
     }
 }

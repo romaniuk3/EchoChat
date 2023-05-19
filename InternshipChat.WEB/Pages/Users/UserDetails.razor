@@ -75,7 +75,6 @@
     {
         var user = await userService.GetUserAsync(UserId);
         UserDTO = user;
-        //TODO: Refactor
         UpdateDTO.Email = user.Email;
         UpdateDTO.FirstName = user.FirstName;
         UpdateDTO.LastName = user.LastName;
