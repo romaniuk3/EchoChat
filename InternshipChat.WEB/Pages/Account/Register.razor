@@ -50,7 +50,7 @@
             </div>
             <MudDatePicker Label="Birthdate" @bind-Date="userRegisterModel.Birthdate" DisableToolbar="true"
                            Validation="@(() => userRegisterModel.Birthdate)" For="@(() => userRegisterModel.Birthdate)" />
-            <button style="margin-top: 10px;" type="submit" class="btn btn-primary">Submit</button>
+            <button style="margin-top: 10px;" disabled="@IsButtonDisabled" type="submit" class="btn btn-primary">Submit</button>
         </EditForm>
     </div>
 </div>
@@ -60,10 +60,12 @@
     private RegisterUserDTO userRegisterModel = new ();
     private bool ShowErrors;
     private IEnumerable<string>? Errors;
+    private bool IsButtonDisabled;
 
     private async Task HandleRegistration()
     {
         ShowErrors = false;
+        IsButtonDisabled = true;
 
         var result = await AuthService.Register(userRegisterModel);
         if (result.Successful)
@@ -74,6 +76,7 @@
         {
             Errors = result.Errors;
             ShowErrors = true;
+            IsButtonDisabled = false;
         }
     }
 
