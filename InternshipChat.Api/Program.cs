@@ -14,6 +14,7 @@ using InternshipChat.DAL.UnitOfWork;
 using InternshipChat.Shared.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -87,6 +88,11 @@ builder.Services.AddIdentityCore<User>(opt =>
   .AddEntityFrameworkStores<ChatContext>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+builder.Services.Configure<HubOptions>(options =>
+{
+    options.MaximumReceiveMessageSize = 1024 * 1024;
+});
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
