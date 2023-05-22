@@ -36,10 +36,18 @@
         <MudInputLabel Class="mr-2 details-label">Last name:</MudInputLabel>
         <MudTextField Disabled="@(!CanEdit)" @bind-Value="@UpdateDTO.LastName" />
     </MudItem>
-    @if (UpdateDTO.Avatar != null)
+    @if (UpdateDTO.Avatar != null || AvatarPreview != null)
     {
         <MudItem md="12" sm="12">
-            <MudAvatar Style="height:250px; width:250px;"><MudImage Src="@UpdateDTO.Avatar"></MudImage></MudAvatar>
+            <MudAvatar Style="height:250px; width:250px;">
+                @if (AvatarPreview != null)
+                {
+                    <MudImage Src="@AvatarPreview"></MudImage>
+                } else
+                {
+                    <MudImage Src="@UpdateDTO.Avatar"></MudImage>
+                }
+            </MudAvatar>
         </MudItem>
     }
     @if (!CanEdit)
@@ -66,6 +74,8 @@
 @code {
     public UpdateUserDTO UpdateDTO { get; set; } = new UpdateUserDTO();
     public UserDTO UserDTO { get; set; }
+    public string? AvatarPreview;
+    public IBrowserFile? ImageToUpload { get; set; }
 
     [Parameter]
     public int UserId { get; set; }
@@ -84,6 +94,11 @@
 
     private async Task UpdateUser()
     {
+        if (ImageToUpload != null)
+        {
+            UpdateDTO.Avatar = await imageService.Upload(ImageToUpload) ?? UpdateDTO.Avatar;
+        }
+
         await userService.UpdateUserAsync(UserId, UpdateDTO);
         Snackbar.Add("Success", Severity.Success);
         NavigateBack();
@@ -106,7 +121,9 @@
 
     private async Task UploadImage(IBrowserFile image)
     {
-        UpdateDTO.Avatar = await imageService.ToBase64(image);
+        AvatarPreview = await imageService.ToBase64(image);
+        ImageToUpload = image;
+        StateHasChanged();
     }
 
     private void CallUser()

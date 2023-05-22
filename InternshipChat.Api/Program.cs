@@ -48,6 +48,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddAuthentication(options =>
 {
