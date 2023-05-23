@@ -31,7 +31,6 @@ namespace InternshipChat.BLL.Services
             {
                 StorageConnectionString = configuration.GetSection("storageconnectionstring").Value!;
                 StorageAccessKey = _configuration.GetSection("storageaccesskey").Value!;
-                StorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=internshipchatstorage;AccountKey=oe/LgpWg9utcb09SXBBVCKpoUg7yyA48oLDkqA8Tf2DUS56Gdx57unW6n7D3AMOHmfWzaJsnLA14+AStWD6SNw==;EndpointSuffix=core.windows.net";
                 BlobContainerName = configuration["BlobContainerName"]!;
             }
         }
