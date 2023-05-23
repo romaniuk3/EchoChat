@@ -55,7 +55,7 @@ namespace InternshipChat.BLL.Services
             foreach (var message in messages)
             {
                 var user = message.User;
-                user!.Avatar = $"{user.Avatar}?{sasToken}" ?? user.Avatar;
+                user!.Avatar = user.Avatar != null ? $"{user.Avatar}?{sasToken}" : user.Avatar;
             }
 
             return messages;

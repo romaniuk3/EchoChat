@@ -48,7 +48,7 @@ namespace InternshipChat.BLL.Services
 
             foreach (var user in usersPagedList)
             {
-                user.Avatar = $"{user.Avatar}?{sasToken}" ?? user.Avatar;
+                user.Avatar = user.Avatar != null ? $"{user.Avatar}?{sasToken}" : user.Avatar;
             }
 
             return usersPagedList;
@@ -64,8 +64,8 @@ namespace InternshipChat.BLL.Services
                 return Result.Failure<User>(DomainErrors.User.NotFound);
             }
 
-            var sas = _fileService.GenerateSasTokenForBlobContainer();
-            user.Avatar = $"{user.Avatar}?{sas}" ?? user.Avatar;
+            var sasToken = _fileService.GenerateSasTokenForBlobContainer();
+            user.Avatar = user.Avatar != null ? $"{user.Avatar}?{sasToken}" : user.Avatar;
 
             return user;
         }
