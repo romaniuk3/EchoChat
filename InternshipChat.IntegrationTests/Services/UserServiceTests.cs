@@ -22,7 +22,7 @@ namespace InternshipChat.IntegrationTests.Services
         private IUserService _userService;
         private ChatContext _chatContext;
 
-        [OneTimeSetUp]
+        [SetUp]
         public void SetUp()
         {
             _userService = ServicesHelper.GetUserService();

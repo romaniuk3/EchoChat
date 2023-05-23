@@ -15,10 +15,12 @@ namespace InternshipChat.BLL.Services
     public class MessageService : IMessageService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFileService _fileService;
 
-        public MessageService(IUnitOfWork unitOfWork)
+        public MessageService(IUnitOfWork unitOfWork, IFileService fileService)
         {
             _unitOfWork = unitOfWork;
+            _fileService = fileService;
         }
         public Message SendMessage(Message message)
         {
@@ -41,8 +43,22 @@ namespace InternshipChat.BLL.Services
             }
 
             var messagesInChat = await repository.GetMessages(chatId);
+            var messagesWithUserAvatars = AppendSasTokenToUsersAvatar(messagesInChat);
 
-            return Result.Success(messagesInChat);
+            return Result.Success(messagesWithUserAvatars);
+        }
+
+        private IEnumerable<Message> AppendSasTokenToUsersAvatar(IEnumerable<Message> messages)
+        {
+            var sasToken = _fileService.GenerateSasTokenForBlobContainer();
+
+            foreach (var message in messages)
+            {
+                var user = message.User;
+                user!.Avatar = $"{user.Avatar}?{sasToken}" ?? user.Avatar;
+            }
+
+            return messages;
         }
     }
 }

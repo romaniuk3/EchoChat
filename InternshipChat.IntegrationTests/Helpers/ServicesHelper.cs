@@ -9,10 +9,12 @@ using InternshipChat.DAL.Entities;
 using InternshipChat.DAL.Repositories;
 using InternshipChat.DAL.Repositories.Interfaces;
 using InternshipChat.DAL.UnitOfWork;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +47,8 @@ namespace InternshipChat.IntegrationTests.Helpers
 
             var unitOfWork = new UnitOfWork(_chatContext, serviceProvider);
             var userManager = serviceProvider.GetService<UserManager<User>>();
-            var userService = new UserService(unitOfWork, userManager);
+            var fileService = serviceProvider.GetService<IFileService>();
+            var userService = new UserService(unitOfWork, userManager, fileService);
 
             return userService;
         }
@@ -56,7 +59,8 @@ namespace InternshipChat.IntegrationTests.Helpers
             var serviceProvider = SetupServiceProviders();
 
             var unitOfWork = new UnitOfWork(_chatContext, serviceProvider);
-            var messageService = new MessageService(unitOfWork);
+            var fileService = serviceProvider.GetService<IFileService>();
+            var messageService = new MessageService(unitOfWork, fileService);
 
             return messageService;
         }
@@ -102,11 +106,16 @@ namespace InternshipChat.IntegrationTests.Helpers
 
         private static ServiceProvider SetupServiceProviders()
         {
+            var configuration = InitConfiguration();
             var services = new ServiceCollection();
+            var environment = new Mock<IWebHostEnvironment>();
             services.AddScoped<IChatRepository, ChatRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IUserChatsRepository, UserChatsRepository>();
+            services.AddSingleton<IConfiguration>(configuration);
+            services.AddSingleton<IWebHostEnvironment>(environment.Object);
+            services.AddScoped<IFileService, FileService>();
             services.AddScoped(_ => _chatContext);
             services.AddValidatorsFromAssemblyContaining<LoginDtoValidator>();
             services.AddValidatorsFromAssemblyContaining<UserDTOValidator>();

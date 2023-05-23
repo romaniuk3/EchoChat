@@ -11,5 +11,6 @@ namespace InternshipChat.BLL.Services.Contracts
     {
         string GetUniqueFileName(string fileName);
         Task<string> UploadImageAsync(IFormFile file);
+        string GenerateSasTokenForBlobContainer();
     }
 }

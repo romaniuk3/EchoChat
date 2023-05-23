@@ -23,18 +23,35 @@ namespace InternshipChat.BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
+        private readonly IFileService _fileService;
 
-        public UserService(IUnitOfWork unitOfWork, UserManager<User> userManager)
+        public UserService(IUnitOfWork unitOfWork, UserManager<User> userManager, IFileService fileService)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+            _fileService = fileService;
         }
 
         public async Task<PagedList<User>> GetAllAsync(UserParameters userParameters)
         {
             var repository = _unitOfWork.GetRepository<IUserRepository>();
 
-            return await repository.GetUsersAsync(userParameters);
+            var usersPagedList = await repository.GetUsersAsync(userParameters);
+            var usersWithSasToken = AppendSasTokenToAvatar(usersPagedList);
+
+            return usersWithSasToken;
+        }
+
+        public PagedList<User> AppendSasTokenToAvatar(PagedList<User> usersPagedList)
+        {
+            var sasToken = _fileService.GenerateSasTokenForBlobContainer();
+
+            foreach (var user in usersPagedList)
+            {
+                user.Avatar = $"{user.Avatar}?{sasToken}" ?? user.Avatar;
+            }
+
+            return usersPagedList;
         }
 
         public Result<User> GetUser(int id)
@@ -46,6 +63,9 @@ namespace InternshipChat.BLL.Services
             {
                 return Result.Failure<User>(DomainErrors.User.NotFound);
             }
+
+            var sas = _fileService.GenerateSasTokenForBlobContainer();
+            user.Avatar = $"{user.Avatar}?{sas}" ?? user.Avatar;
 
             return user;
         }
