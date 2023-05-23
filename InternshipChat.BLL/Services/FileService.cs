@@ -66,7 +66,7 @@ namespace InternshipChat.BLL.Services
 
         public string GenerateSasTokenForBlobContainer()
         {
-            if (_webHostEnvironment.IsProduction()) return string.Empty;
+            if (_webHostEnvironment.IsDevelopment()) return string.Empty;
 
             var azureStorageAccount = _configuration["StorageAccountName"];
             var sasBuilder = new BlobSasBuilder()
