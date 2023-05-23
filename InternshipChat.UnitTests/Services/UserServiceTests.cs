@@ -27,6 +27,7 @@ namespace InternshipChat.UnitTests.Services
         private Mock<IUnitOfWork> _mockUnitOfWork;
         private Mock<IUserRepository> _mockUserRepository;
         private Mock<UserManager<User>> _mockUserManager;
+        private Mock<IFileService> _mockIFileService;
 
         [SetUp]
         public void SetUp()
@@ -44,8 +45,9 @@ namespace InternshipChat.UnitTests.Services
                         null,
                         null
                     );
+            _mockIFileService = new Mock<IFileService>();
             _mockUnitOfWork.Setup(uow => uow.GetRepository<IUserRepository>()).Returns(_mockUserRepository.Object);
-            _userService = new UserService(_mockUnitOfWork.Object, _mockUserManager.Object);
+            _userService = new UserService(_mockUnitOfWork.Object, _mockUserManager.Object, _mockIFileService.Object);
         }
 
         [Test]
