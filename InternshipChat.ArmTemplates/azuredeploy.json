@@ -46,7 +46,7 @@
     "internshipchatKeyVaultName": {
       "type": "string",
       "minLength": 1,
-      "defaultValue": "internshipchat-test-keyvault"
+      "defaultValue": "internshipchat-test-kv"
     },
     "DatabaseName": {
       "type": "string",
