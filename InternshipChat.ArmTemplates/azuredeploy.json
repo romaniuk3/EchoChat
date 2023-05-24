@@ -34,6 +34,14 @@
     "appbaseAdminLoginPassword": {
       "type": "securestring"
     },
+    "SqlServerName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "DatabaseName": {
+      "type": "string",
+      "minLength": 1
+    },
     "appbaseCollation": {
       "type": "string",
       "minLength": 1,
@@ -63,7 +71,8 @@
       "metadata": {
         "description": "Describes the performance level for Edition"
       }
-    }},
+    }
+  },
   "variables": { },
   "resources": [
     {
@@ -101,13 +110,13 @@
       }
     },
     {
-      "name": "[parameters('internshipchatAppBaseName')]",
+      "name": "[parameters('SqlServerName')]",
       "type": "Microsoft.Sql/servers",
       "location": "[resourceGroup().location]",
       "apiVersion": "2014-04-01-preview",
       "dependsOn": [],
       "tags": {
-        "displayName": "appbase"
+        "displayName": "sqlServer"
       },
       "properties": {
         "administratorLogin": "[parameters('appbaseAdminLogin')]",
@@ -120,7 +129,7 @@
           "location": "[resourceGroup().location]",
           "apiVersion": "2014-04-01-preview",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', parameters('internshipchatAppBaseName'))]"
+            "[resourceId('Microsoft.Sql/servers', parameters('SqlServerName'))]"
           ],
           "properties": {
             "startIpAddress": "0.0.0.0",
@@ -128,15 +137,15 @@
           }
         },
         {
-          "name": "[parameters('internshipchatAppBaseName')]",
+          "name": "[parameters('DatabaseName')]",
           "type": "databases",
           "location": "[resourceGroup().location]",
           "apiVersion": "2014-04-01-preview",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', parameters('internshipchatAppBaseName'))]"
+            "[resourceId('Microsoft.Sql/servers', parameters('SqlServerName'))]"
           ],
           "tags": {
-            "displayName": "appbase"
+            "displayName": "Database"
           },
           "properties": {
             "collation": "[parameters('appbaseCollation')]",

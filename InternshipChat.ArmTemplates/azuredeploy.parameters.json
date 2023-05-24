@@ -8,6 +8,12 @@
     "internshipchatAppBaseSkuName": {
       "value": "#arm_appBaseSkuName#"
     },
+    "SqlServerName": {
+      "value": "#arm_SqlServerName#"
+    },
+    "DatabaseName": {
+      "value": "#arm_DatabaseName#"
+    },
     "appbaseAdminLogin": {
       "value": "#arm_SqlLogin#"
     },
