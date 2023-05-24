@@ -34,10 +34,6 @@
     "appbaseAdminLoginPassword": {
       "type": "securestring"
     },
-    "appbaseName": {
-      "type": "string",
-      "minLength": 1
-    },
     "appbaseCollation": {
       "type": "string",
       "minLength": 1,
@@ -132,7 +128,7 @@
           }
         },
         {
-          "name": "[parameters('appbaseName')]",
+          "name": "[parameters('internshipchatAppBaseName')]",
           "type": "databases",
           "location": "[resourceGroup().location]",
           "apiVersion": "2014-04-01-preview",
