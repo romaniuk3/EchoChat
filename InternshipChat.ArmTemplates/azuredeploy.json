@@ -27,8 +27,7 @@
         "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
       }
     }},
-  "variables": {
-    "internshipchatnewapiName": "[concat('internshipchatnewapi', uniqueString(resourceGroup().id))]"},
+  "variables": { },
   "resources": [
     {
       "name": "[parameters('internshipchatAppBaseName')]",
@@ -48,7 +47,7 @@
       }
     },
     {
-      "name": "[variables('internshipchatnewapiName')]",
+      "name": "[parameters('internshipchatAppBaseName')]",
       "type": "Microsoft.Web/sites",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-08-01",
@@ -60,7 +59,7 @@
         "displayName": "internshipchatnewapi"
       },
       "properties": {
-        "name": "[variables('internshipchatnewapiName')]",
+        "name": "[parameters('internshipchatAppBaseName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
       }
     } ],
