@@ -19,6 +19,9 @@
     },
     "appbaseAdminLoginPassword": {
       "value": "#arm_SqlPassword#"
+    },
+    "objectId": {
+      "value": "#arm_UserObjectId#"
     }
   }
 }
