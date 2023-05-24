@@ -7,6 +7,12 @@
     },
     "internshipchatAppBaseSkuName": {
       "value": "#arm_appBaseSkuName#"
+    },
+    "appbaseAdminLogin": {
+      "value": "#arm_SqlLogin#"
+    },
+    "appbaseAdminLoginPassword": {
+      "value": "#arm_SqlPassword#"
     }
   }
 }

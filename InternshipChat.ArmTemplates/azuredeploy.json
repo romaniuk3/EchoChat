@@ -26,6 +26,47 @@
       "metadata": {
         "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
       }
+    },
+    "appbaseAdminLogin": {
+      "type": "string",
+      "minLength": 1
+    },
+    "appbaseAdminLoginPassword": {
+      "type": "securestring"
+    },
+    "appbaseName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "appbaseCollation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "appbaseEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "appbaseRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
     }},
   "variables": { },
   "resources": [
@@ -62,6 +103,53 @@
         "name": "[parameters('internshipchatAppBaseName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
       }
+    },
+    {
+      "name": "[parameters('internshipchatAppBaseName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "appbase"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('appbaseAdminLogin')]",
+        "administratorLoginPassword": "[parameters('appbaseAdminLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('internshipchatAppBaseName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[parameters('appbaseName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('internshipchatAppBaseName'))]"
+          ],
+          "tags": {
+            "displayName": "appbase"
+          },
+          "properties": {
+            "collation": "[parameters('appbaseCollation')]",
+            "edition": "[parameters('appbaseEdition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('appbaseRequestedServiceObjectiveName')]"
+          }
+        }
+      ]
     } ],
   "outputs": {}
 }
