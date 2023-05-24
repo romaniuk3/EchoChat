@@ -120,12 +120,12 @@
           "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName')))]": "Resource",
           "displayName": "internshipchatnewapi"
         },
+        "identity": {
+          "type": "SystemAssigned"
+        },
         "properties": {
           "name": "[parameters('internshipchatAppBaseName')]",
           "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]",
-          "identity": {
-            "type": "SystemAssigned"
-          }
         }
       },
       {
@@ -187,12 +187,12 @@
           "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName')))]": "Resource",
           "displayName": "internshipchatnewclient"
         },
+        "identity": {
+          "type": "SystemAssigned"
+        },
         "properties": {
           "name": "[parameters('internshipchatClientName')]",
-          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]",
-          "identity": {
-            "type": "SystemAssigned"
-          }
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
         }
       },
       {
