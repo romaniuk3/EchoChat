@@ -43,6 +43,11 @@
       "minLength": 1,
       "defaultValue": "internshipchat-test-client"
     },
+    "internshipchatKeyVaultName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "internshipchat-test-keyvault"
+    },
     "DatabaseName": {
       "type": "string",
       "minLength": 1
@@ -177,6 +182,42 @@
         "name": "[parameters('internshipchatClientName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
       }
-    } ],
+    },
+    {
+      "name": "[parameters('internshipchatKeyVaultName')]",
+      "type": "Microsoft.KeyVault/vaults",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-09-01",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "accessPolicies": [],
+        "enabledForDeployment": true,
+        "enabledForDiskEncryption": true,
+        "enabledForTemplateDeployment": true
+      },
+      "resources": [
+        {
+          "type": "Microsoft.KeyVault/vaults/secrets",
+          "apiVersion": "2019-09-01",
+          "name": "[concat(parameters('internshipchatKeyVaultName'), '/azuresqlconnectionstring')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]"
+          ],
+          "properties": {
+            "attributes": {
+              "enabled": true
+            },
+            "value": "COOL HIDDEN VALUE"
+          }
+        }
+      ]
+    }
+
+  ],
   "outputs": {}
 }
