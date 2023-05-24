@@ -122,7 +122,10 @@
         },
         "properties": {
           "name": "[parameters('internshipchatAppBaseName')]",
-          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]",
+          "identity": {
+            "type": "SystemAssigned"
+          }
         }
       },
       {
@@ -186,7 +189,10 @@
         },
         "properties": {
           "name": "[parameters('internshipchatClientName')]",
-          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]",
+          "identity": {
+            "type": "SystemAssigned"
+          }
         }
       },
       {
@@ -206,7 +212,8 @@
               "objectId": "[parameters('objectId')]",
               "permissions": {
                 "certificates": [],
-                "keys": ["all"]
+                "keys": [],
+                "secrets": ["all"]
               }
             }
           ],
