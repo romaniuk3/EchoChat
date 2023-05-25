@@ -2,8 +2,8 @@ trigger:
 - master
 
 pool:
-  name: 'default'
-  vmImage: 'komputer'
+  name: 'Azure Pipelines'
+  vmImage: 'windows-latest'
   
 steps:
 - task: UseDotNet@2
