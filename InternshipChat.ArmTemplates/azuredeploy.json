@@ -296,22 +296,18 @@
           "name": "[concat(parameters('internshipchatKeyVaultName'), '/storageaccesskey')]",
           "location": "[resourceGroup().location]",
           "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]",
             "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
           ],
           "properties": {
             "attributes": {
               "enabled": true
             },
-            "value": "[reference('storageAccessKey')]"
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value]"
           }
         }
       ]
     }
   ],
-  "outputs": {
-    "storageAccessKey": {
-      "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value]"
-    }
-  }
+  "outputs": {}
 }
