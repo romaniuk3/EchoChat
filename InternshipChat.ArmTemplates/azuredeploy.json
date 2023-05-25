@@ -287,7 +287,7 @@
             "attributes": {
               "enabled": true
             },
-            "value": "[concat('Server=tcp:',reference(parameters('SqlServerName')).fullyQualifiedDomainName,',1433;Initial Catalog=',parameters('DatabaseName'),';Persist Security Info=False;User ID=',reference(parameters('SqlServerName')).administratorLogin,';Password=',parameters('appbaseAdminLoginPassword'),';Connection Timeout=30;')]"
+            "value": "[concat('Server=tcp:',reference(parameters('SqlServerName')).fullyQualifiedDomainName,',1433;Initial Catalog=',parameters('DatabaseName'),';Persist Security Info=False;User ID=',reference(parameters('SqlServerName')).administratorLogin,';Password=',reference(parameters('SqlServerName')).administratorLoginPassword,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
           }
         },
         {
@@ -304,6 +304,22 @@
               "enabled": true
             },
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value]"
+          }
+        },
+        {
+          "type": "Microsoft.KeyVault/vaults/secrets",
+          "apiVersion": "2019-09-01",
+          "name": "[concat(parameters('internshipchatKeyVaultName'), '/storageconnectionstring')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+          ],
+          "properties": {
+            "attributes": {
+              "enabled": true
+            },
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
           }
         }
       ]
