@@ -163,9 +163,8 @@
       },
       "resources": [
         {
-          "name": "AllowAllWindowsAzureIps",
+          "name": "[concat(parameters('SqlServerName'), '/', 'allowAllRule')]",
           "type": "Microsoft.Sql/servers/firewallRules",
-          "kind": "v12.0",
           "location": "[resourceGroup().location]",
           "apiVersion": "2021-02-01-preview",
           "dependsOn": [
