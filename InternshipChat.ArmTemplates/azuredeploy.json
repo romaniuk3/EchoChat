@@ -275,7 +275,7 @@
           "bypass": "AzureServices",
           "defaultAction": "Allow"
         },
-        "supportsHttpsTrafficOnly": true,
+        "supportsHttpsTrafficOnly": true
       },
       "resources": [
         {
