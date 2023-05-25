@@ -52,7 +52,7 @@
     "storageAccountName": {
       "type": "string",
       "minLength": 1,
-      "defaultValue": "chatteststorage"
+      "defaultValue": "internschatteststorage"
     },
     "internshipchatKeyVaultName": {
       "type": "string",
