@@ -212,6 +212,43 @@
       }
     },
     {
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-06-01",
+      "sku": {
+        "name": "[parameters('storageaccountType')]"
+      },
+      "tags": {
+        "displayName": "storageaccount"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "Hot",
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": true,
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "defaultAction": "Allow"
+        },
+        "supportsHttpsTrafficOnly": true
+      }
+    },
+    {
+      "name": "[concat(parameters('storageAccountName'), '/default/avatars-container')]",
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2019-06-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ],
+      "properties": {
+        "immutableStorageWithVersioning": {
+          "enabled": false
+        },
+        "publicAccess": "None"
+      }
+    },
+    {
       "name": "[parameters('internshipchatKeyVaultName')]",
       "type": "Microsoft.KeyVault/vaults",
       "location": "[resourceGroup().location]",
@@ -252,49 +289,30 @@
             },
             "value": "[concat('Server=tcp:',reference(parameters('SqlServerName')).fullyQualifiedDomainName,',1433;Initial Catalog=',parameters('DatabaseName'),';Persist Security Info=False;User ID=',reference(parameters('SqlServerName')).administratorLogin,';Password=',parameters('appbaseAdminLoginPassword'),';Connection Timeout=30;')]"
           }
-        }
-      ]
-    },
-    {
-      "name": "[parameters('storageAccountName')]",
-      "type": "Microsoft.Storage/storageAccounts",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2019-06-01",
-      "sku": {
-        "name": "[parameters('storageaccountType')]"
-      },
-      "tags": {
-        "displayName": "storageaccount"
-      },
-      "kind": "StorageV2",
-      "properties": {
-        "accessTier": "Hot",
-        "allowBlobPublicAccess": false,
-        "allowSharedKeyAccess": true,
-        "networkAcls": {
-          "bypass": "AzureServices",
-          "defaultAction": "Allow"
         },
-        "supportsHttpsTrafficOnly": true
-      },
-      "resources": [
         {
-          "name": "[concat(parameters('storageAccountName'), '/default/avatars-container')]",
-          "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-          "apiVersion": "2021-04-01",
+          "type": "Microsoft.KeyVault/vaults/secrets",
+          "apiVersion": "2019-09-01",
+          "name": "[concat(parameters('internshipchatKeyVaultName'), '/storageaccesskey')]",
+          "location": "[resourceGroup().location]",
           "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]",
             "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
           ],
           "properties": {
-            "immutableStorageWithVersioning": {
-              "enabled": false
+            "attributes": {
+              "enabled": true
             },
-            "publicAccess": "None"
+            "value": "[reference('storageAccessKey')]"
           }
         }
       ]
     }
-
   ],
-  "outputs": {}
+  "outputs": {
+    "storageAccessKey": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value]"
+    }
+  }
 }
