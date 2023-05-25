@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "internshipchatAppBaseName": {
@@ -111,7 +111,7 @@
       "name": "[parameters('internshipchatAppBaseName')]",
       "type": "Microsoft.Web/serverfarms",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-08-01",
+      "apiVersion": "2021-02-01",
       "sku": {
         "name": "[parameters('internshipchatAppBaseSkuName')]"
       },
@@ -128,7 +128,7 @@
       "name": "[parameters('internshipchatAppBaseName')]",
       "type": "Microsoft.Web/sites",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-08-01",
+      "apiVersion": "2021-02-01",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
       ],
@@ -148,21 +148,25 @@
       "name": "[parameters('SqlServerName')]",
       "type": "Microsoft.Sql/servers",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2014-04-01-preview",
+      "apiVersion": "2021-02-01-preview",
       "dependsOn": [],
       "tags": {
         "displayName": "sqlServer"
       },
       "properties": {
         "administratorLogin": "[parameters('appbaseAdminLogin')]",
-        "administratorLoginPassword": "[parameters('appbaseAdminLoginPassword')]"
+        "administratorLoginPassword": "[parameters('appbaseAdminLoginPassword')]",
+        "version": "12.0",
+        "minimalTlsVersion": "1.2",
+        "publicNetworkAccess": "Enabled",
+        "restrictOutboundNetworkAccess": "Disabled"
       },
       "resources": [
         {
           "name": "AllowAllWindowsAzureIps",
           "type": "firewallrules",
           "location": "[resourceGroup().location]",
-          "apiVersion": "2014-04-01-preview",
+          "apiVersion": "2021-02-01-preview",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('SqlServerName'))]"
           ],
@@ -175,7 +179,7 @@
           "name": "[parameters('DatabaseName')]",
           "type": "databases",
           "location": "[resourceGroup().location]",
-          "apiVersion": "2014-04-01-preview",
+          "apiVersion": "2021-02-01-preview",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('SqlServerName'))]"
           ],
@@ -195,7 +199,7 @@
       "name": "[parameters('internshipchatClientName')]",
       "type": "Microsoft.Web/sites",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-08-01",
+      "apiVersion": "2021-02-01",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
       ],
@@ -215,7 +219,7 @@
       "name": "[parameters('storageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2019-06-01",
+      "apiVersion": "2021-06-01",
       "sku": {
         "name": "[parameters('storageaccountType')]"
       },
