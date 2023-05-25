@@ -130,7 +130,9 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "2021-02-01",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
+        "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]",
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('SqlServerName'), parameters('DatabaseName'))]",
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName')))]": "Resource",
@@ -177,7 +179,7 @@
         },
         {
           "name": "[parameters('DatabaseName')]",
-          "type": "databases",
+          "type": "Microsoft.Sql/servers/databases",
           "location": "[resourceGroup().location]",
           "apiVersion": "2021-02-01-preview",
           "dependsOn": [
@@ -285,7 +287,8 @@
           "name": "[concat(parameters('internshipchatKeyVaultName'), '/azuresqlconnectionstring')]",
           "location": "[resourceGroup().location]",
           "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]"
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]",
+            "[resourceId('Microsoft.Sql/servers/databases', parameters('SqlServerName'), parameters('DatabaseName'))]"
           ],
           "properties": {
             "attributes": {
