@@ -49,6 +49,11 @@
       "minLength": 1,
       "defaultValue": "internshipchat-test-client"
     },
+    "storageAccountName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "internshipchat-test-storage"
+    },
     "internshipchatKeyVaultName": {
       "type": "string",
       "minLength": 1,
@@ -87,6 +92,17 @@
       "metadata": {
         "description": "Describes the performance level for Edition"
       }
+    },
+    "storageaccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
     }
   },
   "variables": {},
@@ -234,7 +250,46 @@
             "attributes": {
               "enabled": true
             },
-            "value": "COOL HIDDEN VALUE"
+            "value": "[concat('Server=tcp:',reference(parameters('SqlServerName')).fullyQualifiedDomainName,',1433;Initial Catalog=',parameters('DatabaseName'),';Persist Security Info=False;User ID=',reference(parameters('SqlServerName')).administratorLogin,';Password=',parameters('appbaseAdminLoginPassword'),';Connection Timeout=30;')]"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-06-01",
+      "sku": {
+        "name": "[parameters('storageaccountType')]"
+      },
+      "tags": {
+        "displayName": "storageaccount"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "Hot",
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": true,
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "defaultAction": "Allow"
+        },
+        "supportsHttpsTrafficOnly": true,
+      },
+      "resources": [
+        {
+          "name": "[concat(parameters('storageAccountName'), '/default/avatars-container')]",
+          "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+          "apiVersion": "2021-04-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+          ],
+          "properties": {
+            "immutableStorageWithVersioning": {
+              "enabled": false
+            },
+            "publicAccess": "None"
           }
         }
       ]
