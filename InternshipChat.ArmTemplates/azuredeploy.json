@@ -178,7 +178,7 @@
           }
         },
         {
-          "name": "[parameters('DatabaseName')]",
+          "name": "[concat(parameters('SqlServerName'), '/', parameters('DatabaseName'))]",
           "type": "Microsoft.Sql/servers/databases",
           "location": "[resourceGroup().location]",
           "apiVersion": "2021-02-01-preview",
