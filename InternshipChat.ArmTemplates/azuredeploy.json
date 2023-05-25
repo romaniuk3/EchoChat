@@ -159,10 +159,6 @@
           {
             "name": "KeyVaultURL",
             "value": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))).vaultUri]"
-          },
-          {
-            "name": "StorageAccountName",
-            "value": "parameters('storageAccountName')"
           }
         ]
       }
