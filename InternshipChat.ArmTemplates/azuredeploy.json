@@ -131,8 +131,7 @@
       "apiVersion": "2021-02-01",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]",
-        "[resourceId('Microsoft.Sql/servers/databases', parameters('SqlServerName'), parameters('DatabaseName'))]",
-        "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]"
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('SqlServerName'), parameters('DatabaseName'))]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName')))]": "Resource",
@@ -273,6 +272,15 @@
               "certificates": [],
               "keys": [],
               "secrets": [ "all" ]
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', parameters('internshipchatAppBaseName')), '2021-02-01', 'Full').identity.principalId]",
+            "permissions": {
+              "certificates": [],
+              "keys": [],
+              "secrets": [ "get", "list" ]
             }
           }
         ],
