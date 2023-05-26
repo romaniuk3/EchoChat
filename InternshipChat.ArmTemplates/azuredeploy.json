@@ -116,29 +116,6 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
-      "name": "createapi",
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'createsqlserverdb')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('webapi-template')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "internshipchatAppBaseName": {
-            "value": "[parameters('internshipchatAppBaseName')]"
-          },
-          "internshipchatAppBaseSkuName": {
-            "value": "[parameters('internshipchatAppBaseSkuName')]"
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2021-04-01",
       "name": "createsqlserverdb",
       "properties": {
         "mode": "Incremental",
@@ -174,6 +151,29 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
+      "name": "createapi",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'createsqlserverdb')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('webapi-template')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "internshipchatAppBaseName": {
+            "value": "[parameters('internshipchatAppBaseName')]"
+          },
+          "internshipchatAppBaseSkuName": {
+            "value": "[parameters('internshipchatAppBaseSkuName')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
       "name": "createstorageaccount",
       "properties": {
         "mode": "Incremental",
@@ -196,7 +196,8 @@
       "apiVersion": "2021-04-01",
       "name": "createkeyvault",
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'createapi')]"
+        "[resourceId('Microsoft.Resources/deployments', 'createapi')]",
+        "[resourceId('Microsoft.Resources/deployments', 'createsqlserverdb')]"
       ],
       "properties": {
         "mode": "Incremental",
