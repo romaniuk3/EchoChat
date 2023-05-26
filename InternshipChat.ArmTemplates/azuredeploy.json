@@ -254,9 +254,9 @@
     //  "type": "string",
     //  "value": "[reference('createstorageaccount').outputs.storageAccountKey.value]"
     //},
-    "databaseConnectionString": {
-      "type": "string",
-      "value": "[reference('createsqlserverdb').outputs.connectionString.value]"
-    }
+    //"databaseConnectionString": {
+    //  "type": "string",
+    //  "value": "[reference('createsqlserverdb').outputs.connectionString.value]"
+    //}
   }
 }
