@@ -82,5 +82,9 @@
     }
   ],
   "outputs": {
+    "apiObjectId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('chatApiName')), '2021-02-01', 'Full').identity.principalId]"
+    }
   }
 }
