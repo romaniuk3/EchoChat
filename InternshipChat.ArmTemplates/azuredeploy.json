@@ -170,54 +170,54 @@
           }
         }
       }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2021-04-01",
-      "name": "createstorageaccount",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('storage-template')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "storageAccountName": {
-            "value": "[parameters('storageAccountName')]"
-          },
-          "storageaccountType": {
-            "value": "[parameters('storageaccountType')]"
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2021-04-01",
-      "name": "createkeyvault",
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'createapi')]",
-        "[resourceId('Microsoft.Resources/deployments', 'createsqlserverdb')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('keyvault-template')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "internshipchatKeyVaultName": {
-            "value": "[parameters('internshipchatKeyVaultName')]"
-          },
-          "objectId": {
-            "value": "[parameters('objectId')]"
-          },
-          "webApiObjectId": {
-            "value": "[reference(resourceId('Microsoft.Web/sites', parameters('internshipchatAppBaseName')), '2021-02-01', 'Full').identity.principalId]"
-          }
-        }
-      }
     }
+    //{
+    //  "type": "Microsoft.Resources/deployments",
+    //  "apiVersion": "2021-04-01",
+    //  "name": "createstorageaccount",
+    //  "properties": {
+    //    "mode": "Incremental",
+    //    "templateLink": {
+    //      "uri": "[variables('storage-template')]",
+    //      "contentVersion": "1.0.0.0"
+    //    },
+    //    "parameters": {
+    //      "storageAccountName": {
+    //        "value": "[parameters('storageAccountName')]"
+    //      },
+    //      "storageaccountType": {
+    //        "value": "[parameters('storageaccountType')]"
+    //      }
+    //    }
+    //  }
+    //},
+    //{
+    //  "type": "Microsoft.Resources/deployments",
+    //  "apiVersion": "2021-04-01",
+    //  "name": "createkeyvault",
+    //  "dependsOn": [
+    //    "[resourceId('Microsoft.Resources/deployments', 'createapi')]",
+    //    "[resourceId('Microsoft.Resources/deployments', 'createsqlserverdb')]"
+    //  ],
+    //  "properties": {
+    //    "mode": "Incremental",
+    //    "templateLink": {
+    //      "uri": "[variables('keyvault-template')]",
+    //      "contentVersion": "1.0.0.0"
+    //    },
+    //    "parameters": {
+    //      "internshipchatKeyVaultName": {
+    //        "value": "[parameters('internshipchatKeyVaultName')]"
+    //      },
+    //      "objectId": {
+    //        "value": "[parameters('objectId')]"
+    //      },
+    //      "webApiObjectId": {
+    //        "value": "[reference(resourceId('Microsoft.Web/sites', parameters('internshipchatAppBaseName')), '2021-02-01', 'Full').identity.principalId]"
+    //      }
+    //    }
+    //  }
+    //}
     //{
     //  "type": "Microsoft.Resources/deployments",
     //  "apiVersion": "2021-04-01",
