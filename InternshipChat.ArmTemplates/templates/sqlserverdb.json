@@ -84,5 +84,9 @@
     }
   ],
   "outputs": {
+    "connectionString": {
+      "type": "string",
+      "value": "[concat('Server=tcp:',reference(parameters('SqlServerName')).fullyQualifiedDomainName,',1433;Initial Catalog=',parameters('DatabaseName'),';Persist Security Info=False;User ID=',parameters('appbaseAdminLogin'),';Password=',parameters('appbaseAdminLoginPassword'),';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+    }
   }
 }

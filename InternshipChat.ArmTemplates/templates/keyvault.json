@@ -1,0 +1,58 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "internshipchatKeyVaultName": {
+      "type": "string"
+    },
+    "objectId": {
+      "type": "string"
+    },
+    "webApiObjectId": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[parameters('internshipchatKeyVaultName')]",
+      "type": "Microsoft.KeyVault/vaults",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-09-01",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[parameters('objectId')]",
+            "permissions": {
+              "certificates": [],
+              "keys": [],
+              "secrets": [ "all" ]
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[parameters('webApiObjectId')]",
+            "permissions": {
+              "certificates": [],
+              "keys": [],
+              "secrets": [ "get", "list" ]
+            }
+          }
+        ],
+        "enabledForDeployment": true,
+        "enabledForDiskEncryption": true,
+        "enabledForTemplateDeployment": true
+      },
+      "resources": []
+    }
+  ],
+  "outputs": {
+  }
+}
