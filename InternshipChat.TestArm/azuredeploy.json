@@ -45,12 +45,21 @@
     "storageAccountName": {
       "type": "string",
       "defaultValue": "[concat('storage', uniqueString(resourceGroup().id))]"
+    },
+    "chatApiName": {
+      "type": "string",
+      "defaultValue": "[concat('chatapi', uniqueString(resourceGroup().id))]"
+    },
+    "chatClientName": {
+      "type": "string",
+      "defaultValue": "[concat('chatclient', uniqueString(resourceGroup().id))]"
+    },
+    "sqlserverName": {
+      "type": "string",
+      "defaultValue": "[concat('chatserver', uniqueString(resourceGroup().id))]"
     }
   },
   "variables": {
-    "chatApiName": "[concat('chatapi', uniqueString(resourceGroup().id))]",
-    "chatClientName": "[concat('chatclient', uniqueString(resourceGroup().id))]",
-    "sqlserverName": "[concat('chatserver', uniqueString(resourceGroup().id))]",
     "webapps-template": "https://gist.githubusercontent.com/romaniuk3/a3ac558520a54e4993f79b7ad95ec8a7/raw/6aa5ca288a44eb3dc8de263a8722864eee704007/webapps.json",
     "sqlserverdb-template": "https://gist.githubusercontent.com/romaniuk3/8029516b2ad4a957670f67fe4804c3d1/raw/ce5b7b6e5d6b663939a4471750b74e2847a5c79f/sqlserverdb.json",
     "keyvault-template": "https://gist.githubusercontent.com/romaniuk3/a96c95a0bbb6537ee495699b4e35451b/raw/d58fc02c1c8d77e48c356b4d76c5eb74d5e06662/keyvault.json",
@@ -70,7 +79,7 @@
         },
         "parameters": {
           "sqlserverName": {
-            "value": "[variables('sqlserverName')]"
+            "value": "[parameters('sqlserverName')]"
           },
           "administratorLogin": {
             "value": "[parameters('administratorLogin')]"
@@ -96,10 +105,10 @@
         },
         "parameters": {
           "chatApiName": {
-            "value": "[variables('chatApiName')]"
+            "value": "[parameters('chatApiName')]"
           },
           "chatClientName": {
-            "value": "[variables('chatClientName')]"
+            "value": "[parameters('chatClientName')]"
           }
         }
       }
@@ -125,7 +134,7 @@
             "value": "[parameters('objectId')]"
           },
           "webApiObjectId": {
-            "value": "[reference(resourceId('Microsoft.Web/sites', variables('chatApiName')), '2021-02-01', 'Full').identity.principalId]"
+            "value": "[reference(resourceId('Microsoft.Web/sites', parameters('chatApiName')), '2021-02-01', 'Full').identity.principalId]"
           }
         }
       }
@@ -182,7 +191,7 @@
       }
     },
     {
-      "name": "[concat(variables('chatApiName'), '/appsettings')]",
+      "name": "[concat(parameters('chatApiName'), '/appsettings')]",
       "type": "Microsoft.Web/sites/config",
       "apiVersion": "2015-08-01",
       "dependsOn": [

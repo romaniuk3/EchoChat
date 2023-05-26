@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "administratorLogin": {
+      "value": "#arm_dbLogin#"
+    },
+    "administratorLoginPassword": {
+      "value": "#arm_dbPassword#"
+    },
+    "databaseName": {
+      "value": "#arm_dbName#"
+    },
+    "keyVaultName": {
+      "value": "#arm_keyVaultName#"
+    },
+    "objectId": {
+      "value": "#arm_objectId#"
+    },
+    "storageAccountName": {
+      "value": "#arm_storageName#"
+    },
+    "chatApiName": {
+      "value": "#arm_apiName#"
+    },
+    "chatClientName": {
+      "value": "#arm_clientName#"
+    },
+    "sqlserverName": {
+      "value": "#arm_sqlServerName#"
+    }
+  }
+}
