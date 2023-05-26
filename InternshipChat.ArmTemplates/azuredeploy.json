@@ -106,13 +106,17 @@
     }
   },
   "variables": {
-    "webapi-template": "https://gist.githubusercontent.com/romaniuk3/7529474bc1c0700cee22c66887e044c4/raw/94d89bf87d152fc2d32fdaf22d9114f17da72282/webapi.json"
+    "webapi-template": "https://gist.githubusercontent.com/romaniuk3/7529474bc1c0700cee22c66887e044c4/raw/94d89bf87d152fc2d32fdaf22d9114f17da72282/webapi.json",
+    "sqlserverdb-template": "https://gist.githubusercontent.com/romaniuk3/8029516b2ad4a957670f67fe4804c3d1/raw/5ea6410b4b9519b3e3d95713acba834e30d34a75/sqlserverdb.json"
   },
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "createapi",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'createsqlserverdb')]"
+      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -128,7 +132,41 @@
           }
         }
       }
-
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "createsqlserverdb",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('sqlserverdb-template')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "SqlServerName": {
+            "value": "[parameters('SqlServerName')]"
+          },
+          "appbaseAdminLogin": {
+            "value": "[parameters('appbaseAdminLogin')]"
+          },
+          "appbaseAdminLoginPassword": {
+            "value": "[parameters('appbaseAdminLoginPassword')]"
+          },
+          "DatabaseName": {
+            "value": "[parameters('DatabaseName')]"
+          },
+          "appbaseCollation": {
+            "value": "[parameters('appbaseCollation')]"
+          },
+          "appbaseEdition": {
+            "value": "[parameters('appbaseEdition')]"
+          },
+          "appbaseRequestedServiceObjectiveName": {
+            "value": "[parameters('appbaseRequestedServiceObjectiveName')]"
+          }
+        }
+      }
     }
   ],
   "outputs": {

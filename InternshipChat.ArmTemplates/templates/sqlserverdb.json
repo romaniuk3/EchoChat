@@ -1,0 +1,88 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "SqlServerName": {
+      "type": "string"
+    },
+    "appbaseAdminLogin": {
+      "type": "string"
+    },
+    "appbaseAdminLoginPassword": {
+      "type": "string"
+    },
+    "DatabaseName": {
+      "type": "string"
+    },
+    "appbaseCollation": {
+      "type": "string"
+    },
+    "appbaseEdition": {
+      "type": "string"
+    },
+    "appbaseRequestedServiceObjectiveName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[parameters('SqlServerName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2021-02-01-preview",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "sqlServer"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('appbaseAdminLogin')]",
+        "administratorLoginPassword": "[parameters('appbaseAdminLoginPassword')]",
+        "version": "12.0",
+        "minimalTlsVersion": "1.2",
+        "publicNetworkAccess": "Enabled",
+        "restrictOutboundNetworkAccess": "Disabled"
+      },
+      "resources": [
+        {
+          "name": "[concat(parameters('SqlServerName'), '/', 'allowAllRule')]",
+          "type": "Microsoft.Sql/servers/firewallRules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2021-02-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('SqlServerName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[concat(parameters('SqlServerName'), '/', parameters('DatabaseName'))]",
+          "type": "Microsoft.Sql/servers/databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2021-02-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('SqlServerName'))]"
+          ],
+          "tags": {
+            "displayName": "Database"
+          },
+          "sku": {
+            "name": "Basic",
+            "tier": "Basic"
+          },
+          "properties": {
+            "collation": "[parameters('appbaseCollation')]",
+            "edition": "[parameters('appbaseEdition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('appbaseRequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+  }
+}

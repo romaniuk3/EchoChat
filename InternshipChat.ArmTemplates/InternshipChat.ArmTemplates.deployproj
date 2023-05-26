@@ -30,6 +30,7 @@
       <Visible>False</Visible>
     </None>
     <Content Include="Deploy-AzureResourceGroup.ps1" />
+    <None Include="templates\sqlserverdb.json" />
     <None Include="templates\webapi.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
