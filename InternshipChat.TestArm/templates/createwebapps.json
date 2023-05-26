@@ -75,7 +75,7 @@
             "[resourceId('Microsoft.Web/sites', parameters('chatClientName'))]"
           ],
           "properties": {
-            "AppBase": "[concat('https://', parameters('chatApiName'), '.azurewebsites.net')]"
+            "AppBase": "[concat('https://', parameters('chatApiName'), '.azurewebsites.net/')]"
           }
         }
       ]
