@@ -164,24 +164,6 @@
         }
       ]
     },
-    //{
-    //  "apiVersion": "2015-08-01",
-    //  "dependsOn": [
-    //    "[resourceId('Microsoft.Web/sites', parameters('internshipchatAppBaseName'))]",
-    //    "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]"
-    //  ],
-    //  "kind": "string",
-    //  "name": "[concat(parameters('internshipchatAppBaseName'), '/appsettings')]",
-    //  "properties": {
-    //    "appSettings": [
-    //      {
-    //        "name": "KeyVaultURL",
-    //        "value": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))).vaultUri]"
-    //      }
-    //    ]
-    //  },
-    //  "type": "Microsoft.Web/sites/config"
-    //},
     {
       "name": "[parameters('SqlServerName')]",
       "type": "Microsoft.Sql/servers",
@@ -223,6 +205,10 @@
           ],
           "tags": {
             "displayName": "Database"
+          },
+          "sku": {
+            "name": "Basic",
+            "tier": "Basic"
           },
           "properties": {
             "collation": "[parameters('appbaseCollation')]",
