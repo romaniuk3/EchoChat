@@ -108,14 +108,36 @@
   "variables": {
     "webapi-template": "https://gist.githubusercontent.com/romaniuk3/7529474bc1c0700cee22c66887e044c4/raw/94d89bf87d152fc2d32fdaf22d9114f17da72282/webapi.json",
     "sqlserverdb-template": "https://gist.githubusercontent.com/romaniuk3/8029516b2ad4a957670f67fe4804c3d1/raw/5ea6410b4b9519b3e3d95713acba834e30d34a75/sqlserverdb.json",
-    "keyvault-template": "https://gist.githubusercontent.com/romaniuk3/a96c95a0bbb6537ee495699b4e35451b/raw/177d880a2acdaf37e24a0d5f25bae1992dedf854/keyvault.json"
+    "keyvault-template": "https://gist.githubusercontent.com/romaniuk3/a96c95a0bbb6537ee495699b4e35451b/raw/177d880a2acdaf37e24a0d5f25bae1992dedf854/keyvault.json",
+    "serviceplan-template": "https://gist.githubusercontent.com/romaniuk3/ac0a7c8b63eb3055b5d44cfa83c9c033/raw/95e6de5ebd8996cb4eac98032a2b751e6f74c696/serviceplan.json"
   },
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
+      "name": "createserviceplan",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('serviceplan-template')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "internshipchatAppBaseName": {
+            "value": "[parameters('internshipchatAppBaseName')]"
+          },
+          "internshipchatAppBaseSkuName": {
+            "value": "[parameters('internshipchatAppBaseSkuName')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
       "name": "createapi",
       "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'createserviceplan')]",
         "[resourceId('Microsoft.Resources/deployments', 'createsqlserverdb')]"
       ],
       "properties": {
@@ -130,6 +152,9 @@
           },
           "internshipchatAppBaseSkuName": {
             "value": "[parameters('internshipchatAppBaseSkuName')]"
+          },
+          "serverFarmId": {
+            "value": "[reference('createserviceplan').outputs.planId.value]"
           }
         }
       }
@@ -201,6 +226,10 @@
     //  "type": "string",
     //  "value": "[reference('createstorageaccount').outputs.storageAccountKey.value]"
     //},
+    "servicePlanId": {
+      "type": "string",
+      "value": "[reference('createserviceplan').outputs.planId.value]"
+    },
     "databaseConnectionString": {
       "type": "string",
       "value": "[reference('createsqlserverdb').outputs.connectionString.value]"
