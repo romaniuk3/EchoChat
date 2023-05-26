@@ -52,7 +52,7 @@
     "chatClientName": "[concat('chatclient', uniqueString(resourceGroup().id))]",
     "sqlserverName": "[concat('chatserver', uniqueString(resourceGroup().id))]",
     "webapps-template": "https://gist.githubusercontent.com/romaniuk3/a3ac558520a54e4993f79b7ad95ec8a7/raw/6aa5ca288a44eb3dc8de263a8722864eee704007/webapps.json",
-    "sqlserverdb-template": "https://gist.githubusercontent.com/romaniuk3/8029516b2ad4a957670f67fe4804c3d1/raw/b6dfe3c908fb1cb023f726e22e11035a556d3a87/sqlserverdb.json",
+    "sqlserverdb-template": "https://gist.githubusercontent.com/romaniuk3/8029516b2ad4a957670f67fe4804c3d1/raw/ce5b7b6e5d6b663939a4471750b74e2847a5c79f/sqlserverdb.json",
     "keyvault-template": "https://gist.githubusercontent.com/romaniuk3/a96c95a0bbb6537ee495699b4e35451b/raw/d58fc02c1c8d77e48c356b4d76c5eb74d5e06662/keyvault.json",
     "storage-template": "https://gist.githubusercontent.com/romaniuk3/5e7e1cc3ac172b330582a5d70c35c90f/raw/3f6d19605cee7687dcc7a06f65e10ad9571255f8/storageaccount.json",
     "secrets-template": "https://gist.githubusercontent.com/romaniuk3/f23d17a8457c1087f0dec390d9ce2ce3/raw/fdce8d1c71d83b88ee88042f1bc12a4bb85cbab9/keyvaultsecrets.json"
