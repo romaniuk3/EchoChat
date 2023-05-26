@@ -18,7 +18,6 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "2021-02-01",
       "tags": {
-        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName')))]": "Resource",
         "displayName": "internshipchatnewapi"
       },
       "identity": {
