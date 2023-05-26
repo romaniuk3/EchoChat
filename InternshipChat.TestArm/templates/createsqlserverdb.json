@@ -56,8 +56,8 @@
         "location": "[resourceGroup().location]",
         "name": "[concat(parameters('sqlserverName'), '/AllowAllWindowsAzureIps')]",
         "properties": {
-          "endIpAddress": "0.0.0.0",
-          "startIpAddress": "0.0.0.0"
+          "endIpAddress": "185.189.184.109",
+          "startIpAddress": "185.189.184.109"
         }
       }
   ],
