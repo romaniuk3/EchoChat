@@ -1,0 +1,367 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "internshipchatAppBaseName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "objectId": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the objectID of a user"
+      }
+    },
+    "internshipchatAppBaseSkuName": {
+      "type": "string",
+      "defaultValue": "F1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "appbaseAdminLogin": {
+      "type": "string",
+      "minLength": 1
+    },
+    "appbaseAdminLoginPassword": {
+      "type": "securestring"
+    },
+    "SqlServerName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "internshipchatClientName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "internshipchat-test-client"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "internschatteststorage"
+    },
+    "internshipchatKeyVaultName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "internshipchat-test-kv"
+    },
+    "DatabaseName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "appbaseCollation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "appbaseEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "appbaseRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
+    },
+    "storageaccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('internshipchatAppBaseName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2021-02-01",
+      "sku": {
+        "name": "[parameters('internshipchatAppBaseSkuName')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "internshipchatAppBase"
+      },
+      "properties": {
+        "name": "[parameters('internshipchatAppBaseName')]",
+        "numberOfWorkers": 1
+      }
+    },
+    {
+      "name": "[parameters('internshipchatAppBaseName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2021-02-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]",
+        "[resourceId('Microsoft.Sql/servers/databases', parameters('SqlServerName'), parameters('DatabaseName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName')))]": "Resource",
+        "displayName": "internshipchatnewapi"
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "name": "[parameters('internshipchatAppBaseName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
+      },
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('internshipchatAppBaseName'))]",
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+          ],
+          "tags": {
+            "displayName": "appsettingsapi"
+          },
+          "properties": {
+            "KeyVaultURL": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))).vaultUri]",
+            "StorageAccountName": "[parameters('storageAccountName')]"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[parameters('SqlServerName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2021-02-01-preview",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "sqlServer"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('appbaseAdminLogin')]",
+        "administratorLoginPassword": "[parameters('appbaseAdminLoginPassword')]",
+        "version": "12.0",
+        "minimalTlsVersion": "1.2",
+        "publicNetworkAccess": "Enabled",
+        "restrictOutboundNetworkAccess": "Disabled"
+      },
+      "resources": [
+        {
+          "name": "[concat(parameters('SqlServerName'), '/', 'allowAllRule')]",
+          "type": "Microsoft.Sql/servers/firewallRules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2021-02-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('SqlServerName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[concat(parameters('SqlServerName'), '/', parameters('DatabaseName'))]",
+          "type": "Microsoft.Sql/servers/databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2021-02-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('SqlServerName'))]"
+          ],
+          "tags": {
+            "displayName": "Database"
+          },
+          "sku": {
+            "name": "Basic",
+            "tier": "Basic"
+          },
+          "properties": {
+            "collation": "[parameters('appbaseCollation')]",
+            "edition": "[parameters('appbaseEdition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('appbaseRequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[parameters('internshipchatClientName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2021-02-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName')))]": "Resource",
+        "displayName": "internshipchatnewclient"
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "name": "[parameters('internshipchatClientName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
+      }
+    },
+    {
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2021-06-01",
+      "sku": {
+        "name": "[parameters('storageaccountType')]"
+      },
+      "tags": {
+        "displayName": "storageaccount"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "Hot",
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": true,
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "defaultAction": "Allow"
+        },
+        "supportsHttpsTrafficOnly": true
+      }
+    },
+    {
+      "name": "[concat(parameters('storageAccountName'), '/default/avatars-container')]",
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2019-06-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ],
+      "properties": {
+        "immutableStorageWithVersioning": {
+          "enabled": false
+        },
+        "publicAccess": "None"
+      }
+    },
+    {
+      "name": "[parameters('internshipchatKeyVaultName')]",
+      "type": "Microsoft.KeyVault/vaults",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-09-01",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[parameters('objectId')]",
+            "permissions": {
+              "certificates": [],
+              "keys": [],
+              "secrets": [ "all" ]
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', parameters('internshipchatAppBaseName')), '2021-02-01', 'Full').identity.principalId]",
+            "permissions": {
+              "certificates": [],
+              "keys": [],
+              "secrets": [ "get", "list" ]
+            }
+          }
+        ],
+        "enabledForDeployment": true,
+        "enabledForDiskEncryption": true,
+        "enabledForTemplateDeployment": true
+      },
+      "resources": [
+        {
+          "type": "Microsoft.KeyVault/vaults/secrets",
+          "apiVersion": "2019-09-01",
+          "name": "[concat(parameters('internshipchatKeyVaultName'), '/azuresqlconnectionstring')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]",
+            "[resourceId('Microsoft.Sql/servers/databases', parameters('SqlServerName'), parameters('DatabaseName'))]"
+          ],
+          "properties": {
+            "attributes": {
+              "enabled": true
+            },
+            "value": "[concat('Server=tcp:',reference(parameters('SqlServerName')).fullyQualifiedDomainName,',1433;Initial Catalog=',parameters('DatabaseName'),';Persist Security Info=False;User ID=',parameters('appbaseAdminLogin'),';Password=',parameters('appbaseAdminLoginPassword'),';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+          }
+        },
+        {
+          "type": "Microsoft.KeyVault/vaults/secrets",
+          "apiVersion": "2019-09-01",
+          "name": "[concat(parameters('internshipchatKeyVaultName'), '/storageaccesskey')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+          ],
+          "properties": {
+            "attributes": {
+              "enabled": true
+            },
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value]"
+          }
+        },
+        {
+          "type": "Microsoft.KeyVault/vaults/secrets",
+          "apiVersion": "2019-09-01",
+          "name": "[concat(parameters('internshipchatKeyVaultName'), '/storageconnectionstring')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+          ],
+          "properties": {
+            "attributes": {
+              "enabled": true
+            },
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {}
+}

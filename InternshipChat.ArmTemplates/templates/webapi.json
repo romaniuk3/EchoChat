@@ -1,0 +1,74 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "internshipchatAppBaseName": {
+      "type": "string"
+    },
+    "internshipchatAppBaseSkuName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[parameters('internshipchatAppBaseName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2021-02-01",
+      "sku": {
+        "name": "[parameters('internshipchatAppBaseSkuName')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "internshipchatAppBase"
+      },
+      "properties": {
+        "name": "[parameters('internshipchatAppBaseName')]",
+        "numberOfWorkers": 1
+      }
+    },
+    {
+      "name": "[parameters('internshipchatAppBaseName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2021-02-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName')))]": "Resource",
+        "displayName": "internshipchatnewapi"
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "name": "[parameters('internshipchatAppBaseName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('internshipchatAppBaseName'))]"
+      },
+      "resources": [
+        //{
+        //  "name": "appsettings",
+        //  "type": "config",
+        //  "apiVersion": "2015-08-01",
+        //  "dependsOn": [
+        //    "[resourceId('Microsoft.Web/sites', parameters('internshipchatAppBaseName'))]",
+        //    "[resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))]",
+        //    "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+        //  ],
+        //  "tags": {
+        //    "displayName": "appsettingsapi"
+        //  },
+        //  "properties": {
+        //    "KeyVaultURL": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))).vaultUri]",
+        //    "StorageAccountName": "[parameters('storageAccountName')]"
+        //  }
+        //}
+      ]
+    }
+  ],
+  "outputs": {
+  }
+}
