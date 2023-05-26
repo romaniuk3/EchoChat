@@ -59,7 +59,7 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    SourceFolder: 'InternshipChat.ArmTemplates'
+    SourceFolder: 'InternshipChat.TestArm'
     Contents: 'azuredeploy*.json'
     TargetFolder: '$(build.artifactStagingDirectory)/arm'
 
