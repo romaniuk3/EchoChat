@@ -1,0 +1,70 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sqlserverName": {
+      "type": "string"
+    },
+    "administratorLogin": {
+      "type": "string"
+    },
+    "administratorLoginPassword": {
+      "type": "string"
+    },
+    "databaseName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+      {
+        "type": "Microsoft.Sql/servers",
+        "apiVersion": "2021-02-01-preview",
+        "name": "[parameters('sqlserverName')]",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "administratorLogin": "[parameters('administratorLogin')]",
+          "administratorLoginPassword": "[parameters('administratorLoginPassword')]"
+        }
+      },
+      {
+        "type": "Microsoft.Sql/servers/databases",
+        "apiVersion": "2021-02-01-preview",
+        "name": "[format('{0}/{1}', parameters('sqlserverName'), parameters('databaseName'))]",
+        "location": "[resourceGroup().location]",
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Sql/servers', parameters('sqlserverName'))]"
+        ],
+        "properties": {
+          "collation": "SQL_Latin1_General_CP1_CI_AS",
+          "maxSizeBytes": 1073741824,
+          "edition": "Basic",
+          "requestedServiceObjectiveName": "Basic"
+        }
+      },
+      {
+        "type": "Microsoft.Sql/servers/firewallRules",
+        "apiVersion": "2021-02-01-preview",
+        "dependsOn": [
+          "[resourceId('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
+        ],
+        "location": "[resourceGroup().location]",
+        "name": "[concat(parameters('sqlserverName'), '/AllowAllWindowsAzureIps')]",
+        "properties": {
+          "endIpAddress": "0.0.0.0",
+          "startIpAddress": "0.0.0.0"
+        }
+      }
+  ],
+  "outputs": {
+    "connectionString": {
+      "type": "string",
+      "value": "[concat('Server=tcp:',reference(parameters('sqlserverName')).fullyQualifiedDomainName,',1433;Initial Catalog=',parameters('databaseName'),';Persist Security Info=False;User ID=',parameters('administratorLogin'),';Password=',parameters('administratorLoginPassword'),';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+    }
+  }
+}
