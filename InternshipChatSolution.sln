@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternshipChat.IntegrationT
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "InternshipChat.ArmTemplates", "InternshipChat.ArmTemplates\InternshipChat.ArmTemplates.deployproj", "{58EBC6C5-141E-4CB0-B4C0-C43E2EB4F6B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternshipChat.Infrastructure", "InternshipChat.Infrastructure\InternshipChat.Infrastructure.csproj", "{221BB1CF-62B0-4F6D-A33C-2C6D3036D00B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{58EBC6C5-141E-4CB0-B4C0-C43E2EB4F6B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58EBC6C5-141E-4CB0-B4C0-C43E2EB4F6B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58EBC6C5-141E-4CB0-B4C0-C43E2EB4F6B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{221BB1CF-62B0-4F6D-A33C-2C6D3036D00B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{221BB1CF-62B0-4F6D-A33C-2C6D3036D00B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{221BB1CF-62B0-4F6D-A33C-2C6D3036D00B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{221BB1CF-62B0-4F6D-A33C-2C6D3036D00B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
