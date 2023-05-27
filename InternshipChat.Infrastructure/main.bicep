@@ -9,7 +9,7 @@ param chatClientName string = 'default2323chat4client'
 param sqlserverName string = 'defaul3tserv8er9'
 param location string = resourceGroup().location
 
-module webAppsModule 'webapps.bicep' = {
+module webAppsModule './modules/webapps.bicep' = {
   name: 'CreateWebApps'
   params: {
     chatApiName: chatApiName
