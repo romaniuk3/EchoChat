@@ -1,13 +1,13 @@
-param administratorLogin string = 'defaultadminlogin4'
+param administratorLogin string
 @secure()
-param administratorLoginPassword string = 'def@ultpaSsword1'
-param databaseName string = 'InternshipChatDefault'
-param keyVaultName string = 'defaultkeyvault9f330'
-param objectId string = '02340230f'
-param storageAccountName string = 'defaultstora5ge33'
-param chatApiName string = 'defaulta3423chatapi'
-param chatClientName string = 'default2323chat4client'
-param sqlserverName string = 'defaul3tserv8er9'
+param administratorLoginPassword string
+param databaseName string
+param keyVaultName string
+param objectId string
+param storageAccountName string
+param chatApiName string
+param chatClientName string
+param sqlserverName string
 param location string = resourceGroup().location
 
 module webAppsModule 'modules/webapps.bicep' = {
@@ -49,4 +49,31 @@ module keyVaultModule 'modules/keyvault.bicep' = {
     objectId: objectId
     webApiObjectId: webAppsModule.outputs.apiObjectId
   }
+}
+
+module secretsModule 'modules/keyvaultsecrets.bicep' = {
+  name: 'CreateSecrets'
+  dependsOn: [
+    keyVaultModule
+    sqlServerModule
+    storageModule
+  ]
+  params: {
+    databaseConnectionString: sqlServerModule.outputs.connectionString
+    internshipchatKeyVaultName: keyVaultName
+    storageAccessKey: storageModule.outputs.storageAccountKey
+    storageAccountName: storageAccountName
+  }
+}
+
+resource chatApiAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
+  name: '${chatApiName}/appsettings'
+  properties: {
+    KeyVaultURL: keyVaultModule.outputs.kvUrl
+    StorageAccountName: storageAccountName
+  }
+  dependsOn: [
+    webAppsModule
+    secretsModule
+  ]
 }
