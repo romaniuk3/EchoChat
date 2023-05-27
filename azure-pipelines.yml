@@ -70,13 +70,11 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: 'az bicep build --file InternshipChat.Infrastructure/main.bicep'
 
-
-
-# - task: CopyFiles@2
-#   inputs:
-#     sourceFolder: '$(System.DefaultWorkingDirectory)'
-#     contents: '**/main.json'
-#     targetFolder: '$(Build.ArtifactStagingDirectory)/arm'
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: 'InternshipChat.Infrastructure'
+    contents: 'main*.json'
+    targetFolder: '$(Build.ArtifactStagingDirectory)/arm'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish packaging'
