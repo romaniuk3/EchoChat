@@ -68,7 +68,7 @@ steps:
     azureSubscription: 'Azure subscription 1 (8faf8986-2d5d-404e-b8a5-3488cbf5a1ff)'
     scriptType: 'ps'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az bicep build --file **/*.bicep'
+    inlineScript: 'az bicep build --file InternshipChat.Infrastructure/main.bicep'
 
 
 
