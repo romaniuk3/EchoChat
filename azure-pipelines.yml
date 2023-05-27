@@ -63,6 +63,14 @@ steps:
     Contents: 'azuredeploy*.json'
     TargetFolder: '$(build.artifactStagingDirectory)/arm'
 
+- task: AzureFileCopy@5
+  inputs:
+    SourcePath: '$(build.artifactStagingDirectory)/arm'
+    azureSubscription: 'Azure subscription 1 (8faf8986-2d5d-404e-b8a5-3488cbf5a1ff)'
+    Destination: 'AzureBlob'
+    storage: 'chatlinkedtemplates'
+    ContainerName: 'templates'
+
 - task: DotNetCoreCLI@2
   displayName: 'Publish packaging'
   inputs:
