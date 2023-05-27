@@ -12,12 +12,12 @@ steps:
     packageType: 'sdk'
     version: '6.x'
 
-# - task: DotNetCoreCLI@2
-#   displayName: 'Restore'
-#   inputs:
-#     command: 'restore'
-#     projects: '**/*.csproj'
-#     feedsToUse: 'select'
+- task: DotNetCoreCLI@2
+  displayName: 'Restore'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
   displayName: 'Build'
@@ -25,17 +25,17 @@ steps:
     command: 'build'
     projects: '**/*.csproj'
 
-# - task: MSBuild@1
-#   displayName: 'DB project build'
-#   inputs:
-#     solution: '**/ChatDbProject/ChatDbProject.sqlproj'
+- task: MSBuild@1
+  displayName: 'DB project build'
+  inputs:
+    solution: '**/ChatDbProject/ChatDbProject.sqlproj'
 
-# - task: CopyFiles@2
-#   displayName: 'Copy dacpac'
-#   inputs:
-#     Contents: '**/*.dacpac'
-#     TargetFolder: '$(build.artifactStagingDirectory)/dacpacs'
-#     flattenFolders: true
+- task: CopyFiles@2
+  displayName: 'Copy dacpac'
+  inputs:
+    Contents: '**/*.dacpac'
+    TargetFolder: '$(build.artifactStagingDirectory)/dacpacs'
+    flattenFolders: true
 
 # - task: CmdLine@2
 #   displayName: 'Start LocalDb'
@@ -62,14 +62,6 @@ steps:
     SourceFolder: 'InternshipChat.ArmTemplates'
     Contents: 'azuredeploy*.json'
     TargetFolder: '$(build.artifactStagingDirectory)/arm'
-
-- task: AzureFileCopy@3
-  inputs:
-    sourcePath: '$(build.artifactStagingDirectory)/arm'
-    azureSubscription: 'Azure subscription 1 (8faf8986-2d5d-404e-b8a5-3488cbf5a1ff)'
-    Destination: 'AzureBlob'
-    storage: 'chatlinkedtemplates'
-    ContainerName: 'templates'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish packaging'
