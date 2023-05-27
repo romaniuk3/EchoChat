@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternshipChat.UnitTests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternshipChat.IntegrationTests", "InternshipChat.IntegrationTests\InternshipChat.IntegrationTests.csproj", "{D7B018EB-82E9-4751-A446-FC4FC76D90D3}"
 EndProject
-Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "InternshipChat.ArmTemplates", "InternshipChat.TestArm\InternshipChat.ArmTemplates.deployproj", "{58EBC6C5-141E-4CB0-B4C0-C43E2EB4F6B0}"
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "InternshipChat.ArmTemplates", "InternshipChat.ArmTemplates\InternshipChat.ArmTemplates.deployproj", "{58EBC6C5-141E-4CB0-B4C0-C43E2EB4F6B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
