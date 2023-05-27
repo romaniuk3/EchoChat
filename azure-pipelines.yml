@@ -57,11 +57,24 @@ steps:
 #     projects: './InternshipChat.IntegrationTests/InternshipChat.IntegrationTests.csproj'
 #     arguments: '--configuration $(BuildConfiguration)'
 
+# - task: CopyFiles@2
+#   inputs:
+#     SourceFolder: 'InternshipChat.ArmTemplates'
+#     Contents: 'azuredeploy*.json'
+#     TargetFolder: '$(build.artifactStagingDirectory)/arm'
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Azure subscription 1 (8faf8986-2d5d-404e-b8a5-3488cbf5a1ff)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az bicep build --file main.bicep'
+
 - task: CopyFiles@2
   inputs:
-    SourceFolder: 'InternshipChat.ArmTemplates'
-    Contents: 'azuredeploy*.json'
-    TargetFolder: '$(build.artifactStagingDirectory)/arm'
+    sourceFolder: '$(System.DefaultWorkingDirectory)'
+    contents: '**/main.json'
+    targetFolder: '$(Build.ArtifactStagingDirectory)/arm'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish packaging'
