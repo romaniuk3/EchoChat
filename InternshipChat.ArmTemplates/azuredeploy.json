@@ -71,11 +71,11 @@
     }
   },
   "variables": {
-    "webapps-template": "[concat(parameters('_artifactsLocation'),'/createwebapps.json',parameters('_artifactsLocationSasToken'))]",
-    "sqlserverdb-template": "[concat(parameters('_artifactsLocation'),'/sqlserverdb.json',parameters('_artifactsLocationSasToken'))]",
-    "keyvault-template": "[concat(parameters('_artifactsLocation'),'/keyvault.json',parameters('_artifactsLocationSasToken'))]",
-    "storage-template": "[concat(parameters('_artifactsLocation'),'/storageaccount.json',parameters('_artifactsLocationSasToken'))]",
-    "secrets-template": "[concat(parameters('_artifactsLocation'),'/keyvaultsecrets.json',parameters('_artifactsLocationSasToken'))]"
+    "webapps-template": "[concat(parameters('_artifactsLocation'),'/createwebapps.json?',parameters('_artifactsLocationSasToken'))]",
+    "sqlserverdb-template": "[concat(parameters('_artifactsLocation'),'/createsqlserverdb.json?',parameters('_artifactsLocationSasToken'))]",
+    "keyvault-template": "[concat(parameters('_artifactsLocation'),'/keyvault.json?',parameters('_artifactsLocationSasToken'))]",
+    "storage-template": "[concat(parameters('_artifactsLocation'),'/storageaccount.json?',parameters('_artifactsLocationSasToken'))]",
+    "secrets-template": "[concat(parameters('_artifactsLocation'),'/keyvaultsecrets.json?',parameters('_artifactsLocationSasToken'))]"
   },
   "resources": [
     {
