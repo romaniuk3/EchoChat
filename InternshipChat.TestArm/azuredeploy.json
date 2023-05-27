@@ -71,40 +71,39 @@
     }
   },
   "variables": {
-    //"webapps-template": "https://gist.githubusercontent.com/romaniuk3/a3ac558520a54e4993f79b7ad95ec8a7/raw/b579dbe2a641a275d582fdca4b1e6733cc1f81ed/webapps.json",
-    "webapps-template": "[concat(parameters('_artifactsLocation'),'/webapps.json',parameters('_artifactsLocationSasToken'))]",
-    "sqlserverdb-template": "https://gist.githubusercontent.com/romaniuk3/8029516b2ad4a957670f67fe4804c3d1/raw/8dbeac70067b62621a01c47ade5b964a98d33d7d/sqlserverdb.json",
-    "keyvault-template": "https://gist.githubusercontent.com/romaniuk3/a96c95a0bbb6537ee495699b4e35451b/raw/d58fc02c1c8d77e48c356b4d76c5eb74d5e06662/keyvault.json",
-    "storage-template": "https://gist.githubusercontent.com/romaniuk3/5e7e1cc3ac172b330582a5d70c35c90f/raw/3f6d19605cee7687dcc7a06f65e10ad9571255f8/storageaccount.json",
-    "secrets-template": "https://gist.githubusercontent.com/romaniuk3/f23d17a8457c1087f0dec390d9ce2ce3/raw/fdce8d1c71d83b88ee88042f1bc12a4bb85cbab9/keyvaultsecrets.json"
+    "webapps-template": "[concat(parameters('_artifactsLocation'),'/createwebapps.json',parameters('_artifactsLocationSasToken'))]",
+    "sqlserverdb-template": "[concat(parameters('_artifactsLocation'),'/sqlserverdb.json',parameters('_artifactsLocationSasToken'))]",
+    "keyvault-template": "[concat(parameters('_artifactsLocation'),'/keyvault.json',parameters('_artifactsLocationSasToken'))]",
+    "storage-template": "[concat(parameters('_artifactsLocation'),'/storageaccount.json',parameters('_artifactsLocationSasToken'))]",
+    "secrets-template": "[concat(parameters('_artifactsLocation'),'/keyvaultsecrets.json',parameters('_artifactsLocationSasToken'))]"
   },
   "resources": [
-    //{
-    //  "type": "Microsoft.Resources/deployments",
-    //  "apiVersion": "2021-04-01",
-    //  "name": "createsqlserverdb",
-    //  "properties": {
-    //    "mode": "Incremental",
-    //    "templateLink": {
-    //      "uri": "[variables('sqlserverdb-template')]",
-    //      "contentVersion": "1.0.0.0"
-    //    },
-    //    "parameters": {
-    //      "sqlserverName": {
-    //        "value": "[parameters('sqlserverName')]"
-    //      },
-    //      "administratorLogin": {
-    //        "value": "[parameters('administratorLogin')]"
-    //      },
-    //      "administratorLoginPassword": {
-    //        "value": "[parameters('administratorLoginPassword')]"
-    //      },
-    //      "databaseName": {
-    //        "value": "[parameters('databaseName')]"
-    //      }
-    //    }
-    //  }
-    //},
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "createsqlserverdb",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('sqlserverdb-template')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "sqlserverName": {
+            "value": "[parameters('sqlserverName')]"
+          },
+          "administratorLogin": {
+            "value": "[parameters('administratorLogin')]"
+          },
+          "administratorLoginPassword": {
+            "value": "[parameters('administratorLoginPassword')]"
+          },
+          "databaseName": {
+            "value": "[parameters('databaseName')]"
+          }
+        }
+      }
+    },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
@@ -124,99 +123,99 @@
           }
         }
       }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "createkeyvault",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'createwebapps')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('keyvault-template')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "internshipchatKeyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "objectId": {
+            "value": "[parameters('objectId')]"
+          },
+          "webApiObjectId": {
+            "value": "[reference('createwebapps').outputs.apiObjectId.value]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "createstorage",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('storage-template')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          },
+          "storageaccountType": {
+            "value": "[parameters('storageaccountType')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "createsecrets",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'createkeyvault')]",
+        "[resourceId('Microsoft.Resources/deployments', 'createsqlserverdb')]",
+        "[resourceId('Microsoft.Resources/deployments', 'createstorage')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('secrets-template')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "internshipchatKeyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "databaseConnectionString": {
+            "value": "[reference('createsqlserverdb').outputs.connectionString.value]"
+          },
+          "storageAccessKey": {
+            "value": "[reference('createstorage').outputs.storageAccountKey.value]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('chatApiName'), '/appsettings')]",
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'createwebapps')]",
+        "[resourceId('Microsoft.Resources/deployments', 'createsecrets')]"
+      ],
+      "tags": {
+        "displayName": "appsettingsapi"
+      },
+      "properties": {
+        "KeyVaultURL": "[reference('createkeyvault').outputs.kvUrl.value]",
+        "StorageAccountName": "[parameters('storageAccountName')]"
+      }
     }
-    //{
-    //  "type": "Microsoft.Resources/deployments",
-    //  "apiVersion": "2021-04-01",
-    //  "name": "createkeyvault",
-    //  "dependsOn": [
-    //    "[resourceId('Microsoft.Resources/deployments', 'createwebapps')]"
-    //  ],
-    //  "properties": {
-    //    "mode": "Incremental",
-    //    "templateLink": {
-    //      "uri": "[variables('keyvault-template')]",
-    //      "contentVersion": "1.0.0.0"
-    //    },
-    //    "parameters": {
-    //      "internshipchatKeyVaultName": {
-    //        "value": "[parameters('keyVaultName')]"
-    //      },
-    //      "objectId": {
-    //        "value": "[parameters('objectId')]"
-    //      },
-    //      "webApiObjectId": {
-    //        "value": "[reference('createwebapps').outputs.apiObjectId.value]"
-    //      }
-    //    }
-    //  }
-    //},
-    //{
-    //  "type": "Microsoft.Resources/deployments",
-    //  "apiVersion": "2021-04-01",
-    //  "name": "createstorage",
-    //  "properties": {
-    //    "mode": "Incremental",
-    //    "templateLink": {
-    //      "uri": "[variables('storage-template')]",
-    //      "contentVersion": "1.0.0.0"
-    //    },
-    //    "parameters": {
-    //      "storageAccountName": {
-    //        "value": "[parameters('storageAccountName')]"
-    //      },
-    //      "storageaccountType": {
-    //        "value": "[parameters('storageaccountType')]"
-    //      }
-    //    }
-    //  }
-    //},
-    //{
-    //  "type": "Microsoft.Resources/deployments",
-    //  "apiVersion": "2021-04-01",
-    //  "name": "createsecrets",
-    //  "dependsOn": [
-    //    "[resourceId('Microsoft.Resources/deployments', 'createkeyvault')]",
-    //    "[resourceId('Microsoft.Resources/deployments', 'createsqlserverdb')]",
-    //    "[resourceId('Microsoft.Resources/deployments', 'createstorage')]"
-    //  ],
-    //  "properties": {
-    //    "mode": "Incremental",
-    //    "templateLink": {
-    //      "uri": "[variables('secrets-template')]",
-    //      "contentVersion": "1.0.0.0"
-    //    },
-    //    "parameters": {
-    //      "internshipchatKeyVaultName": {
-    //        "value": "[parameters('keyVaultName')]"
-    //      },
-    //      "databaseConnectionString": {
-    //        "value": "[reference('createsqlserverdb').outputs.connectionString.value]"
-    //      },
-    //      "storageAccessKey": {
-    //        "value": "[reference('createstorage').outputs.storageAccountKey.value]"
-    //      },
-    //      "storageAccountName": {
-    //        "value": "[parameters('storageAccountName')]"
-    //      }
-    //    }
-    //  }
-    //},
-    //{
-    //  "name": "[concat(parameters('chatApiName'), '/appsettings')]",
-    //  "type": "Microsoft.Web/sites/config",
-    //  "apiVersion": "2015-08-01",
-    //  "dependsOn": [
-    //    "[resourceId('Microsoft.Resources/deployments', 'createwebapps')]",
-    //    "[resourceId('Microsoft.Resources/deployments', 'createsecrets')]"
-    //  ],
-    //  "tags": {
-    //    "displayName": "appsettingsapi"
-    //  },
-    //  "properties": {
-    //    "KeyVaultURL": "[reference('createkeyvault').outputs.kvUrl.value]",
-    //    "StorageAccountName": "[parameters('storageAccountName')]"
-    //  }
-    //}
   ]
 }
