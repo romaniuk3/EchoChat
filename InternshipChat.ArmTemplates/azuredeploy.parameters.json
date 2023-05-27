@@ -2,26 +2,32 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "internshipchatAppBaseName": {
-      "value": "#arm_appBaseName#"
+    "administratorLogin": {
+      "value": "#arm_dbLogin#"
     },
-    "internshipchatAppBaseSkuName": {
-      "value": "#arm_appBaseSkuName#"
+    "administratorLoginPassword": {
+      "value": "#arm_dbPassword#"
     },
-    "SqlServerName": {
-      "value": "#arm_SqlServerName#"
+    "databaseName": {
+      "value": "#arm_dbName#"
     },
-    "DatabaseName": {
-      "value": "#arm_DatabaseName#"
-    },
-    "appbaseAdminLogin": {
-      "value": "#arm_SqlLogin#"
-    },
-    "appbaseAdminLoginPassword": {
-      "value": "#arm_SqlPassword#"
+    "keyVaultName": {
+      "value": "#arm_keyVaultName#"
     },
     "objectId": {
-      "value": "#arm_UserObjectId#"
+      "value": "#arm_objectId#"
+    },
+    "storageAccountName": {
+      "value": "#arm_storageName#"
+    },
+    "chatApiName": {
+      "value": "#arm_apiName#"
+    },
+    "chatClientName": {
+      "value": "#arm_clientName#"
+    },
+    "sqlserverName": {
+      "value": "#arm_sqlServerName#"
     }
   }
 }

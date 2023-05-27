@@ -54,5 +54,9 @@
     }
   ],
   "outputs": {
+    "kvUrl": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('internshipchatKeyVaultName'))).vaultUri]"
+    }
   }
 }
