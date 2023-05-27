@@ -19,11 +19,11 @@ steps:
 #     projects: '**/*.csproj'
 #     feedsToUse: 'select'
 
-# - task: DotNetCoreCLI@2
-#   displayName: 'Build'
-#   inputs:
-#     command: 'build'
-#     projects: '**/*.csproj'
+- task: DotNetCoreCLI@2
+  displayName: 'Build'
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
 
 # - task: MSBuild@1
 #   displayName: 'DB project build'
@@ -63,14 +63,13 @@ steps:
     Contents: 'azuredeploy*.json'
     TargetFolder: '$(build.artifactStagingDirectory)/arm'
 
-- task: AzureFileCopy@5
+- task: AzureFileCopy@3
   inputs:
     sourcePath: '$(build.artifactStagingDirectory)/arm'
     azureSubscription: 'Azure subscription 1 (8faf8986-2d5d-404e-b8a5-3488cbf5a1ff)'
     Destination: 'AzureBlob'
     storage: 'chatlinkedtemplates'
     ContainerName: 'templates'
-    BlobPrefix: 'template'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish packaging'
