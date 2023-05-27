@@ -10,8 +10,22 @@ param chatClientName string
 param sqlserverName string
 param location string = resourceGroup().location
 
+module sqlServerModule 'modules/sqlserverdb.bicep' = {
+  name: 'CreateSqlServer'
+  params: {
+    administratorLogin: administratorLogin
+    administratorLoginPassword: administratorLoginPassword
+    databaseName: databaseName
+    location: location
+    sqlserverName: sqlserverName
+  }
+}
+
 module webAppsModule 'modules/webapps.bicep' = {
   name: 'CreateWebApps'
+  dependsOn: [
+    sqlServerModule
+  ]
   params: {
     chatApiName: chatApiName
     chatClientName: chatClientName
@@ -21,20 +35,12 @@ module webAppsModule 'modules/webapps.bicep' = {
 
 module storageModule 'modules/storage.bicep' = {
   name: 'CreateStorage'
+  dependsOn: [
+    sqlServerModule
+  ]
   params: {
     location: location
     storageAccountName: storageAccountName
-  }
-}
-
-module sqlServerModule 'modules/sqlserverdb.bicep' = {
-  name: 'CreateSqlServer'
-  params: {
-    administratorLogin: administratorLogin
-    administratorLoginPassword: administratorLoginPassword
-    databaseName: databaseName
-    location: location
-    sqlserverName: sqlserverName
   }
 }
 
@@ -55,8 +61,6 @@ module secretsModule 'modules/keyvaultsecrets.bicep' = {
   name: 'CreateSecrets'
   dependsOn: [
     keyVaultModule
-    sqlServerModule
-    storageModule
   ]
   params: {
     databaseConnectionString: sqlServerModule.outputs.connectionString

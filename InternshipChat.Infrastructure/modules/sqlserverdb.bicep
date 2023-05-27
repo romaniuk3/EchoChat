@@ -30,6 +30,9 @@ resource Database 'Microsoft.Sql/servers/databases@2022-08-01-preview' = {
 
 resource SqlServerRule 'Microsoft.Sql/servers/firewallRules@2022-08-01-preview' = {
   parent: SqlServer
+  dependsOn: [
+    Database
+  ]
   name: 'AllowAllWindowsAzureIps'
   properties: {
     endIpAddress: '0.0.0.0'
