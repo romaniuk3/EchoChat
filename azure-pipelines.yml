@@ -2,8 +2,7 @@ trigger:
 - master
 
 pool:
-  name: 'Default'
-  vmImage: 'komputer'
+  vmImage: 'windows-latest'
   
 steps:
 - task: UseDotNet@2
