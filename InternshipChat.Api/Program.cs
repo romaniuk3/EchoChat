@@ -31,9 +31,8 @@ if (builder.Environment.IsProduction())
     var azureCredential = new DefaultAzureCredential();
     builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
     connectionString = builder.Configuration.GetSection("azuresqlconnectionstring").Value!;
-    //var signalRConnectionString = builder.Configuration.GetSection("azuresignalrconnectionstring").Value;
-    //builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
-    builder.Services.AddSignalR();
+    var signalRConnectionString = builder.Configuration.GetSection("azuresignalrconnectionstring").Value;
+    builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
 } else if (builder.Environment.IsDevelopment())
 {
     connectionString = builder.Configuration.GetConnectionString("Default")!;

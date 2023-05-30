@@ -37,4 +37,4 @@ resource SignalR 'Microsoft.SignalRService/SignalR@2022-08-01-preview' = {
   }
 }
 
-output signalRConnectionString string = 'Endpoint=${SignalR.properties.hostName};AccessKey=${listKeys(SignalR.id, SignalR.apiVersion).primaryKey}'
+output signalRConnectionString string = 'Endpoint=https://${SignalR.properties.hostName};AccessKey=${listKeys(SignalR.id, SignalR.apiVersion).primaryKey};Version=1.0'
