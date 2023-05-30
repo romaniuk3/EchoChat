@@ -2,6 +2,7 @@ param internshipchatKeyVaultName string
 param databaseConnectionString string
 param storageAccessKey string
 param storageAccountName string
+param signalRConnectionString string
 
 resource internshipchatKeyVaultName_azuresqlconnectionstring 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
   name: '${internshipchatKeyVaultName}/azuresqlconnectionstring'
@@ -30,5 +31,15 @@ resource internshipchatKeyVaultName_storageconnectionstring 'Microsoft.KeyVault/
       enabled: true
     }
     value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${storageAccessKey};EndpointSuffix=core.windows.net'
+  }
+}
+
+resource internshipchatKeyVaultName_signalRConnectionString 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
+  name: '${internshipchatKeyVaultName}/azuresignalrconnectionstring'
+  properties: {
+    attributes: {
+      enabled: true
+    }
+    value: signalRConnectionString
   }
 }

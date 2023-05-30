@@ -8,6 +8,7 @@ param storageAccountName string
 param chatApiName string
 param chatClientName string
 param sqlserverName string
+param signalRServiceName string
 param location string = resourceGroup().location
 
 module sqlServerModule 'modules/sqlserverdb.bicep' = {
@@ -57,6 +58,17 @@ module keyVaultModule 'modules/keyvault.bicep' = {
   }
 }
 
+module signalRModule 'modules/signalr.bicep' = {
+  name: 'CreateSignalRService'
+  dependsOn: [
+    webAppsModule
+  ]
+  params: {
+    location: location
+    name: signalRServiceName
+  }
+}
+
 module secretsModule 'modules/keyvaultsecrets.bicep' = {
   name: 'CreateSecrets'
   dependsOn: [
@@ -67,6 +79,7 @@ module secretsModule 'modules/keyvaultsecrets.bicep' = {
     internshipchatKeyVaultName: keyVaultName
     storageAccessKey: storageModule.outputs.storageAccountKey
     storageAccountName: storageAccountName
+    signalRConnectionString: signalRModule.outputs.signalRConnectionString
   }
 }
 

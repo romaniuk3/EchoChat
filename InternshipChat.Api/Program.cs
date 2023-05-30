@@ -31,9 +31,12 @@ if (builder.Environment.IsProduction())
     var azureCredential = new DefaultAzureCredential();
     builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
     connectionString = builder.Configuration.GetSection("azuresqlconnectionstring").Value!;
+    var signalRConnectionString = builder.Configuration.GetSection("azuresignalrconnectionstring").Value;
+    builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
 } else if (builder.Environment.IsDevelopment())
 {
     connectionString = builder.Configuration.GetConnectionString("Default")!;
+    builder.Services.AddSignalR();
 }
 
 builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(connectionString));
@@ -103,7 +106,6 @@ builder.Services.AddControllers()
 
 builder.Services.ConfigureValidators();
 
-builder.Services.AddSignalR();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

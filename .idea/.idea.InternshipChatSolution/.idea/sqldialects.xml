@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetRoleClaims.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetRoles.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetUserClaims.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetUserLogins.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetUserRoles.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetUserTokens.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetUsers.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/Chats.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/Messages.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/UserChats.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatDbProject/dbo/Views/ChatInfoView.sql" dialect="TSQL" />
+  </component>
+</project>

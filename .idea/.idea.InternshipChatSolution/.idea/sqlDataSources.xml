@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDataSourceStorage">
+    <option name="dataSources">
+      <list>
+        <State>
+          <option name="id" value="b83a8219-e4fe-435f-a423-b20f4ed2c276" />
+          <option name="name" value="ChatDbProject" />
+          <option name="dbmsName" value="MSSQL" />
+          <option name="urls">
+            <array>
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/Messages.sql" />
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/Chats.sql" />
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/UserChats.sql" />
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetUserTokens.sql" />
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetUsers.sql" />
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetUserRoles.sql" />
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetUserLogins.sql" />
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetUserClaims.sql" />
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetRoles.sql" />
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Tables/AspNetRoleClaims.sql" />
+              <option value="file://$PROJECT_DIR$/ChatDbProject/dbo/Views/ChatInfoView.sql" />
+            </array>
+          </option>
+          <option name="remarks" value="Database Project" />
+          <option name="outPath" value="$PROJECT_DIR$/ChatDbProject" />
+          <option name="codeStyleName" value="Visual Studio Database Project" />
+          <option name="outLayout" value="File per object by schema.groovy" />
+          <option name="scriptOptions">
+            <map>
+              <entry key="ConstraintContext" value="CONSTRAINT_IN_TABLE" />
+              <entry key="MsVsDdlCompatibility" value="1" />
+              <entry key="QualifyWithSchema" value="ALWAYS" />
+              <entry key="Reformat" value="1" />
+              <entry key="UseSemicolon" value="1" />
+            </map>
+          </option>
+        </State>
+      </list>
+    </option>
+  </component>
+</project>
