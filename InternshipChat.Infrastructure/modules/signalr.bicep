@@ -2,13 +2,13 @@ param location string
 param name string
 
 
-resource SignalR 'Microsoft.SignalRService/signalR@2023-03-01-preview' = {
+resource SignalR 'Microsoft.SignalRService/SignalR@2022-08-01-preview' = {
   name: name
   location: location
   sku: {
-    capacity: 1
     name: 'Free_F1'
     tier: 'Free'
+    capacity: 1
   }
   kind: 'SignalR'
   identity: {
@@ -22,10 +22,6 @@ resource SignalR 'Microsoft.SignalRService/signalR@2023-03-01-preview' = {
       }
       {
         flag: 'EnableConnectivityLogs'
-        value: 'true'
-      }
-      {
-        flag: 'EnableMessagingLogs'
         value: 'true'
       }
     ]
