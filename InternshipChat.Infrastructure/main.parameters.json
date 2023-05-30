@@ -28,6 +28,9 @@
       },
       "sqlserverName": {
         "value": "#arm_sqlServerName#"
+      },
+      "signalRServiceName": {
+        "value": "#arm_signalRServiceName"
       }
     }
   }
