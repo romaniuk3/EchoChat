@@ -30,7 +30,7 @@
         "value": "#arm_sqlServerName#"
       },
       "signalRServiceName": {
-        "value": "#arm_signalRServiceName"
+        "value": "#arm_signalRServiceName#"
       }
     }
   }

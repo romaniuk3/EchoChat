@@ -24,6 +24,10 @@ resource SignalR 'Microsoft.SignalRService/SignalR@2022-08-01-preview' = {
         flag: 'EnableConnectivityLogs'
         value: 'true'
       }
+      {
+        flag: 'EnableMessagingLogs'
+        value: 'true'
+      }
     ]
     cors: {
       allowedOrigins: [
