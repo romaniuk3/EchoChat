@@ -10,6 +10,7 @@
 @inject IUserService userService
 @inject IConfiguration Configuration
 @inject AuthenticationStateProvider AuthState
+@implements IDisposable
 
 @if (!IsPageLoaded)
 {
@@ -62,7 +63,7 @@
 @code {
     [Parameter]
     public int Id { get; set; }
-    [CascadingParameter] public HubConnection hubConnection { get; set; }
+    public HubConnection hubConnection { get; set; }
     private string CurrentMessage { get; set; }
     private ChatDTO OpenedChat { get; set; } = new();
     private List<MessageDTO> messages { get; set; } = new();
@@ -71,6 +72,7 @@
     private bool IsAccessGranted { get; set; }
     private bool IsPageLoaded { get; set; }
     private string? Error { get; set; }
+    private IDisposable MessageSubscription { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
@@ -93,7 +95,7 @@
             await hubConnection.StartAsync();
         }
 
-        hubConnection.On<MessageDTO, string>("ReceiveMessage", async (message, userName) =>
+        MessageSubscription = hubConnection.On<MessageDTO, string>("ReceiveMessage", async (message, userName) =>
         {
             if (message.ChatId == Id)
             {
@@ -179,5 +181,17 @@
     public void CheckIfUserHasAccessToChat()
     {
         IsAccessGranted = OpenedChat.Users.Any(user => user.Id == CurrentUserId);
+    }
+
+    public void Dispose()
+    {
+        MessageSubscription.Dispose();
+        InvokeAsync(async () =>
+        {
+            if (hubConnection != null)
+            {
+                await hubConnection.StopAsync();
+            }
+        });
     }
 }
