@@ -14,10 +14,10 @@ using InternshipChat.AttachmentFunctions.Models;
 
 namespace InternshipChat.AttachmentFunctions
 {
-    public static class HttpFunctions
+    public class HttpFunctions
     {
         [FunctionName(nameof(AttachmentStarter))]
-        public static async Task<IActionResult> AttachmentStarter(
+        public async Task<IActionResult> AttachmentStarter(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient starter,
             ILogger log)

@@ -1,4 +1,3 @@
-using Azure.Identity;
 using Blazored.LocalStorage;
 using InternshipChat.WEB.Services;
 using InternshipChat.WEB.Services.Auth;

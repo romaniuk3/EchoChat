@@ -16,12 +16,12 @@ using Xceed.Words.NET;
 
 namespace InternshipChat.AttachmentFunctions
 {
-    public static class ActivityFunctions
+    public class ActivityFunctions
     {
         [FunctionName(nameof(LoadFileToStorage))]
-        public static async Task<string> LoadFileToStorage([ActivityTrigger] Attachment inputFile, ILogger log)
+        public async Task<string> LoadFileToStorage([ActivityTrigger] Attachment inputFile, ILogger log)
         {
-            var accountConnectionString = "f";
+            var accountConnectionString = "DefaultEndpointsProtocol=https;AccountName=chatstoragein1;AccountKey=s4rOf/d89DqHX4XJrgRaYdsSqF+woeFNH+cFrdhOsnunE0c9h0OBveE6xsKtfWQPDe1LUtS27VUU+AStkPc7Ag==;EndpointSuffix=core.windows.net";
             var containerName = "attachments-container";
             Stream fileStream = new MemoryStream(inputFile.Content);
 
@@ -34,7 +34,7 @@ namespace InternshipChat.AttachmentFunctions
         }
 
         [FunctionName(nameof(ExtractTextFromFile))]
-        public static async Task<string> ExtractTextFromFile([ActivityTrigger] Attachment inputFile, ILogger log)
+        public async Task<string> ExtractTextFromFile([ActivityTrigger] Attachment inputFile, ILogger log)
         {
             using MemoryStream stream = new(inputFile.Content);
             var extractedText = string.Empty;
@@ -46,7 +46,7 @@ namespace InternshipChat.AttachmentFunctions
         }
 
         [FunctionName(nameof(SaveTextToDatabase))]
-        public static async Task<string> SaveTextToDatabase([ActivityTrigger] string textFromFile, ILogger log)
+        public async Task<string> SaveTextToDatabase([ActivityTrigger] string textFromFile, ILogger log)
         {
             
             

@@ -11,15 +11,15 @@ using InternshipChat.AttachmentFunctions.Models;
 
 namespace InternshipChat.AttachmentFunctions
 {
-    public static class OrhestratorFunctions
+    public class OrhestratorFunctions
     {
         [FunctionName(nameof(ProcessFileOrchestrator))]
-        public static async Task<object> ProcessFileOrchestrator(
+        public async Task<object> ProcessFileOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             var attachmentInput = context.GetInput<Attachment>();
             var loadedBlob = await context.CallActivityAsync<string>("LoadFileToStorage", attachmentInput);
-            var textFromBlob = await context.CallActivityAsync<string>("ExtractTextFromFile", loadedBlob);
+            var textFromBlob = await context.CallActivityAsync<string>("ExtractTextFromFile", attachmentInput);
 
             return null;
             /*

@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Text;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.Models;
-using Azure;
 using InternshipChat.Shared.DTO.UserDtos;
 using System.Text.Json.Serialization;
 
