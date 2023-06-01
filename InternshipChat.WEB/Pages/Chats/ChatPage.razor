@@ -4,6 +4,7 @@
 @using InternshipChat.Shared.DTO.UserDtos;
 @using InternshipChat.WEB.Services.Contracts;
 @using Microsoft.AspNetCore.SignalR.Client;
+@using InternshipChat.WEB.Pages.Attachments;
 @inject IChatService chatService
 @inject IAuthService AuthService
 @inject IMessageService messageService
@@ -47,6 +48,9 @@
             <MudButton OnClick="@SendMessageAsync" StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" ButtonType="ButtonType.Button">Send</MudButton>
         </MudPaper>
     </MudPaper>
+</div>
+<div>
+    <DocumentAttachment></DocumentAttachment>
 </div>
 } else
 {

@@ -48,5 +48,25 @@ namespace InternshipChat.WEB.Services
 
             return null;
         }
+
+        public async Task<object> UploadAttachment(IBrowserFile file)
+        {
+            var formData = new MultipartFormDataContent
+            {
+                { new StreamContent(file.OpenReadStream()), "file", file.Name }
+            };
+
+            var response = await _httpClient.PostAsync("http://localhost:7241/api/AttachmentStarter", formData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("SUCCEDED in service");
+            } else
+            {
+                Console.WriteLine("FAILED in service");
+            }
+
+            return null;
+        }
     }
 }

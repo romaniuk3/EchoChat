@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using InternshipChat.AttachmentFunctions.Models;
 
 namespace InternshipChat.AttachmentFunctions
 {
@@ -17,22 +18,28 @@ namespace InternshipChat.AttachmentFunctions
     {
         [FunctionName(nameof(AttachmentStarter))]
         public static async Task<IActionResult> AttachmentStarter(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient starter,
             ILogger log)
         {
-            var file = req.GetQueryParameterDictionary()["file"];
+            var file = req.Form.Files.FirstOrDefault();
 
             if (file == null)
             {
-                return new BadRequestObjectResult("Please pass the file location to query stirng");
+                return new BadRequestObjectResult("Please provide a valid .docx file");
             }
+            var fileModel = new Attachment()
+            {
+                FileName = file.FileName,
+                Content = Attachment.ReadFileContent(file)
+            };
+
+            log.LogInformation("PASSED FILENAME IS: " + fileModel.FileName);
 
             // Function input comes from the request content.
-            string instanceId = await starter.StartNewAsync("ProcessFileOrchestrator", null, file);
+            string instanceId = await starter.StartNewAsync("ProcessFileOrchestrator", null, fileModel);
 
-            log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
-
+            //log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
             return starter.CreateCheckStatusResponse(req, instanceId);
         }
     }

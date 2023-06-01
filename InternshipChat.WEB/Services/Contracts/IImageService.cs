@@ -6,5 +6,6 @@ namespace InternshipChat.WEB.Services.Contracts
     {
         public Task<string> ToBase64(IBrowserFile imageFile);
         Task<string?> Upload(IBrowserFile file);
+        Task<object> UploadAttachment(IBrowserFile file);
     }
 }

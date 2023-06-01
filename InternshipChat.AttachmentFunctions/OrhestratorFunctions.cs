@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using InternshipChat.AttachmentFunctions.Models;
 
 namespace InternshipChat.AttachmentFunctions
 {
@@ -14,17 +17,18 @@ namespace InternshipChat.AttachmentFunctions
         public static async Task<object> ProcessFileOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
-            var fileLocation = context.GetInput<string>();
-
-            var loadedBlob = await context.CallActivityAsync<string>("LoadFileToStorage", fileLocation);
+            var attachmentInput = context.GetInput<Attachment>();
+            var loadedBlob = await context.CallActivityAsync<string>("LoadFileToStorage", attachmentInput);
             var textFromBlob = await context.CallActivityAsync<string>("ExtractTextFromFile", loadedBlob);
 
+            return null;
+            /*
             return new
             {
-                FileLocation = fileLocation,
+                FileLocation = file,
                 LoadedBlob = loadedBlob,
                 TextFromBlob = textFromBlob
-            };
+            };*/
         }
     }
 }

@@ -1,0 +1,32 @@
+﻿@using InternshipChat.WEB.Services.Contracts;
+@inject IImageService _imageService
+
+<MudFileUpload T="IBrowserFile" Accept=".docx" FilesChanged="UploadDocument">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   for="@context">
+            Attach your document
+        </MudButton>
+    </ButtonTemplate>
+</MudFileUpload>
+@if(document != null)
+{
+    <MudList>
+            <MudListItem Icon="@Icons.Material.Filled.AttachFile">
+                @document.Name <code>@document.Size bytes</code>
+            </MudListItem>
+    </MudList>
+}
+
+@code {
+    private IBrowserFile? document;
+
+    private void UploadDocument(IBrowserFile file)
+    {
+        document = file;
+        var res = _imageService.UploadAttachment(file);
+    }
+}
