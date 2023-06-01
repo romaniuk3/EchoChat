@@ -9,6 +9,7 @@ param chatApiName string
 param chatClientName string
 param sqlserverName string
 param signalRServiceName string
+param functionAppName string
 param location string = resourceGroup().location
 
 module sqlServerModule 'modules/sqlserverdb.bicep' = {
@@ -80,6 +81,18 @@ module secretsModule 'modules/keyvaultsecrets.bicep' = {
     storageAccessKey: storageModule.outputs.storageAccountKey
     storageAccountName: storageAccountName
     signalRConnectionString: signalRModule.outputs.signalRConnectionString
+  }
+}
+
+module azFunctionsModule 'modules/functionsapp.bicep' = {
+  name: 'CreateAzFunctionsApp'
+  dependsOn: [
+    secretsModule
+  ]
+  params: {
+    functionAppName: functionAppName
+    location: location
+    storageAccountName: 'func-${storageAccountName}'
   }
 }
 

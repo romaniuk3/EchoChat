@@ -31,6 +31,9 @@
       },
       "signalRServiceName": {
         "value": "#arm_signalRServiceName#"
+      },
+      "functionAppName": {
+        "value": "#arm_functionAppName#"
       }
     }
   }
