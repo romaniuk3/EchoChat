@@ -1,4 +1,4 @@
-param storageAccountName string
+param storageAccountName string = 'azstoragechat1'
 param location string
 param hostingPlanName string = 'azfuncplan${uniqueString(resourceGroup().id)}'
 param functionAppName string

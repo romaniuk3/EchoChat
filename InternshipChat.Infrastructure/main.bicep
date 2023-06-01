@@ -92,7 +92,6 @@ module azFunctionsModule 'modules/functionsapp.bicep' = {
   params: {
     functionAppName: functionAppName
     location: location
-    storageAccountName: 'func-${storageAccountName}'
   }
 }
 
