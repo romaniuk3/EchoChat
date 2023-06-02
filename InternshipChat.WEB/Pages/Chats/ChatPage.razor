@@ -48,9 +48,28 @@
             <MudButton OnClick="@SendMessageAsync" StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" ButtonType="ButtonType.Button">Send</MudButton>
         </MudPaper>
     </MudPaper>
+    <MudPaper Elevation="25" Class="pa-3 ml-6" Width="400px">
+        <MudToolBar Dense="true">
+            <MudText Typo="Typo.h6">Attachments</MudText>
+        </MudToolBar>
+        <div class="d-flex flex-column gap-3">
+            @foreach (var chatAttachment in attachments)
+            {
+                <MudCard Outlined="true">
+                    <MudCardContent>
+                        <MudText>@chatAttachment.FileName</MudText>
+                        <MudText Class="text-break" Typo="Typo.body2">@chatAttachment.FileText</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary">Read More</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            }
+         </div>
+    </MudPaper>
 </div>
 <div>
-    <DocumentAttachment ChatId="@Id" UserId="@CurrentUserId"></DocumentAttachment>
+    <DocumentAttachment ChatId="@Id" UserId="@CurrentUserId" OnAttachmentProcessed="@HandleNewAttachment"></DocumentAttachment>
 </div>
 } else
 {
@@ -65,8 +84,7 @@
 }
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
     public HubConnection hubConnection { get; set; }
     private string CurrentMessage { get; set; }
     private ChatDTO OpenedChat { get; set; } = new();
@@ -77,6 +95,7 @@
     private bool IsPageLoaded { get; set; }
     private string? Error { get; set; }
     private IDisposable MessageSubscription { get; set; }
+    private List<ChatAttachment> attachments = new();
 
     protected async override Task OnInitializedAsync()
     {
@@ -108,6 +127,12 @@
                 await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");
             }
         });
+    }
+
+    private async Task HandleNewAttachment(ChatAttachment chatAttachment)
+    {
+        attachments.Add(chatAttachment);
+        StateHasChanged();
     }
 
     private async Task LoadChat()

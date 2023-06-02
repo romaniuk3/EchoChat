@@ -12,5 +12,6 @@ namespace InternshipChat.DAL.Repositories.Interfaces
         Task<Chat> GetChatById(int id);
         Task<IEnumerable<ChatInfoView>> GetAllChats();
         Task<Chat?> GetChatByName(string name);
+        Task<IEnumerable<ChatAttachment>> GetAllChatAttachments(int chatId);
     }
 }

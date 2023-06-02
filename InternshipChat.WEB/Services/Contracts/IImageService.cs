@@ -1,4 +1,5 @@
-﻿using InternshipChat.Shared.DTO.ChatDtos;
+﻿using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.DTO.ChatDtos;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace InternshipChat.WEB.Services.Contracts
@@ -7,6 +8,6 @@ namespace InternshipChat.WEB.Services.Contracts
     {
         public Task<string> ToBase64(IBrowserFile imageFile);
         Task<string?> Upload(IBrowserFile file);
-        Task<object> UploadAttachment(ChatAttachmentDTO attachmentDto);
+        Task<ChatAttachment?> UploadAttachment(ChatAttachmentDTO attachmentDto);
     }
 }

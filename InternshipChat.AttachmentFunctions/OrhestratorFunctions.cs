@@ -16,7 +16,7 @@ namespace InternshipChat.AttachmentFunctions
     public class OrhestratorFunctions
     {
         [FunctionName(nameof(ProcessFileOrchestrator))]
-        public async Task<object> ProcessFileOrchestrator(
+        public async Task<ChatAttachment> ProcessFileOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
         {
             log = context.CreateReplaySafeLogger(log);
@@ -26,19 +26,12 @@ namespace InternshipChat.AttachmentFunctions
             log.LogInformation("CHAT ID " + attachmentInput.ChatId);
             log.LogInformation("FILENAME " + attachmentInput.FileName);
             log.LogInformation("FILENAME FROM DOCUMENT" + attachmentInput.Attachment.FileName);
-            var loadedBlobName = await context.CallActivityAsync<string>("LoadFileToStorage", attachmentInput.Attachment);
-            var textFromBlob = await context.CallActivityAsync<string>("ExtractTextFromFile", loadedBlobName);
-            attachmentInput.FileText = textFromBlob;
-            var savetoDatabase = await context.CallActivityAsync<string>("SaveTextToDatabase", attachmentInput);
-
-            return null;
-            /*
-            return new
-            {
-                FileLocation = file,
-                LoadedBlob = loadedBlob,
-                TextFromBlob = textFromBlob
-            };*/
+            //var loadedBlobName = await context.CallActivityAsync<string>("LoadFileToStorage", attachmentInput.Attachment);
+            //var textFromBlob = await context.CallActivityAsync<string>("ExtractTextFromFile", loadedBlobName);
+            //attachmentInput.FileText = textFromBlob;
+            //var savedAttachment = await context.CallActivityAsync<ChatAttachment>("SaveTextToDatabase", attachmentInput);
+            return new ChatAttachment();
+            //return savedAttachment;
         }
     }
 }

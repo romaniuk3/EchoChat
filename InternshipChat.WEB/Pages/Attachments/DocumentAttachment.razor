@@ -1,4 +1,5 @@
-﻿@using InternshipChat.Shared.DTO.ChatDtos;
+﻿@using InternshipChat.DAL.Entities;
+@using InternshipChat.Shared.DTO.ChatDtos;
 @using InternshipChat.WEB.Services.Contracts;
 @inject IImageService _imageService
 
@@ -25,6 +26,7 @@
 @code {
     [Parameter] public int ChatId { get; set; }
     [Parameter] public int UserId { get; set; }
+    [Parameter] public EventCallback<ChatAttachment> OnAttachmentProcessed { get; set; }
 
     private IBrowserFile? document;
 
@@ -38,8 +40,12 @@
                 Document = file
             };
         document = file;
-        Console.WriteLine("IM GOING TO CALL SERVICE! ");
-        var res = _imageService.UploadAttachment(attachmentDto);
+
+        var attachmentResult = await _imageService.UploadAttachment(attachmentDto);
+        if (attachmentResult != null)
+        {
+            await OnAttachmentProcessed.InvokeAsync(attachmentResult);
+        }
     }
 
     private async Task<IFormFile> ConvertToFormFile(IBrowserFile file)

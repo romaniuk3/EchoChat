@@ -13,17 +13,22 @@ using Microsoft.AspNetCore.Http;
 using InternshipChat.Shared.DTO.ChatDtos;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.Models;
+using System.Threading;
+using DarkLoop.Azure.Functions.Authorize;
 
 namespace InternshipChat.AttachmentFunctions
 {
     public class HttpFunctions
     {
+        [FunctionAuthorize]
         [FunctionName(nameof(AttachmentStarter))]
         public async Task<IActionResult> AttachmentStarter(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient starter,
             ILogger log)
         {
+            TimeSpan timeout = TimeSpan.FromSeconds(30);
+            TimeSpan retryInterval = TimeSpan.FromSeconds(1);
             var form = await req.ReadFormAsync();
             var file = form.Files.GetFile("file");
             var fileModel = new FileModel
@@ -42,7 +47,18 @@ namespace InternshipChat.AttachmentFunctions
 
             string instanceId = await starter.StartNewAsync("ProcessFileOrchestrator", null, attachment);
 
-            return starter.CreateCheckStatusResponse(req, instanceId);
+            return await starter.WaitForCompletionOrCreateCheckStatusResponseAsync(req, instanceId, timeout, retryInterval);
+        }
+
+        private static TimeSpan? GetTimeSpan(HttpRequest request, string queryParameterName)
+        {
+            string queryParameterStringValue = request.GetQueryParameterDictionary()[queryParameterName];
+            if (string.IsNullOrEmpty(queryParameterStringValue))
+            {
+                return null;
+            }
+
+            return TimeSpan.FromSeconds(double.Parse(queryParameterStringValue));
         }
     }
 }

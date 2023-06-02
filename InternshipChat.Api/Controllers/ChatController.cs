@@ -75,6 +75,13 @@ namespace InternshipChat.Api.Controllers
             return Ok(chatDto);
         }
 
+        [HttpGet]
+        [Route("attachments/{chatId}")]
+        public async Task<ActionResult<IEnumerable<ChatAttachment>>> GetChatAttachments(int chatId)
+        {
+            return Ok();
+        }
+
         [HttpPost]
         [Route("{chatId}/add-user")]
         public async Task<ActionResult> AddUserToChat(int chatId, [FromBody] int userId)

@@ -39,5 +39,12 @@ namespace InternshipChat.DAL.Repositories
             var chats = await _chatContext.Set<ChatInfoView>().ToListAsync();
             return chats;
         }
+
+        public async Task<IEnumerable<ChatAttachment>> GetAllChatAttachments(int chatId)
+        {
+            var attachments = await _chatContext.ChatAttachments.Where(ca => ca.ChatId == chatId).ToListAsync();
+
+            return attachments;
+        }
     }
 }

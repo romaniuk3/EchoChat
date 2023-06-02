@@ -1,8 +1,10 @@
 ﻿using Blazored.LocalStorage;
+using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Net;
 using System.Text.Json;
 
 namespace InternshipChat.WEB.Services
@@ -50,8 +52,10 @@ namespace InternshipChat.WEB.Services
             return null;
         }
 
-        public async Task<object> UploadAttachment(ChatAttachmentDTO attachmentDto)
+        public async Task<ChatAttachment?> UploadAttachment(ChatAttachmentDTO attachmentDto)
         {
+            await GetBearerToken();
+
             var formData = new MultipartFormDataContent
             {
                 { new StringContent(attachmentDto.SenderId.ToString()), "SenderId" },
@@ -60,24 +64,22 @@ namespace InternshipChat.WEB.Services
                 { new StreamContent(attachmentDto.Document.OpenReadStream()), "file", attachmentDto.Document.Name }
             };
             var response = await _httpClient.PostAsync("http://localhost:7241/api/AttachmentStarter", formData);
-            
-            if(response.IsSuccessStatusCode)
+            if(response.StatusCode == HttpStatusCode.OK)
             {
+                var readyAttachment = await response.Content.ReadFromJsonAsync<ChatAttachment>();
                 Console.WriteLine("SUCCEEDED IN SERVICE");
-            } else
+                Console.WriteLine("EXTRACTED TEXT AFTER FUNCTION COMPLETED: " + readyAttachment.FileText);
+                Console.WriteLine("ATTACHMENT ID: " + readyAttachment.Id);
+                Console.WriteLine("ATTACHMENT CHATID: " + readyAttachment.ChatId);
+                Console.WriteLine("ATTACHMENT USERID: " + readyAttachment.SenderId);
+
+                return readyAttachment;
+            } else if (response.StatusCode == HttpStatusCode.Accepted)
             {
-                Console.WriteLine("FAILED IN SERVICE");
+                Console.WriteLine("In progress");
             }
 
             return null;
-            /*
-            using (var formData = new MultipartFormDataContent())
-            {
-                { new StringContent(attachmentDto.SenderId.ToString()), "SenderId" },
-                { new StringContent(attachmentDto.ChatId.ToString()), "ChatId" },
-                { new StringContent(attachmentDto.FileName.ToString()), "FileName" },
-                { new StreamContent(attachmentDto.Document.OpenReadStream()), "file", attachmentDto.FileName }
-            };*/
         }
     }
 }

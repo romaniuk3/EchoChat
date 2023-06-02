@@ -25,7 +25,7 @@ namespace InternshipChat.AttachmentFunctions
 
         public ActivityFunctions(ChatContext chatContext)
         {
-            var accountConnectionString = "";
+            var accountConnectionString = "DefaultEndpointsProtocol=https;AccountName=chatstoragein1;AccountKey=s4rOf/d89DqHX4XJrgRaYdsSqF+woeFNH+cFrdhOsnunE0c9h0OBveE6xsKtfWQPDe1LUtS27VUU+AStkPc7Ag==;EndpointSuffix=core.windows.net";
             var containerName = "attachments-container";
             _blobContainerClient = new BlobContainerClient(accountConnectionString, containerName);
             _chatContext = chatContext;
@@ -62,11 +62,12 @@ namespace InternshipChat.AttachmentFunctions
         }
 
         [FunctionName(nameof(SaveTextToDatabase))]
-        public async Task<string> SaveTextToDatabase([ActivityTrigger] ChatAttachment chatAttachment, ILogger log)
+        public async Task<ChatAttachment> SaveTextToDatabase([ActivityTrigger] ChatAttachment chatAttachment, ILogger log)
         {
             await _chatContext.ChatAttachments.AddAsync(chatAttachment);
             await _chatContext.SaveChangesAsync();
-            return "";
+
+            return chatAttachment;
         }
     }
 }
