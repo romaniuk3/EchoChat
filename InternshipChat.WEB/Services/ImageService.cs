@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using InternshipChat.Shared.DTO.ChatDtos;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
 using Microsoft.AspNetCore.Components.Forms;
@@ -49,24 +50,34 @@ namespace InternshipChat.WEB.Services
             return null;
         }
 
-        public async Task<object> UploadAttachment(IBrowserFile file)
+        public async Task<object> UploadAttachment(ChatAttachmentDTO attachmentDto)
         {
             var formData = new MultipartFormDataContent
             {
-                { new StreamContent(file.OpenReadStream()), "file", file.Name }
+                { new StringContent(attachmentDto.SenderId.ToString()), "SenderId" },
+                { new StringContent(attachmentDto.ChatId.ToString()), "ChatId" },
+                { new StringContent(attachmentDto.FileName.ToString()), "FileName" },
+                { new StreamContent(attachmentDto.Document.OpenReadStream()), "file", attachmentDto.Document.Name }
             };
-
             var response = await _httpClient.PostAsync("http://localhost:7241/api/AttachmentStarter", formData);
-
-            if (response.IsSuccessStatusCode)
+            
+            if(response.IsSuccessStatusCode)
             {
-                Console.WriteLine("SUCCEDED in service");
+                Console.WriteLine("SUCCEEDED IN SERVICE");
             } else
             {
-                Console.WriteLine("FAILED in service");
+                Console.WriteLine("FAILED IN SERVICE");
             }
 
             return null;
+            /*
+            using (var formData = new MultipartFormDataContent())
+            {
+                { new StringContent(attachmentDto.SenderId.ToString()), "SenderId" },
+                { new StringContent(attachmentDto.ChatId.ToString()), "ChatId" },
+                { new StringContent(attachmentDto.FileName.ToString()), "FileName" },
+                { new StreamContent(attachmentDto.Document.OpenReadStream()), "file", attachmentDto.FileName }
+            };*/
         }
     }
 }

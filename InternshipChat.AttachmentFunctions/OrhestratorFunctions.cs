@@ -7,7 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using InternshipChat.AttachmentFunctions.Models;
+using InternshipChat.Shared.DTO.ChatDtos;
+using InternshipChat.DAL.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace InternshipChat.AttachmentFunctions
 {
@@ -15,11 +17,19 @@ namespace InternshipChat.AttachmentFunctions
     {
         [FunctionName(nameof(ProcessFileOrchestrator))]
         public async Task<object> ProcessFileOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context)
+            [OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
         {
-            var attachmentInput = context.GetInput<Attachment>();
-            var loadedBlob = await context.CallActivityAsync<string>("LoadFileToStorage", attachmentInput);
-            var textFromBlob = await context.CallActivityAsync<string>("ExtractTextFromFile", attachmentInput);
+            log = context.CreateReplaySafeLogger(log);
+            var attachmentInput = context.GetInput<ChatAttachment>();
+            log.LogInformation("ORCHESTRATOR");
+            log.LogInformation("SENDER ID " + attachmentInput.SenderId);
+            log.LogInformation("CHAT ID " + attachmentInput.ChatId);
+            log.LogInformation("FILENAME " + attachmentInput.FileName);
+            log.LogInformation("FILENAME FROM DOCUMENT" + attachmentInput.Attachment.FileName);
+            var loadedBlobName = await context.CallActivityAsync<string>("LoadFileToStorage", attachmentInput.Attachment);
+            var textFromBlob = await context.CallActivityAsync<string>("ExtractTextFromFile", loadedBlobName);
+            attachmentInput.FileText = textFromBlob;
+            var savetoDatabase = await context.CallActivityAsync<string>("SaveTextToDatabase", attachmentInput);
 
             return null;
             /*

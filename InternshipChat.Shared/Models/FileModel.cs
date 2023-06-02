@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InternshipChat.AttachmentFunctions.Models
+namespace InternshipChat.Shared.Models
 {
-    public class Attachment
+    public class FileModel
     {
         public string FileName { get; set; }
         public byte[] Content { get; set; }

@@ -5,7 +5,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
-using InternshipChat.AttachmentFunctions.Models;
+using InternshipChat.DAL.Data;
+using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -18,39 +20,53 @@ namespace InternshipChat.AttachmentFunctions
 {
     public class ActivityFunctions
     {
-        [FunctionName(nameof(LoadFileToStorage))]
-        public async Task<string> LoadFileToStorage([ActivityTrigger] Attachment inputFile, ILogger log)
-        {
-            var accountConnectionString = "DefaultEndpointsProtocol=https;AccountName=chatstoragein1;AccountKey=s4rOf/d89DqHX4XJrgRaYdsSqF+woeFNH+cFrdhOsnunE0c9h0OBveE6xsKtfWQPDe1LUtS27VUU+AStkPc7Ag==;EndpointSuffix=core.windows.net";
-            var containerName = "attachments-container";
-            Stream fileStream = new MemoryStream(inputFile.Content);
+        private readonly ChatContext _chatContext;
+        private readonly BlobContainerClient _blobContainerClient;
 
-            var blobClient = new BlobContainerClient(accountConnectionString, containerName);
-            var blob = blobClient.GetBlobClient(inputFile.FileName);
+        public ActivityFunctions(ChatContext chatContext)
+        {
+            var accountConnectionString = "";
+            var containerName = "attachments-container";
+            _blobContainerClient = new BlobContainerClient(accountConnectionString, containerName);
+            _chatContext = chatContext;
+        }
+
+        [FunctionName(nameof(LoadFileToStorage))]
+        public async Task<string> LoadFileToStorage([ActivityTrigger] FileModel inputFile, ILogger log)
+        {
+            Stream fileStream = new MemoryStream(inputFile.Content);
+            var blob = _blobContainerClient.GetBlobClient(inputFile.FileName);
 
             await blob.UploadAsync(fileStream, true);
 
-            return blobClient.Uri.AbsoluteUri;
+            return blob.Name;
         }
 
         [FunctionName(nameof(ExtractTextFromFile))]
-        public async Task<string> ExtractTextFromFile([ActivityTrigger] Attachment inputFile, ILogger log)
+        public async Task<string> ExtractTextFromFile([ActivityTrigger] string loadedBlobName, ILogger log)
         {
-            using MemoryStream stream = new(inputFile.Content);
-            var extractedText = string.Empty;
+            var blobClient = _blobContainerClient.GetBlobClient(loadedBlobName);
+            using MemoryStream stream = new();
+            var downloadResponse = await blobClient.DownloadToAsync(stream);
+            stream.Position = 0;
+
+            if (downloadResponse.IsError)
+            {
+                return "";
+            }
 
             using var docxReader = DocX.Load(stream);
-            extractedText = docxReader.Text;
-
+            var extractedText = docxReader.Text;
+            log.LogInformation("EXTRACTED TEXT: " + extractedText);
             return extractedText;
         }
 
         [FunctionName(nameof(SaveTextToDatabase))]
-        public async Task<string> SaveTextToDatabase([ActivityTrigger] string textFromFile, ILogger log)
+        public async Task<string> SaveTextToDatabase([ActivityTrigger] ChatAttachment chatAttachment, ILogger log)
         {
-            
-            
-            return textFromFile;
+            await _chatContext.ChatAttachments.AddAsync(chatAttachment);
+            await _chatContext.SaveChangesAsync();
+            return "";
         }
     }
 }

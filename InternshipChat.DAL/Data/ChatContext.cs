@@ -22,6 +22,7 @@ namespace InternshipChat.DAL.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<UserChats> UserChats { get; set; }
+        public DbSet<ChatAttachment> ChatAttachments { get; set; }
 
         public virtual DbSet<ChatInfoView> ChatInfoViews { get; set; }
 
@@ -43,6 +44,9 @@ namespace InternshipChat.DAL.Data
             builder.Entity<ChatInfoView>()
                 .ToView("ChatInfoView")
                 .HasKey(v => v.Id);
+
+            builder.Entity<ChatAttachment>()    
+                .Ignore(c => c.Attachment);
 
             base.OnModelCreating(builder);
         }

@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using InternshipChat.AttachmentFunctions.Models;
+using InternshipChat.Shared.DTO.ChatDtos;
+using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.Models;
 
 namespace InternshipChat.AttachmentFunctions
 {
@@ -22,24 +24,24 @@ namespace InternshipChat.AttachmentFunctions
             [DurableClient] IDurableOrchestrationClient starter,
             ILogger log)
         {
-            var file = req.Form.Files.FirstOrDefault();
-
-            if (file == null)
+            var form = await req.ReadFormAsync();
+            var file = form.Files.GetFile("file");
+            var fileModel = new FileModel
             {
-                return new BadRequestObjectResult("Please provide a valid .docx file");
-            }
-            var fileModel = new Attachment()
-            {
-                FileName = file.FileName,
-                Content = Attachment.ReadFileContent(file)
+                FileName = form["FileName"],
+                Content = FileModel.ReadFileContent(file)
             };
 
-            log.LogInformation("PASSED FILENAME IS: " + fileModel.FileName);
+            var attachment = new ChatAttachment
+            {
+                ChatId = int.Parse(form["ChatId"]),
+                SenderId = int.Parse(form["SenderId"]),
+                FileName = form["FileName"],
+                Attachment = fileModel
+            };
 
-            // Function input comes from the request content.
-            string instanceId = await starter.StartNewAsync("ProcessFileOrchestrator", null, fileModel);
+            string instanceId = await starter.StartNewAsync("ProcessFileOrchestrator", null, attachment);
 
-            //log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
             return starter.CreateCheckStatusResponse(req, instanceId);
         }
     }
