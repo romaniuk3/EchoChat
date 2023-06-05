@@ -20,6 +20,7 @@ namespace InternshipChat.AttachmentFunctions
         public override void Configure(IFunctionsHostBuilder builder)
         {
             var keyVaultUrl = new Uri(Environment.GetEnvironmentVariable("KeyVaultURL"));
+            //var keyVaultUrl = new Uri("https://internshipchat-kv1.vault.azure.net/");
             var azureCredential = new DefaultAzureCredential();
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Environment.CurrentDirectory)
@@ -28,7 +29,8 @@ namespace InternshipChat.AttachmentFunctions
                 .AddAzureKeyVault(keyVaultUrl, azureCredential)
                 .Build();
 
-            builder.Services.AddSingleton(configuration);
+            builder.Services.AddSingleton<IConfiguration>(configuration);
+
             var databaseConnectionString = configuration.GetSection("azuresqlconnectionstring").Value!;
             //var databaseConnectionString = "Server=tcp:internshipchatserver1.database.windows.net,1433;Initial Catalog=InternshipChat;Persist Security Info=False;User ID=uniquedblogin;Password=R@blik27022001_;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             builder.Services.AddScoped<IFileService, FileService>();

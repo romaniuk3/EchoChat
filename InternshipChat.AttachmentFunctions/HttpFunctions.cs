@@ -27,6 +27,12 @@ namespace InternshipChat.AttachmentFunctions
             [DurableClient] IDurableOrchestrationClient starter,
             ILogger log)
         {
+            /*
+            var azureSqlDbString = _configuration.GetSection("azuresqlconnectionstring").Value;
+            var accountConnectionString = _configuration.GetSection("storageconnectionstring")!.Value;
+            log.LogInformation("DB STRING IS: " + azureSqlDbString);
+            log.LogInformation("STORAGE STRING IS: " + accountConnectionString);
+            return new OkObjectResult("Every");*/
             TimeSpan timeout = TimeSpan.FromSeconds(30);
             TimeSpan retryInterval = TimeSpan.FromSeconds(1);
             var form = await req.ReadFormAsync();
