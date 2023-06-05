@@ -2,6 +2,7 @@ param storageAccountName string = 'azstoragechat1'
 param location string
 param hostingPlanName string = 'azfuncplan${uniqueString(resourceGroup().id)}'
 param functionAppName string
+param keyVaultURL string
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: storageAccountName
@@ -38,6 +39,10 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
         {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        }
+        {
+            name: 'KeyVaultURL'
+            value: keyVaultURL
         }
         {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'

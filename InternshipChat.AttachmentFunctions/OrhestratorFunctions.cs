@@ -26,12 +26,11 @@ namespace InternshipChat.AttachmentFunctions
             log.LogInformation("CHAT ID " + attachmentInput.ChatId);
             log.LogInformation("FILENAME " + attachmentInput.FileName);
             log.LogInformation("FILENAME FROM DOCUMENT" + attachmentInput.Attachment.FileName);
-            //var loadedBlobName = await context.CallActivityAsync<string>("LoadFileToStorage", attachmentInput.Attachment);
-            //var textFromBlob = await context.CallActivityAsync<string>("ExtractTextFromFile", loadedBlobName);
-            //attachmentInput.FileText = textFromBlob;
-            //var savedAttachment = await context.CallActivityAsync<ChatAttachment>("SaveTextToDatabase", attachmentInput);
-            return new ChatAttachment();
-            //return savedAttachment;
+            var loadedBlobName = await context.CallActivityAsync<string>("LoadFileToStorage", attachmentInput.Attachment);
+            var textFromBlob = await context.CallActivityAsync<string>("ExtractTextFromFile", loadedBlobName);
+            attachmentInput.FileText = textFromBlob;
+            var savedAttachment = await context.CallActivityAsync<ChatAttachment>("SaveTextToDatabase", attachmentInput);
+            return savedAttachment;
         }
     }
 }

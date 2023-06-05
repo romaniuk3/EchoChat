@@ -92,6 +92,7 @@ module azFunctionsModule 'modules/functionsapp.bicep' = {
   params: {
     functionAppName: functionAppName
     location: location
+    keyVaultURL: keyVaultModule.outputs.kvUrl
   }
 }
 
