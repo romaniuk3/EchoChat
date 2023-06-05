@@ -22,12 +22,14 @@ namespace InternshipChat.AttachmentFunctions
     public class ActivityFunctions
     {
         private readonly ChatContext _chatContext;
+        private readonly IConfiguration _configuration;
         private readonly BlobContainerClient _blobContainerClient;
 
-        public ActivityFunctions(ChatContext chatContext)
+        public ActivityFunctions(ChatContext chatContext, IConfiguration configuration)
         {
-            //var accountConnectionString = configuration.GetSection("storageconnectionstring")!.Value;
-            var accountConnectionString = "DefaultEndpointsProtocol=https;AccountName=chatstoragein1;AccountKey=s4rOf/d89DqHX4XJrgRaYdsSqF+woeFNH+cFrdhOsnunE0c9h0OBveE6xsKtfWQPDe1LUtS27VUU+AStkPc7Ag==;EndpointSuffix=core.windows.net";
+            _configuration = configuration;
+            var accountConnectionString = _configuration.GetSection("storageconnectionstring")!.Value;
+            //var accountConnectionString = "DefaultEndpointsProtocol=https;AccountName=chatstoragein1;AccountKey=s4rOf/d89DqHX4XJrgRaYdsSqF+woeFNH+cFrdhOsnunE0c9h0OBveE6xsKtfWQPDe1LUtS27VUU+AStkPc7Ag==;EndpointSuffix=core.windows.net";
             var containerName = "attachments-container";
             _blobContainerClient = new BlobContainerClient(accountConnectionString, containerName);
             _chatContext = chatContext;
