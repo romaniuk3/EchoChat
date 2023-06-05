@@ -48,22 +48,14 @@
             <MudButton OnClick="@SendMessageAsync" StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" ButtonType="ButtonType.Button">Send</MudButton>
         </MudPaper>
     </MudPaper>
-    <MudPaper Elevation="25" Class="pa-3 ml-6" Width="400px">
+    <MudPaper Elevation="25" Class="pa-3 ml-6" Width="600px">
         <MudToolBar Dense="true">
             <MudText Typo="Typo.h6">Attachments</MudText>
         </MudToolBar>
-        <div class="d-flex flex-column gap-3">
+         <div class="d-flex flex-column gap-3 pb-3" style="max-height:65vh;min-height:65vh; overflow:scroll;">
             @foreach (var chatAttachment in attachments)
             {
-                <MudCard Outlined="true">
-                    <MudCardContent>
-                        <MudText>@chatAttachment.FileName</MudText>
-                        <MudText Class="text-break" Typo="Typo.body2">@chatAttachment.FileText</MudText>
-                    </MudCardContent>
-                    <MudCardActions>
-                        <MudButton Variant="Variant.Text" Color="Color.Primary">Read More</MudButton>
-                    </MudCardActions>
-                </MudCard>
+                <ChatAttachmentCard chatAttachment="chatAttachment"></ChatAttachmentCard>
             }
          </div>
     </MudPaper>
@@ -102,8 +94,7 @@
         await DefineChatUser();
         await LoadChat();
         CheckIfUserHasAccessToChat();
-        if (IsAccessGranted) LoadChatMessages();
-
+        if (IsAccessGranted) LoadChatItems();
         if (hubConnection == null)
         {
             var url = Configuration["AppBase"] + "chathub";
@@ -140,9 +131,10 @@
         OpenedChat = await chatService.GetChatById(Id);
     }
 
-    private async void LoadChatMessages()
+    private async void LoadChatItems()
     {
         messages = await messageService.GetMessagesAsync(Id);
+        attachments = await chatService.GetChatAttachments(Id);
         await InvokeAsync(StateHasChanged);
     }
 
@@ -160,7 +152,7 @@
         if (response.IsSuccessStatusCode)
         {
             IsAccessGranted = true;
-            LoadChatMessages();
+            LoadChatItems();
             StateHasChanged();
         }
         else

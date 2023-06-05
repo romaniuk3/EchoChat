@@ -9,5 +9,6 @@ namespace InternshipChat.WEB.Services.Contracts
         Task<IEnumerable<ChatInfoDTO>> GetAllChatsAsync();
         Task<ChatDTO> GetChatById(int chatId);
         Task<HttpResponseMessage> AddUserToChat(int chatId, int userId);
+        Task<List<ChatAttachment>> GetChatAttachments(int chatId);
     }
 }

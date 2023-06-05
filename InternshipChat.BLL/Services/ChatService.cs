@@ -69,6 +69,20 @@ namespace InternshipChat.BLL.Services
             return await repository.GetAllChats();
         }
 
+        public async Task<Result<IEnumerable<ChatAttachment>>> GetChatAttachments(int chatId)
+        {
+            var repository = _unitOfWork.GetRepository<IChatRepository>();
+            var chat = await repository.GetChatById(chatId);
+
+            if (chat == null)
+            {
+                return Result.Failure<IEnumerable<ChatAttachment>>(DomainErrors.Chat.NotFound);
+            }
+            var chatAttachments = await repository.GetAllChatAttachments(chatId);
+
+            return Result.Success(chatAttachments);
+        }
+
         public async Task<Result<IEnumerable<Chat>>> GetUserChatsAsync(int userId)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();

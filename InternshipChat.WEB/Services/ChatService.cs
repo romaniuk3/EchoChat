@@ -41,5 +41,11 @@ namespace InternshipChat.WEB.Services
             await GetBearerToken();
             return await _httpClient.GetFromJsonAsync<IEnumerable<ChatInfoDTO>>("api/chat/all", _options);
         }
+
+        public async Task<List<ChatAttachment>> GetChatAttachments(int chatId)
+        {
+            await GetBearerToken();
+            return await _httpClient.GetFromJsonAsync<List<ChatAttachment>>($"api/chat/attachments/{chatId}");
+        }
     }
 }

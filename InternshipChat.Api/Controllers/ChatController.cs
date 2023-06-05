@@ -79,7 +79,13 @@ namespace InternshipChat.Api.Controllers
         [Route("attachments/{chatId}")]
         public async Task<ActionResult<IEnumerable<ChatAttachment>>> GetChatAttachments(int chatId)
         {
-            return Ok();
+            var attachmentsResult = await _chatService.GetChatAttachments(chatId);
+            if (attachmentsResult.IsFailure)
+            {
+                return this.FromError(attachmentsResult.Error);
+            }
+
+            return Ok(attachmentsResult.Value);
         }
 
         [HttpPost]
