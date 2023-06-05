@@ -2,26 +2,26 @@
 @using InternshipChat.Shared.DTO.ChatDtos;
 @using InternshipChat.WEB.Services.Contracts;
 @inject IImageService _imageService
+@inject ISnackbar Snackbar
 
-<MudFileUpload T="IBrowserFile" Accept=".docx" FilesChanged="UploadDocument">
-    <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context">
-            Attach your document
-        </MudButton>
-    </ButtonTemplate>
-</MudFileUpload>
-@if(document != null)
-{
-    <MudList>
-            <MudListItem Icon="@Icons.Material.Filled.AttachFile">
-                @document.Name <code>@document.Size bytes</code>
-            </MudListItem>
-    </MudList>
-}
+<MudStack Style="width: 100%;">
+    <MudFileUpload T="IBrowserFile" Accept=".docx" FilesChanged="AddFile" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0"
+    @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
+        <ButtonTemplate>
+            <MudPaper Height="100px" Outlined="true" Class="@DragClass">
+                <MudText Typo="Typo.h6">Drag and drop files here or click</MudText>
+                @if(document != null)
+                {
+                    <MudChip Color="Color.Dark" Text="@document.Name" />
+                }
+            </MudPaper>
+        </ButtonTemplate>
+    </MudFileUpload>
+        <div class="d-flex justify-content-evenly">
+            <MudButton OnClick="UploadDocument" Disabled="@(document == null)" Color="Color.Success" Variant="Variant.Filled">Upload</MudButton>
+            <MudButton OnClick="Clear" Disabled="@(document == null)" Color="Color.Warning" Variant="Variant.Filled">Clear</MudButton>
+        </div>
+</MudStack>
 
 @code {
     [Parameter] public int ChatId { get; set; }
@@ -29,23 +29,59 @@
     [Parameter] public EventCallback<ChatAttachment> OnAttachmentProcessed { get; set; }
 
     private IBrowserFile? document;
+    private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10 text-center";
+    private string DragClass = DefaultDragClass;
 
-    private async Task UploadDocument(IBrowserFile file)
+    private void AddFile(IBrowserFile file)
     {
-        var attachmentDto = new ChatAttachmentDTO
-            {
-                ChatId = ChatId,
-                SenderId = UserId,
-                FileName = file.Name,
-                Document = file
-            };
-        document = file;
-
-        var attachmentResult = await _imageService.UploadAttachment(attachmentDto);
-        if (attachmentResult != null)
+        ClearDragClass();
+        if (file.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
         {
-            await OnAttachmentProcessed.InvokeAsync(attachmentResult);
+            Snackbar.Add("You can upload only .docx file.", Severity.Error);
+        } else {
+            document = file;
         }
+    }
+
+    private async Task UploadDocument()
+    {
+        if (document != null)
+        {
+            var attachmentDto = new ChatAttachmentDTO
+                {
+                    ChatId = ChatId,
+                    SenderId = UserId,
+                    FileName = document.Name,
+                    Document = document
+                };
+            Console.WriteLine("ATTACHMENT NAME: " + attachmentDto.FileName);
+            Console.WriteLine("ATTACHMENT UID: " + attachmentDto.SenderId);
+            Console.WriteLine("ATTACHMENT CID: " + attachmentDto.ChatId);
+            //var attachmentResult = await _imageService.UploadAttachment(attachmentDto);
+            //if (attachmentResult != null)
+            //{
+            // await OnAttachmentProcessed.InvokeAsync(attachmentResult);
+            //}
+        }
+    }
+
+    private void SetDragClass()
+    {
+        DragClass = $"{DefaultDragClass} mud-border-primary";
+        StateHasChanged();
+    }
+
+    private void ClearDragClass()
+    {
+        DragClass = DefaultDragClass;
+    }
+
+    private async Task Clear()
+    {
+        document = null;
+        ClearDragClass();
+        await Task.Delay(100);
+        StateHasChanged();
     }
 
     private async Task<IFormFile> ConvertToFormFile(IBrowserFile file)

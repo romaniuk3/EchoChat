@@ -57,12 +57,13 @@
             {
                 <ChatAttachmentCard chatAttachment="chatAttachment"></ChatAttachmentCard>
             }
+            <div>
+                <DocumentAttachment ChatId="@Id" UserId="@CurrentUserId" OnAttachmentProcessed="@HandleNewAttachment"></DocumentAttachment>
+            </div>
          </div>
     </MudPaper>
 </div>
-<div>
-    <DocumentAttachment ChatId="@Id" UserId="@CurrentUserId" OnAttachmentProcessed="@HandleNewAttachment"></DocumentAttachment>
-</div>
+
 } else
 {
     <MudPaper Elevation="25" Style="height: 75vh;" Class="d-flex align-center justify-content-center">
