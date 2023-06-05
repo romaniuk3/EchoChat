@@ -36,7 +36,7 @@
         "value": "#arm_functionAppName#"
       },
       "jwtSecretKey": {
-        "value": "#arm_jwtSecretKey"
+        "value": "#arm_jwtSecretKey#"
       }
     }
   }
