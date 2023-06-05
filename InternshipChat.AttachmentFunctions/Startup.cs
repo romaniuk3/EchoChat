@@ -19,6 +19,7 @@ namespace InternshipChat.AttachmentFunctions
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            /*
             var keyVaultUrl = new Uri(Environment.GetEnvironmentVariable("KeyVaultURL"));
             var azureCredential = new DefaultAzureCredential();
             var configuration = new ConfigurationBuilder()
@@ -28,8 +29,8 @@ namespace InternshipChat.AttachmentFunctions
                 .Build();
 
             builder.Services.AddSingleton(configuration);
-            var databaseConnectionString = configuration.GetSection("azuresqlconnectionstring").Value!;
-            //var databaseConnectionString = "Server=tcp:internshipchatserver1.database.windows.net,1433;Initial Catalog=InternshipChat;Persist Security Info=False;User ID=uniquedblogin;Password=R@blik27022001_;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            var databaseConnectionString = configuration.GetSection("azuresqlconnectionstring").Value!;*/
+            var databaseConnectionString = "Server=tcp:internshipchatserver1.database.windows.net,1433;Initial Catalog=InternshipChat;Persist Security Info=False;User ID=uniquedblogin;Password=R@blik27022001_;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(databaseConnectionString));
 
