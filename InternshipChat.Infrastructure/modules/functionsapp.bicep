@@ -3,6 +3,8 @@ param location string
 param hostingPlanName string = 'azfuncplan${uniqueString(resourceGroup().id)}'
 param functionAppName string
 param keyVaultURL string
+@secure()
+param jwtSecretKey string
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: storageAccountName
@@ -43,6 +45,10 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
         {
             name: 'KeyVaultURL'
             value: keyVaultURL
+        }
+        {
+          name: 'JwtSecretKey'
+          value: jwtSecretKey
         }
         {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'

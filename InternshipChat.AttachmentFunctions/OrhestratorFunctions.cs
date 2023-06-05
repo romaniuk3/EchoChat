@@ -21,11 +21,6 @@ namespace InternshipChat.AttachmentFunctions
         {
             log = context.CreateReplaySafeLogger(log);
             var attachmentInput = context.GetInput<ChatAttachment>();
-            log.LogInformation("ORCHESTRATOR");
-            log.LogInformation("SENDER ID " + attachmentInput.SenderId);
-            log.LogInformation("CHAT ID " + attachmentInput.ChatId);
-            log.LogInformation("FILENAME " + attachmentInput.FileName);
-            log.LogInformation("FILENAME FROM DOCUMENT" + attachmentInput.Attachment.FileName);
             var loadedBlobName = await context.CallActivityAsync<string>("LoadFileToStorage", attachmentInput.Attachment);
             var textFromBlob = await context.CallActivityAsync<string>("ExtractTextFromFile", loadedBlobName);
             attachmentInput.FileText = textFromBlob;

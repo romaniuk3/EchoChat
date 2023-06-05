@@ -20,8 +20,8 @@ namespace InternshipChat.AttachmentFunctions
         public override void Configure(IFunctionsHostBuilder builder)
         {
             var keyVaultUrl = new Uri(Environment.GetEnvironmentVariable("KeyVaultURL"));
-            //var keyVaultUrl = new Uri("https://internshipchat-kv1.vault.azure.net/");
             var azureCredential = new DefaultAzureCredential();
+
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Environment.CurrentDirectory)
                 .AddEnvironmentVariables()
@@ -32,7 +32,6 @@ namespace InternshipChat.AttachmentFunctions
             builder.Services.AddSingleton<IConfiguration>(configuration);
 
             var databaseConnectionString = configuration.GetSection("azuresqlconnectionstring").Value!;
-            //var databaseConnectionString = "Server=tcp:internshipchatserver1.database.windows.net,1433;Initial Catalog=InternshipChat;Persist Security Info=False;User ID=uniquedblogin;Password=R@blik27022001_;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddDbContext<ChatContext>(options => options.UseSqlServer(databaseConnectionString));
 
@@ -51,7 +50,7 @@ namespace InternshipChat.AttachmentFunctions
                     ClockSkew = TimeSpan.Zero,
                     ValidIssuer = "ChatAPI",
                     ValidAudience = "ChatAPIClient",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("VerySuperSecretMegaUberUltraKey"))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JwtSecretKey")))
                 };
             });
 

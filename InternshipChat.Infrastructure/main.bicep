@@ -10,6 +10,8 @@ param chatClientName string
 param sqlserverName string
 param signalRServiceName string
 param functionAppName string
+@secure()
+param jwtSecretKey string
 param location string = resourceGroup().location
 
 module sqlServerModule 'modules/sqlserverdb.bicep' = {
@@ -94,6 +96,7 @@ module azFunctionsModule 'modules/functionsapp.bicep' = {
     functionAppName: functionAppName
     location: location
     keyVaultURL: keyVaultModule.outputs.kvUrl
+    jwtSecretKey: jwtSecretKey
   }
 }
 

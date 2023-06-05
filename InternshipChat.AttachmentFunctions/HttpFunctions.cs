@@ -15,6 +15,7 @@ using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.Models;
 using System.Threading;
 using DarkLoop.Azure.Functions.Authorize;
+using System.IO;
 
 namespace InternshipChat.AttachmentFunctions
 {
@@ -23,23 +24,17 @@ namespace InternshipChat.AttachmentFunctions
         [FunctionAuthorize]
         [FunctionName(nameof(AttachmentStarter))]
         public async Task<IActionResult> AttachmentStarter(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient starter,
             ILogger log)
         {
-            /*
-            var azureSqlDbString = _configuration.GetSection("azuresqlconnectionstring").Value;
-            var accountConnectionString = _configuration.GetSection("storageconnectionstring")!.Value;
-            log.LogInformation("DB STRING IS: " + azureSqlDbString);
-            log.LogInformation("STORAGE STRING IS: " + accountConnectionString);
-            return new OkObjectResult("Every");*/
             TimeSpan timeout = TimeSpan.FromSeconds(30);
             TimeSpan retryInterval = TimeSpan.FromSeconds(1);
             var form = await req.ReadFormAsync();
             var file = form.Files.GetFile("file");
             var fileModel = new FileModel
             {
-                FileName = form["FileName"],
+                FileName = GetUniqueFileName(form["FileName"]),
                 Content = FileModel.ReadFileContent(file)
             };
 
@@ -54,6 +49,16 @@ namespace InternshipChat.AttachmentFunctions
             string instanceId = await starter.StartNewAsync("ProcessFileOrchestrator", null, attachment);
 
             return await starter.WaitForCompletionOrCreateCheckStatusResponseAsync(req, instanceId, timeout, retryInterval);
+        }
+
+        private string GetUniqueFileName(string fileName)
+        {
+            fileName = Path.GetFileName(fileName);
+
+            return string.Concat(Path.GetFileNameWithoutExtension(fileName)
+                , "_"
+                , Guid.NewGuid().ToString().AsSpan(0, 10)
+                , Path.GetExtension(fileName));
         }
 
         private static TimeSpan? GetTimeSpan(HttpRequest request, string queryParameterName)
