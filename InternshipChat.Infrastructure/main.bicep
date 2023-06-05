@@ -49,16 +49,28 @@ module storageModule 'modules/storage.bicep' = {
   }
 }
 
+module azFunctionsModule 'modules/functionsapp.bicep' = {
+  name: 'CreateAzFunctionsApp'
+  params: {
+    functionAppName: functionAppName
+    location: location
+    keyVaultURL: 'https://${keyVaultName}.vault.azure.net/'
+    jwtSecretKey: jwtSecretKey
+  }
+}
+
 module keyVaultModule 'modules/keyvault.bicep' = {
   name: 'CreateKeyVault'
   dependsOn: [
     webAppsModule
+    azFunctionsModule
   ]
   params: {
     internshipchatKeyVaultName: keyVaultName
     location: location
     objectId: objectId
     webApiObjectId: webAppsModule.outputs.apiObjectId
+    azFunctionsObjectId: azFunctionsModule.outputs.azFunctionsObjectId
   }
 }
 
@@ -84,19 +96,6 @@ module secretsModule 'modules/keyvaultsecrets.bicep' = {
     storageAccessKey: storageModule.outputs.storageAccountKey
     storageAccountName: storageAccountName
     signalRConnectionString: signalRModule.outputs.signalRConnectionString
-  }
-}
-
-module azFunctionsModule 'modules/functionsapp.bicep' = {
-  name: 'CreateAzFunctionsApp'
-  dependsOn: [
-    secretsModule
-  ]
-  params: {
-    functionAppName: functionAppName
-    location: location
-    keyVaultURL: keyVaultModule.outputs.kvUrl
-    jwtSecretKey: jwtSecretKey
   }
 }
 

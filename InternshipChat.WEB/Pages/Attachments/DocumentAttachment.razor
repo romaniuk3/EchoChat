@@ -54,14 +54,11 @@
                     FileName = document.Name,
                     Document = document
                 };
-            Console.WriteLine("ATTACHMENT NAME: " + attachmentDto.FileName);
-            Console.WriteLine("ATTACHMENT UID: " + attachmentDto.SenderId);
-            Console.WriteLine("ATTACHMENT CID: " + attachmentDto.ChatId);
-            //var attachmentResult = await _imageService.UploadAttachment(attachmentDto);
-            //if (attachmentResult != null)
-            //{
-            // await OnAttachmentProcessed.InvokeAsync(attachmentResult);
-            //}
+            var attachmentResult = await _imageService.UploadAttachment(attachmentDto);
+            if (attachmentResult != null)
+            {
+                await OnAttachmentProcessed.InvokeAsync(attachmentResult);
+            }
         }
     }
 
