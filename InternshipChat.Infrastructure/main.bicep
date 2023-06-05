@@ -32,6 +32,7 @@ module webAppsModule 'modules/webapps.bicep' = {
     chatApiName: chatApiName
     chatClientName: chatClientName
     location: location
+    functionAppName: functionAppName
   }
 }
 

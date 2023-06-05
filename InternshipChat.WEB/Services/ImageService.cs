@@ -12,10 +12,12 @@ namespace InternshipChat.WEB.Services
     public class ImageService : BaseHttpService, IImageService
     {
         private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
 
-        public ImageService(HttpClient httpClient, ILocalStorageService localStorage) : base(httpClient, localStorage)
+        public ImageService(HttpClient httpClient, ILocalStorageService localStorage, IConfiguration configuration) : base(httpClient, localStorage)
         {
             _httpClient = httpClient;
+            _configuration = configuration;
         }
 
         public async Task<string> ToBase64(IBrowserFile file)
@@ -63,7 +65,8 @@ namespace InternshipChat.WEB.Services
                 { new StringContent(attachmentDto.FileName.ToString()), "FileName" },
                 { new StreamContent(attachmentDto.Document.OpenReadStream()), "file", attachmentDto.Document.Name }
             };
-            var response = await _httpClient.PostAsync("http://localhost:7241/api/AttachmentStarter", formData);
+            var functionBaseUrl = _configuration["AzFunctionBase"];
+            var response = await _httpClient.PostAsync($"{functionBaseUrl}api/AttachmentStarter", formData);
             if(response.StatusCode == HttpStatusCode.OK)
             {
                 var readyAttachment = await response.Content.ReadFromJsonAsync<ChatAttachment>();

@@ -1,6 +1,7 @@
 param hostingPlanName string = 'chatplan${uniqueString(resourceGroup().id)}'
 param skuName string = 'F1'
 param chatApiName string
+param functionAppName string
 param chatClientName string
 param location string
 
@@ -39,6 +40,7 @@ resource ChatClientAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
   name: 'appsettings'
   properties: {
     AppBase: 'https://${chatApiName}.azurewebsites.net/'
+    AzFunctionBase: 'https://${functionAppName}.azurewebsites.net/'
   }
 }
 
