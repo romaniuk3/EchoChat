@@ -10,6 +10,8 @@ param chatClientName string
 param sqlserverName string
 param signalRServiceName string
 param functionAppName string
+param serviceBusName string
+param serviceBusQueueName string
 @secure()
 param jwtSecretKey string
 param location string = resourceGroup().location
@@ -109,4 +111,13 @@ resource chatApiAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
     webAppsModule
     secretsModule
   ]
+}
+
+module serviceBusModule 'modules/servicebus.bicep' = {
+  name: 'CreateServiceBus'
+  params: {
+    location: location
+    serviceBusName: serviceBusName
+    serviceBusQueueName: serviceBusQueueName
+  }
 }

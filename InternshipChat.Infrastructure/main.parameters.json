@@ -37,6 +37,12 @@
       },
       "jwtSecretKey": {
         "value": "#arm_jwtSecretKey#"
+      },
+      "serviceBusName": {
+        "value": "#arm_serviceBusName#"
+      },
+      "serviceBusQueueName": {
+        "value": "#arm_serviceBusQueueName#"
       }
     }
   }
