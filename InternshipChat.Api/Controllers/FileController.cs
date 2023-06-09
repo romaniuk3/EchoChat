@@ -22,5 +22,14 @@ namespace InternshipChat.Api.Controllers
             var blobUrl = await _fileService.UploadImageAsync(file);
             return Ok(blobUrl);
         }
+
+        [HttpPost]
+        [Route("upload/document")]
+        public async Task<IActionResult> UploadDocument([FromForm] IFormFile file)
+        {
+            var blobUrl = await _fileService.UploadDocumentAsync(file);
+
+            return Ok(blobUrl);
+        }
     }
 }

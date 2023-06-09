@@ -1,4 +1,7 @@
 ﻿@page "/home"
+@using InternshipChat.WEB.Services.Contracts;
+@inject IJSRuntime JS
+@inject IImageService _imageService
 
 <h1>ChatConnect: Revolutionizing Communication</h1>
 <h2>Seamless User Experience</h2>
@@ -10,6 +13,26 @@
     Your privacy and security are of utmost importance to us. ChatConnect employs state-of-the-art encryption protocols to ensure that your conversations and data remain confidential. You can chat with peace of mind, knowing that your personal information is safeguarded and that your messages are for your eyes only.
 </p>
 
+<div id='container' style='background: gray; width: 60vw; height: 85vh; margin: 0 auto;'></div>
+<MudButton OnClick="LoadPdfToStorage">Load pdf</MudButton>
+
 @code {
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("loadPDF", "#container", "https://chatstoragein1.blob.core.windows.net/attachments-container/sample.pdf?sp=r&st=2023-06-09T06:35:18Z&se=2023-06-09T14:35:18Z&spr=https&sv=2022-11-02&sr=b&sig=1n4pc1fAJAB9uPGs%2F1D9MfUKbSxQa8%2Bqt8%2Fd0DOSyyk%3D");
+        }
+    }
+
+    public async Task LoadPdfToStorage()
+    {
+        var base64result = await JS.InvokeAsync<string>("exportPDF");
+        if (base64result != null)
+        {
+           var blobUri = await _imageService.UploadPdf(base64result);
+           Console.WriteLine("BLOB URI " + blobUri);
+        }
+    }
 }

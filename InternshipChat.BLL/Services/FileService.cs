@@ -58,9 +58,18 @@ namespace InternshipChat.BLL.Services
             return client.Uri.AbsoluteUri;
         }
 
-        public string ReturnEmpty()
+        public async Task<string> UploadDocumentAsync(IFormFile file)
         {
-            return string.Empty;
+            var fileName = GetUniqueFileName(file.FileName);
+            var containerName = "attachments-container";
+            BlobContainerClient blobContainer = new BlobContainerClient("", containerName);
+            BlobClient client = blobContainer.GetBlobClient(fileName);
+            await using (Stream stream = file.OpenReadStream())
+            {
+                await client.UploadAsync(stream);
+            }
+
+            return client.Uri.AbsoluteUri;
         }
 
         public string GenerateSasTokenForBlobContainer()

@@ -113,6 +113,7 @@ resource chatApiAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
   ]
 }
 
+/*
 module serviceBusModule 'modules/servicebus.bicep' = {
   name: 'CreateServiceBus'
   params: {
@@ -121,3 +122,4 @@ module serviceBusModule 'modules/servicebus.bicep' = {
     serviceBusQueueName: serviceBusQueueName
   }
 }
+*/

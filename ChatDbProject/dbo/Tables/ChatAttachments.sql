@@ -5,7 +5,9 @@
 	[FileName] NVARCHAR(255) NOT NULL,
 	[FileText] NVARCHAR(MAX) NULL, 
     [ChatId] INT NOT NULL, 
-	PRIMARY KEY CLUSTERED ([Id] ASC),
+	[RequiresSignature] BIT NULL DEFAULT 0, 
+    [ReceiverId] INT NULL, 
+    PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_ChatAttachments_Users] FOREIGN KEY ([SenderId]) REFERENCES [AspNetUsers]([Id]), 
     CONSTRAINT [FK_ChatAttachments_Chats] FOREIGN KEY ([ChatId]) REFERENCES [Chats]([Id])
 )

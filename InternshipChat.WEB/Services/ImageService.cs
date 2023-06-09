@@ -84,5 +84,26 @@ namespace InternshipChat.WEB.Services
 
             return null;
         }
+
+        public async Task<string?> UploadPdf(string base64)
+        {
+            await GetBearerToken();
+           
+            var byteArray = Convert.FromBase64String(base64);
+            var formData = new MultipartFormDataContent
+            {
+                { new StreamContent(new MemoryStream(byteArray)), "file", "filename.pdf" }
+            };
+
+            var response = await _httpClient.PostAsync($"api/file/upload/document", formData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var pdfUrl = await response.Content.ReadAsStringAsync();
+                return pdfUrl;
+            }
+
+            return null;
+        }
     }
 }

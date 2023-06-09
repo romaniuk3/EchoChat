@@ -11,11 +11,6 @@ namespace InternshipChat.Shared.Models
     {
         public string FileName { get; set; }
         public byte[] Content { get; set; }
-        /*public Attachment(IFormFile formFile)
-        {
-            FileName= formFile.FileName;
-            Content = ReadFileContent(formFile);
-        }*/
 
         public static byte[] ReadFileContent(IFormFile formFile)
         {
