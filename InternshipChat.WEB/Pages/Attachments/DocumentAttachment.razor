@@ -3,6 +3,7 @@
 @using InternshipChat.WEB.Services.Contracts;
 @inject IImageService _imageService
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <MudStack Style="width: 100%;">
     <MudFileUpload T="IBrowserFile" Accept=".docx" FilesChanged="AddFile" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0"
@@ -29,17 +30,23 @@
     [Parameter] public EventCallback<ChatAttachment> OnAttachmentProcessed { get; set; }
 
     private IBrowserFile? document;
+    private string? editedDocumentBase64;
     private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10 text-center";
     private string DragClass = DefaultDragClass;
 
-    private void AddFile(IBrowserFile file)
+    private async Task AddFile(IBrowserFile file)
     {
         ClearDragClass();
-        if (file.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        if (file.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && file.ContentType != "application/pdf")
         {
-            Snackbar.Add("You can upload only .docx file.", Severity.Error);
+            Snackbar.Add("You can upload only .docx and .pdf files.", Severity.Error);
         } else {
             document = file;
+        }
+
+        if(file.ContentType == "application/pdf")
+        {
+            await ShowPdfPreview(file);
         }
     }
 
@@ -54,11 +61,33 @@
                     FileName = document.Name,
                     Document = document
                 };
-            var attachmentResult = await _imageService.UploadAttachment(attachmentDto);
-            if (attachmentResult != null)
+
+            if (editedDocumentBase64 != null)
             {
-                await OnAttachmentProcessed.InvokeAsync(attachmentResult);
+                attachmentDto.RequiresSignature = true;
+                attachmentDto.ReceiverId = 2;
+                var pdfResult = await _imageService.UploadPdf(attachmentDto, editedDocumentBase64);
+            } else
+            {
+                var attachmentResult = await _imageService.UploadAttachment(attachmentDto);
+                if (attachmentResult != null)
+                {
+                    await OnAttachmentProcessed.InvokeAsync(attachmentResult);
+                }
             }
+        }
+    }
+
+    public async Task ShowPdfPreview(IBrowserFile file)
+    {
+        var dialogParameter = new DialogParameters
+            {
+                ["PdfDocument"] = file
+            };
+        var dialogResult = await DialogService.Show<AttachmentPreviewModal>("Attachment", dialogParameter).Result;
+        if (!dialogResult.Canceled)
+        {
+            editedDocumentBase64 = dialogResult.Data as string ?? null;
         }
     }
 

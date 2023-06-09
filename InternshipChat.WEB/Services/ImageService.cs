@@ -1,6 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
+using InternshipChat.Shared.Models;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
 using Microsoft.AspNetCore.Components.Forms;
@@ -25,7 +26,7 @@ namespace InternshipChat.WEB.Services
             byte[] fileBytes;
             using (var ms = new MemoryStream())
             {
-                await file.OpenReadStream().CopyToAsync(ms);
+                await file.OpenReadStream(maxAllowedSize: 1024 * 1024).CopyToAsync(ms);
                 fileBytes = ms.ToArray();
             }
             var contentType = file.ContentType;
@@ -70,11 +71,6 @@ namespace InternshipChat.WEB.Services
             if(response.StatusCode == HttpStatusCode.OK)
             {
                 var readyAttachment = await response.Content.ReadFromJsonAsync<ChatAttachment>();
-                Console.WriteLine("SUCCEEDED IN SERVICE");
-                Console.WriteLine("EXTRACTED TEXT AFTER FUNCTION COMPLETED: " + readyAttachment.FileText);
-                Console.WriteLine("ATTACHMENT ID: " + readyAttachment.Id);
-                Console.WriteLine("ATTACHMENT CHATID: " + readyAttachment.ChatId);
-                Console.WriteLine("ATTACHMENT USERID: " + readyAttachment.SenderId);
 
                 return readyAttachment;
             } else if (response.StatusCode == HttpStatusCode.Accepted)
@@ -85,17 +81,37 @@ namespace InternshipChat.WEB.Services
             return null;
         }
 
-        public async Task<string?> UploadPdf(string base64)
+        public async Task<string?> UploadPdf(ChatAttachmentDTO attachmentDto, string base64)
         {
             await GetBearerToken();
-           
+            
             var byteArray = Convert.FromBase64String(base64);
+            await Console.Out.WriteLineAsync("BEFORE SEND FORM DATA");
+            var fm = new FileModel
+            {
+                FileName = attachmentDto.FileName,
+                Content = byteArray,
+            };
+            var res = new ChatAttachment()
+            {
+                Attachment = fm,
+                FileName = attachmentDto.FileName,
+                SenderId = attachmentDto.SenderId,
+                ChatId = attachmentDto.ChatId,
+                RequiresSignature = true,
+                ReceiverId = attachmentDto.ReceiverId,
+            };
+            /*
             var formData = new MultipartFormDataContent
             {
-                { new StreamContent(new MemoryStream(byteArray)), "file", "filename.pdf" }
-            };
-
-            var response = await _httpClient.PostAsync($"api/file/upload/document", formData);
+                { new StringContent(attachmentDto.SenderId.ToString()), "SenderId" },
+                { new StringContent(attachmentDto.ChatId.ToString()), "ChatId" },
+                { new StringContent(attachmentDto.FileName.ToString()), "FileName" },
+                { new StringContent(attachmentDto.ReceiverId.ToString()), "ReceiverId" },
+                { new StringContent(Convert.ToString(attachmentDto.RequiresSignature)), "RequiresSignature" },
+                { new StreamContent(new MemoryStream(byteArray)), "file", attachmentDto.Document.Name }
+            };*/
+            var response = await _httpClient.PostAsJsonAsync($"api/file/upload/document", res);
 
             if (response.IsSuccessStatusCode)
             {

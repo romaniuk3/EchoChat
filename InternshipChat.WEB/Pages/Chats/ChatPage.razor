@@ -135,7 +135,7 @@
     private async void LoadChatItems()
     {
         messages = await messageService.GetMessagesAsync(Id);
-        attachments = await chatService.GetChatAttachments(Id);
+        //attachments = await chatService.GetChatAttachments(Id);
         await InvokeAsync(StateHasChanged);
     }
 

@@ -1,4 +1,7 @@
 ﻿using InternshipChat.BLL.Services.Contracts;
+using InternshipChat.DAL.Entities;
+using InternshipChat.Shared.DTO.ChatDtos;
+using InternshipChat.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,11 +28,15 @@ namespace InternshipChat.Api.Controllers
 
         [HttpPost]
         [Route("upload/document")]
-        public async Task<IActionResult> UploadDocument([FromForm] IFormFile file)
+        public async Task<IActionResult> UploadDocument(ChatAttachment chatAttachment)
         {
-            var blobUrl = await _fileService.UploadDocumentAsync(file);
-
-            return Ok(blobUrl);
+            await Console.Out.WriteLineAsync("Requires sign " + chatAttachment.RequiresSignature);
+            await Console.Out.WriteLineAsync("SenderID " + chatAttachment.SenderId);
+            await Console.Out.WriteLineAsync("ChatID " + chatAttachment.ChatId);
+            await Console.Out.WriteLineAsync("ReceiverID " + chatAttachment.ReceiverId);
+            await Console.Out.WriteLineAsync("ATTACHMENT FILENAME " + chatAttachment.Attachment.FileName);
+            //var blobUrl = await _fileService.UploadDocumentAsync(file);
+            return Ok();
         }
     }
 }

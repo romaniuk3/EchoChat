@@ -45,7 +45,13 @@ namespace InternshipChat.WEB.Services
         public async Task<List<ChatAttachment>> GetChatAttachments(int chatId)
         {
             await GetBearerToken();
-            return await _httpClient.GetFromJsonAsync<List<ChatAttachment>>($"api/chat/attachments/{chatId}");
+            var res = await _httpClient.GetAsync($"api/chat/attachments/{chatId}");
+            if (res.IsSuccessStatusCode)
+            {
+
+            }
+            var result = await _httpClient.GetFromJsonAsync<List<ChatAttachment>>($"api/chat/attachments/{chatId}");
+            return null;
         }
     }
 }

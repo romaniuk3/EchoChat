@@ -14,6 +14,8 @@ namespace InternshipChat.Shared.DTO.ChatDtos
         public int ChatId { get; set; }
         public string FileName { get; set; } = string.Empty;
         public string FileText { get; set; } = string.Empty;
+        public bool RequiresSignature { get; set; }
+        public int ReceiverId { get; set; }
         public IBrowserFile Document { get; set; }
     }
 }
