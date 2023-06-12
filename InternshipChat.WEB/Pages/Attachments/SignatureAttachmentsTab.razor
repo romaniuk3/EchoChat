@@ -1,0 +1,13 @@
+﻿@using InternshipChat.DAL.Entities;
+@using InternshipChat.WEB.Pages.Chats
+
+<div class="d-flex flex-column gap-3 pb-3" style="max-height:65vh;min-height:65vh; overflow:scroll;">
+    @foreach (var signatureAttachment in SignatureAttachments)
+    {
+        <ChatAttachmentCard chatAttachment="signatureAttachment"></ChatAttachmentCard>
+    }
+</div>
+
+@code {
+    [Parameter] public List<ChatAttachment> SignatureAttachments { get; set; }
+}

@@ -2,6 +2,8 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using InternshipChat.BLL.Services.Contracts;
+using InternshipChat.Shared.Models;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -58,16 +60,15 @@ namespace InternshipChat.BLL.Services
             return client.Uri.AbsoluteUri;
         }
 
-        public async Task<string> UploadDocumentAsync(IFormFile file)
+        public async Task<string> UploadDocumentAsync(FileModel fileModel)
         {
-            var fileName = GetUniqueFileName(file.FileName);
+            var fileName = GetUniqueFileName(fileModel.FileName);
             var containerName = "attachments-container";
-            BlobContainerClient blobContainer = new BlobContainerClient("", containerName);
+
+            BlobContainerClient blobContainer = new BlobContainerClient("DefaultEndpointsProtocol=https;AccountName=chatstoragein1;AccountKey=s4rOf/d89DqHX4XJrgRaYdsSqF+woeFNH+cFrdhOsnunE0c9h0OBveE6xsKtfWQPDe1LUtS27VUU+AStkPc7Ag==;EndpointSuffix=core.windows.net", containerName);
             BlobClient client = blobContainer.GetBlobClient(fileName);
-            await using (Stream stream = file.OpenReadStream())
-            {
-                await client.UploadAsync(stream);
-            }
+            Stream fileStream = new MemoryStream(fileModel.Content);
+            await client.UploadAsync(fileStream);
 
             return client.Uri.AbsoluteUri;
         }

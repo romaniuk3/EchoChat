@@ -83,6 +83,28 @@ namespace InternshipChat.BLL.Services
             return Result.Success(chatAttachments);
         }
 
+        public async Task<Result<IEnumerable<ChatAttachment>>> GetUserSignatureAttachments(int chatId, int userId)
+        {
+            var chatRepository = _unitOfWork.GetRepository<IChatRepository>();
+            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
+            var chat = await chatRepository.GetChatById(chatId);
+
+            if (chat == null)
+            {
+                return Result.Failure<IEnumerable<ChatAttachment>>(DomainErrors.Chat.NotFound);
+            }
+            var user = userRepository.GetById(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return Result.Failure<IEnumerable<ChatAttachment>>(DomainErrors.User.NotFound);
+            }
+
+            var signatureAttachments = await chatRepository.GetUserSignatureAttachments(chatId, userId);
+
+            return Result.Success(signatureAttachments);
+        }
+
         public async Task<Result<IEnumerable<Chat>>> GetUserChatsAsync(int userId)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
@@ -108,6 +130,15 @@ namespace InternshipChat.BLL.Services
             }
 
             return chat;
+        }
+
+        public async Task<Result<ChatAttachment>> AddChatAttachment(ChatAttachment chatAttachment)
+        {
+            var repository = _unitOfWork.GetRepository<IChatRepository>();
+            await repository.SaveAttachment(chatAttachment);
+            _unitOfWork.Save();
+
+            return Result.Success(chatAttachment);
         }
 
         public async Task<Result> AddUserToChatAsync(int chatId, int userId)

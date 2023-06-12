@@ -13,5 +13,7 @@ namespace InternshipChat.DAL.Repositories.Interfaces
         Task<IEnumerable<ChatInfoView>> GetAllChats();
         Task<Chat?> GetChatByName(string name);
         Task<IEnumerable<ChatAttachment>> GetAllChatAttachments(int chatId);
+        Task SaveAttachment(ChatAttachment chatAttachment);
+        Task<IEnumerable<ChatAttachment>> GetUserSignatureAttachments(int chatId, int userId);
     }
 }

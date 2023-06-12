@@ -19,5 +19,6 @@ namespace InternshipChat.DAL.Entities
         public int ReceiverId { get; set; }
         public string FileName { get; set; } = string.Empty;
         public string FileText { get; set; } = string.Empty;
+        public string AttachmentUrl { get; set; } = string.Empty;
     }
 }

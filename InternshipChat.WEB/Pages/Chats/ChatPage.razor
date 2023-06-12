@@ -49,18 +49,14 @@
         </MudPaper>
     </MudPaper>
     <MudPaper Elevation="25" Class="pa-3 ml-6" Width="600px">
-        <MudToolBar Dense="true">
-            <MudText Typo="Typo.h6">Attachments</MudText>
-        </MudToolBar>
-         <div class="d-flex flex-column gap-3 pb-3" style="max-height:65vh;min-height:65vh; overflow:scroll;">
-            @foreach (var chatAttachment in attachments)
-            {
-                <ChatAttachmentCard chatAttachment="chatAttachment"></ChatAttachmentCard>
-            }
-            <div>
-                <DocumentAttachment ChatId="@Id" UserId="@CurrentUserId" OnAttachmentProcessed="@HandleNewAttachment"></DocumentAttachment>
-            </div>
-         </div>
+        <MudTabs Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+            <MudTabPanel Text="Attachments">
+                <AllAttachmentsTab ChatId="Id" CurrentUserId="CurrentUserId" attachments="attachments"></AllAttachmentsTab>
+            </MudTabPanel>
+            <MudTabPanel Text="Signatures">
+                <SignatureAttachmentsTab SignatureAttachments="SignatureAttachments"></SignatureAttachmentsTab>
+            </MudTabPanel>
+        </MudTabs>
     </MudPaper>
 </div>
 
@@ -89,6 +85,7 @@
     private string? Error { get; set; }
     private IDisposable MessageSubscription { get; set; }
     private List<ChatAttachment> attachments = new();
+    private List<ChatAttachment> SignatureAttachments = new();
 
     protected async override Task OnInitializedAsync()
     {
@@ -121,12 +118,6 @@
         });
     }
 
-    private async Task HandleNewAttachment(ChatAttachment chatAttachment)
-    {
-        attachments.Add(chatAttachment);
-        StateHasChanged();
-    }
-
     private async Task LoadChat()
     {
         OpenedChat = await chatService.GetChatById(Id);
@@ -135,7 +126,8 @@
     private async void LoadChatItems()
     {
         messages = await messageService.GetMessagesAsync(Id);
-        //attachments = await chatService.GetChatAttachments(Id);
+        attachments = await chatService.GetChatAttachments(Id);
+        SignatureAttachments = await chatService.GetUserSignatureAttachments(Id, CurrentUserId);
         await InvokeAsync(StateHasChanged);
     }
 

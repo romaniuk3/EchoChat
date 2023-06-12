@@ -17,5 +17,7 @@ namespace InternshipChat.BLL.Services.Contracts
         Task<Result<IEnumerable<Chat>>> GetUserChatsAsync(int userId);
         Task<Result> AddUserToChatAsync(int chatId, int userId);
         Task<Result<IEnumerable<ChatAttachment>>> GetChatAttachments(int chatId);
+        Task<Result<ChatAttachment>> AddChatAttachment(ChatAttachment chatAttachment);
+        Task<Result<IEnumerable<ChatAttachment>>> GetUserSignatureAttachments(int chatId, int userId);
     }
 }

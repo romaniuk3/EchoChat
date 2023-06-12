@@ -1,0 +1,24 @@
+﻿@using InternshipChat.DAL.Entities;
+@using InternshipChat.WEB.Pages.Chats
+
+<div class="d-flex flex-column gap-3 pb-3" style="max-height:65vh;min-height:65vh; overflow:scroll;">
+    @foreach (var chatAttachment in attachments)
+    {
+        <ChatAttachmentCard chatAttachment="chatAttachment"></ChatAttachmentCard>
+    }
+    <div>
+        <DocumentAttachment ChatId="@ChatId" UserId="@CurrentUserId" OnAttachmentProcessed="@HandleNewAttachment"></DocumentAttachment>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int ChatId { get; set; }
+    [Parameter] public int CurrentUserId { get; set; }
+    [Parameter] public List<ChatAttachment> attachments { get; set; }
+
+    private async Task HandleNewAttachment(ChatAttachment chatAttachment)
+    {
+        attachments.Add(chatAttachment);
+        StateHasChanged();
+    }
+}

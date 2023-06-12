@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using InternshipChat.Shared.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace InternshipChat.BLL.Services.Contracts
     {
         string GetUniqueFileName(string fileName);
         Task<string> UploadImageAsync(IFormFile file);
-        Task<string> UploadDocumentAsync(IFormFile file);
+        Task<string> UploadDocumentAsync(FileModel fileModel);
         string GenerateSasTokenForBlobContainer();
     }
 }

@@ -88,6 +88,19 @@ namespace InternshipChat.Api.Controllers
             return Ok(attachmentsResult.Value);
         }
 
+        [HttpGet]
+        [Route("signature-attachments/{chatId}")]
+        public async Task<ActionResult<IEnumerable<ChatAttachment>>> GetUserSignatureAttachments(int chatId, [FromQuery] int userId)
+        {
+            var attachmentResult = await _chatService.GetUserSignatureAttachments(chatId, userId);
+            if (attachmentResult.IsFailure)
+            {
+                return this.FromError(attachmentResult.Error);
+            }
+
+            return Ok(attachmentResult.Value);
+        }
+
         [HttpPost]
         [Route("{chatId}/add-user")]
         public async Task<ActionResult> AddUserToChat(int chatId, [FromBody] int userId)

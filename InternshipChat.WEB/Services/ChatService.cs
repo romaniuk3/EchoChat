@@ -3,6 +3,7 @@ using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
 
 namespace InternshipChat.WEB.Services
@@ -45,13 +46,20 @@ namespace InternshipChat.WEB.Services
         public async Task<List<ChatAttachment>> GetChatAttachments(int chatId)
         {
             await GetBearerToken();
-            var res = await _httpClient.GetAsync($"api/chat/attachments/{chatId}");
-            if (res.IsSuccessStatusCode)
-            {
+            return await _httpClient.GetFromJsonAsync<List<ChatAttachment>>($"api/chat/attachments/{chatId}");
+        }
 
-            }
-            var result = await _httpClient.GetFromJsonAsync<List<ChatAttachment>>($"api/chat/attachments/{chatId}");
-            return null;
+        public async Task<List<ChatAttachment>> GetUserSignatureAttachments(int chatId, int userId)
+        {
+            await GetBearerToken();
+            var queryParameters = new Dictionary<string, string>
+                {
+                    { "userId", userId.ToString() }
+                };
+
+            var urlWithQuery = QueryHelpers.AddQueryString($"api/chat/signature-attachments/{chatId}", queryParameters);
+
+            return await _httpClient.GetFromJsonAsync<List<ChatAttachment>>(urlWithQuery);
         }
     }
 }

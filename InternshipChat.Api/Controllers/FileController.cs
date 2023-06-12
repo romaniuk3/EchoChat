@@ -12,10 +12,12 @@ namespace InternshipChat.Api.Controllers
     public class FileController : ControllerBase
     {
         private readonly IFileService _fileService;
+        private readonly IChatService _chatService;
 
-        public FileController(IFileService fileService)
+        public FileController(IFileService fileService, IChatService chatService)
         {
             _fileService = fileService;
+            _chatService = chatService;
         }
 
         [HttpPost]
@@ -35,7 +37,14 @@ namespace InternshipChat.Api.Controllers
             await Console.Out.WriteLineAsync("ChatID " + chatAttachment.ChatId);
             await Console.Out.WriteLineAsync("ReceiverID " + chatAttachment.ReceiverId);
             await Console.Out.WriteLineAsync("ATTACHMENT FILENAME " + chatAttachment.Attachment.FileName);
-            //var blobUrl = await _fileService.UploadDocumentAsync(file);
+            var blobUrl = await _fileService.UploadDocumentAsync(chatAttachment.Attachment);
+            chatAttachment.AttachmentUrl = blobUrl;
+            var saveAttachmentResult = await _chatService.AddChatAttachment(chatAttachment);
+            if (saveAttachmentResult.IsFailure)
+            {
+                return BadRequest();
+            } 
+
             return Ok();
         }
     }

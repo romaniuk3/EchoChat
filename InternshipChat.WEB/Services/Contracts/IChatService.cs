@@ -10,5 +10,6 @@ namespace InternshipChat.WEB.Services.Contracts
         Task<ChatDTO> GetChatById(int chatId);
         Task<HttpResponseMessage> AddUserToChat(int chatId, int userId);
         Task<List<ChatAttachment>> GetChatAttachments(int chatId);
+        Task<List<ChatAttachment>> GetUserSignatureAttachments(int chatId, int userId);
     }
 }

@@ -40,9 +40,21 @@ namespace InternshipChat.DAL.Repositories
             return chats;
         }
 
+        public async Task SaveAttachment(ChatAttachment chatAttachment)
+        {
+            await _chatContext.ChatAttachments.AddAsync(chatAttachment);
+        }
+
+        public async Task<IEnumerable<ChatAttachment>> GetUserSignatureAttachments(int chatId, int userId)
+        {
+            var signatureAttachmentsInChat = await _chatContext.ChatAttachments.Where(ca => ca.ChatId == chatId && (ca.SenderId == userId || ca.ReceiverId == userId)).ToListAsync();
+
+            return signatureAttachmentsInChat;
+        }
+
         public async Task<IEnumerable<ChatAttachment>> GetAllChatAttachments(int chatId)
         {
-            var attachments = await _chatContext.ChatAttachments.Where(ca => ca.ChatId == chatId).ToListAsync();
+            var attachments = await _chatContext.ChatAttachments.Where(ca => ca.ChatId == chatId && ca.ReceiverId == 0).ToListAsync();
 
             return attachments;
         }
