@@ -3,12 +3,6 @@
 @inject IImageService _imageService
 
 <MudDialog>
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Rounded.Call" Class="mr-3 mb-1"></MudIcon>
-            Edit before sending
-        </MudText>
-    </TitleContent>
     <DialogContent>
             <div id='container' style='background: gray; width: 60vw; height: 85vh; margin: 0 auto;'></div>
     </DialogContent>
@@ -21,19 +15,27 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter] public IBrowserFile PdfDocument { get; set; }
+    [Parameter] public string PdfUrl { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var url = await _imageService.ToBase64(PdfDocument);
-            await JS.InvokeVoidAsync("loadPDF", "#container", url);
+            await ShowDocument();
         }
     }
 
     private void Cancel()
     {
         MudDialog.Cancel();
+    }
+
+    private async Task ShowDocument()
+    {
+        string url = string.Empty;
+        url = PdfUrl != null ? PdfUrl : await _imageService.ToBase64(PdfDocument);
+
+        await JS.InvokeVoidAsync("loadPDF", "#container", url);
     }
 
     private async Task Save()

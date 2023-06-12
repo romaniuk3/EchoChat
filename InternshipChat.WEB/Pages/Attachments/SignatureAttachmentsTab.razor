@@ -1,13 +1,18 @@
 ﻿@using InternshipChat.DAL.Entities;
 @using InternshipChat.WEB.Pages.Chats
+@using InternshipChat.WEB.Services.Contracts;
+@inject IImageService _imageService
+@inject IDialogService DialogService
 
 <div class="d-flex flex-column gap-3 pb-3" style="max-height:65vh;min-height:65vh; overflow:scroll;">
     @foreach (var signatureAttachment in SignatureAttachments)
     {
-        <ChatAttachmentCard chatAttachment="signatureAttachment"></ChatAttachmentCard>
+        <SignatureAttachmentCard SignatureAttachment="signatureAttachment"></SignatureAttachmentCard>
     }
 </div>
 
 @code {
     [Parameter] public List<ChatAttachment> SignatureAttachments { get; set; }
+
+
 }
