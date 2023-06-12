@@ -1,9 +1,12 @@
 ﻿@using InternshipChat.DAL.Entities;
 @using InternshipChat.Shared.DTO.ChatDtos;
+@using InternshipChat.Shared.DTO.UserDtos;
 @using InternshipChat.WEB.Services.Contracts;
 @inject IImageService _imageService
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject IUserService UsersService
+@inject AuthenticationStateProvider AuthState
 
 <MudStack Style="width: 100%;">
     <MudFileUpload T="IBrowserFile" Accept=".docx" FilesChanged="AddFile" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0"
@@ -19,9 +22,18 @@
         </ButtonTemplate>
     </MudFileUpload>
         <div class="d-flex justify-content-evenly">
-            <MudButton OnClick="UploadDocument" Disabled="@(document == null)" Color="Color.Success" Variant="Variant.Filled">Upload</MudButton>
+            <MudButton OnClick="UploadDocument" Disabled="@(document == null || (document.ContentType == "application/pdf" && selectedUser == null))" Color="Color.Success" Variant="Variant.Filled">Upload</MudButton>
             <MudButton OnClick="Clear" Disabled="@(document == null)" Color="Color.Warning" Variant="Variant.Filled">Clear</MudButton>
         </div>
+        @if (document != null && document.ContentType == "application/pdf")
+        {
+            <MudSelect Margin="Margin.Dense" T="UserDTO" Label="Receiver" Variant="Variant.Text" @bind-Value="selectedUser">
+                @foreach (var u in users)
+                {
+                    <MudSelectItem T="UserDTO" Value="@u">@u.FirstName</MudSelectItem>
+                }
+            </MudSelect>
+        }
 </MudStack>
 
 @code {
@@ -33,6 +45,8 @@
     private string? editedDocumentBase64;
     private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10 text-center";
     private string DragClass = DefaultDragClass;
+    private IEnumerable<UserDTO> users = new List<UserDTO>();
+    private UserDTO? selectedUser;
 
     private async Task AddFile(IBrowserFile file)
     {
@@ -62,11 +76,12 @@
                     Document = document
                 };
 
-            if (editedDocumentBase64 != null)
+            if (editedDocumentBase64 != null && selectedUser != null)
             {
                 attachmentDto.RequiresSignature = true;
-                attachmentDto.ReceiverId = 2;
+                attachmentDto.ReceiverId = selectedUser.Id;
                 var pdfResult = await _imageService.UploadPdf(attachmentDto, editedDocumentBase64);
+                await OnAttachmentProcessed.InvokeAsync(pdfResult);
             } else
             {
                 var attachmentResult = await _imageService.UploadAttachment(attachmentDto);
@@ -75,6 +90,8 @@
                     await OnAttachmentProcessed.InvokeAsync(attachmentResult);
                 }
             }
+
+            await Clear();
         }
     }
 
@@ -89,6 +106,16 @@
         {
             editedDocumentBase64 = dialogResult.Data as string ?? null;
         }
+
+        var response = await UsersService.GetUsersAsync("");
+        users = await UsersExceptCurrentUser(response.Items);
+    }
+
+    private async Task<List<UserDTO>> UsersExceptCurrentUser(List<UserDTO> users)
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        var userName = authState.User.Identity!.Name!;
+        return users.Where(u => u.UserName != userName).ToList();
     }
 
     private void SetDragClass()
@@ -105,6 +132,7 @@
     private async Task Clear()
     {
         document = null;
+        editedDocumentBase64 = null;
         ClearDragClass();
         await Task.Delay(100);
         StateHasChanged();

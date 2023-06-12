@@ -45,6 +45,11 @@ namespace InternshipChat.DAL.Repositories
             await _chatContext.ChatAttachments.AddAsync(chatAttachment);
         }
 
+        public async Task<ChatAttachment?> GetChatAttachment(int id)
+        {
+            return await _chatContext.ChatAttachments.FirstOrDefaultAsync(ca => ca.Id == id);
+        }
+
         public async Task<IEnumerable<ChatAttachment>> GetUserSignatureAttachments(int chatId, int userId)
         {
             var signatureAttachmentsInChat = await _chatContext.ChatAttachments.Where(ca => ca.ChatId == chatId && (ca.SenderId == userId || ca.ReceiverId == userId)).ToListAsync();

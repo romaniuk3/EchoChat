@@ -81,12 +81,11 @@ namespace InternshipChat.WEB.Services
             return null;
         }
 
-        public async Task<string?> UploadPdf(ChatAttachmentDTO attachmentDto, string base64)
+        public async Task<ChatAttachment?> UploadPdf(ChatAttachmentDTO attachmentDto, string base64)
         {
             await GetBearerToken();
             
             var byteArray = Convert.FromBase64String(base64);
-            await Console.Out.WriteLineAsync("BEFORE SEND FORM DATA");
             var fm = new FileModel
             {
                 FileName = attachmentDto.FileName,
@@ -101,22 +100,31 @@ namespace InternshipChat.WEB.Services
                 RequiresSignature = true,
                 ReceiverId = attachmentDto.ReceiverId,
             };
-            /*
-            var formData = new MultipartFormDataContent
-            {
-                { new StringContent(attachmentDto.SenderId.ToString()), "SenderId" },
-                { new StringContent(attachmentDto.ChatId.ToString()), "ChatId" },
-                { new StringContent(attachmentDto.FileName.ToString()), "FileName" },
-                { new StringContent(attachmentDto.ReceiverId.ToString()), "ReceiverId" },
-                { new StringContent(Convert.ToString(attachmentDto.RequiresSignature)), "RequiresSignature" },
-                { new StreamContent(new MemoryStream(byteArray)), "file", attachmentDto.Document.Name }
-            };*/
+
             var response = await _httpClient.PostAsJsonAsync($"api/file/upload/document", res);
 
             if (response.IsSuccessStatusCode)
             {
                 var pdfUrl = await response.Content.ReadAsStringAsync();
-                return pdfUrl;
+                return res;
+            }
+
+            return null;
+        }
+
+        public async Task<string?> UpdateAttachment(ChatAttachment attachment, string base64)
+        {
+            await GetBearerToken();
+
+            var byteArray = Convert.FromBase64String(base64);
+            attachment.Attachment = new FileModel { FileName = attachment.FileName, Content = byteArray };
+
+            var response = await _httpClient.PutAsJsonAsync($"api/file/document/{attachment.Id}", attachment);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var updatedUrl = await response.Content.ReadAsStringAsync();
+                return updatedUrl;
             }
 
             return null;

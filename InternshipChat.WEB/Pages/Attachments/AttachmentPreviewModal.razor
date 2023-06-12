@@ -16,6 +16,7 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter] public IBrowserFile PdfDocument { get; set; }
     [Parameter] public string PdfUrl { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -35,7 +36,7 @@
         string url = string.Empty;
         url = PdfUrl != null ? PdfUrl : await _imageService.ToBase64(PdfDocument);
 
-        await JS.InvokeVoidAsync("loadPDF", "#container", url);
+        await JS.InvokeVoidAsync("loadPDF", "#container", url, ReadOnly);
     }
 
     private async Task Save()

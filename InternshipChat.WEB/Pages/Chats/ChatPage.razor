@@ -51,10 +51,10 @@
     <MudPaper Elevation="25" Class="pa-3 ml-6" Width="600px">
         <MudTabs Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
             <MudTabPanel Text="Attachments">
-                <AllAttachmentsTab ChatId="Id" CurrentUserId="CurrentUserId" attachments="attachments"></AllAttachmentsTab>
+                <AllAttachmentsTab ChatId="Id" CurrentUserId="CurrentUserId" attachments="attachments" OnDocumentUploaded="@LoadAttachments"></AllAttachmentsTab>
             </MudTabPanel>
             <MudTabPanel Text="Signatures">
-                <SignatureAttachmentsTab SignatureAttachments="SignatureAttachments"></SignatureAttachmentsTab>
+                 <SignatureAttachmentsTab SignatureAttachments="SignatureAttachments" OnShowCompletedPressed="@HandleShowCompleted" CurrentUserId="CurrentUserId"></SignatureAttachmentsTab>
             </MudTabPanel>
         </MudTabs>
     </MudPaper>
@@ -126,8 +126,15 @@
     private async void LoadChatItems()
     {
         messages = await messageService.GetMessagesAsync(Id);
+        await LoadAttachments();
+    }
+
+    private async Task LoadAttachments()
+    {
         attachments = await chatService.GetChatAttachments(Id);
-        SignatureAttachments = await chatService.GetUserSignatureAttachments(Id, CurrentUserId);
+        var signatureAttachments = await chatService.GetUserSignatureAttachments(Id, CurrentUserId);
+        SignatureAttachments = signatureAttachments.Where(sa => sa.RequiresSignature == true).ToList();
+        StateHasChanged();
         await InvokeAsync(StateHasChanged);
     }
 
@@ -190,6 +197,16 @@
         }
         User = await userService.GetUserAsync(userId);
         IsPageLoaded = true;
+    }
+
+    public async Task HandleShowCompleted(bool showCompleted)
+    {
+        SignatureAttachments = await chatService.GetUserSignatureAttachments(Id, CurrentUserId);
+
+        if (!showCompleted)
+        {
+            SignatureAttachments = SignatureAttachments.Where(sa => sa.RequiresSignature == true).ToList();
+        }
     }
 
     public void CheckIfUserHasAccessToChat()

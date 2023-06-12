@@ -35,7 +35,8 @@ namespace InternshipChat.IntegrationTests.Helpers
 
             var unitOfWork = new UnitOfWork(_chatContext, serviceProvider);
             var mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(new AutoMapperProfile())));
-            var chatService = new ChatService(unitOfWork, mapper);
+            var fileService = serviceProvider.GetService<IFileService>();
+            var chatService = new ChatService(unitOfWork, mapper, fileService);
 
             return chatService;
         }

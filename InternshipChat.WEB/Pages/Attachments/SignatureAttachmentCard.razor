@@ -1,30 +1,100 @@
 ﻿@using InternshipChat.DAL.Entities;
+@using InternshipChat.WEB.Services.Contracts;
 @inject IDialogService DialogService
+@inject IImageService imageService
 
 <MudCard Outlined="true">
-    <MudCardContent>
-        <MudText>@SignatureAttachment.FileName</MudText>
+    <MudCardContent Class="d-flex justify-content-between">
+        <div class="d-flex gap-3">
+            @if (SignatureAttachment.SenderId == CurrentUserId)
+            {
+                <MudIcon Color="Color.Tertiary" Icon="@Icons.Material.Filled.ArrowCircleUp"></MudIcon>
+            } else
+            {
+                <MudIcon Color="Color.Info" Icon="@Icons.Material.Filled.ArrowCircleDown"></MudIcon>
+            }
+            <MudText>@SignatureAttachment.FileName</MudText>
+        </div>
+        <div>
+            @if (SignatureAttachment.RequiresSignature)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.AvTimer" Color="Color.Warning"></MudIcon>
+            } else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.FileDownloadDone" Color="Color.Success"></MudIcon>
+            }
+        </div>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="ShowAttachment">Open</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Surface" OnClick="ShowAttachment">Preview</MudButton>
+        @if (SignatureAttachment.RequiresSignature)
+        {
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="EditAttachment">
+                @if (CurrentUserId == SignatureAttachment.SenderId)
+                {
+                    <span>Edit</span>
+                }
+                else
+                {
+                    <span>Sign</span>
+                }
+            </MudButton>
+            @if (editedDocumentBase64 != null)
+            {
+                <MudButton Variant="Variant.Text" Disabled="isLoading" Color="Color.Success" OnClick="UpdateAttachment">Save</MudButton>
+            }
+        }
     </MudCardActions>
 </MudCard>
 
 @code {
     [Parameter] public ChatAttachment SignatureAttachment { get; set; }
+    [Parameter] public int CurrentUserId { get; set; }
     private string? editedDocumentBase64;
+    private bool isLoading;
 
     public async Task ShowAttachment()
     {
         var dialogParameter = new DialogParameters
             {
-                ["PdfUrl"] = "https://chatstoragein1.blob.core.windows.net/attachments-container/sample_94789602-e.pdf?sp=r&st=2023-06-12T06:46:00Z&se=2023-06-12T14:46:00Z&spr=https&sv=2022-11-02&sr=b&sig=LSyy6UdKEm1SeepkoPg3RTJdry0jrP4UyXbzOFXhS5I%3D"
+                ["PdfUrl"] = SignatureAttachment.AttachmentUrl,
+                ["ReadOnly"] = true
+            };
+
+        var dialogResult = await DialogService.Show<AttachmentPreviewModal>(SignatureAttachment.FileName, dialogParameter).Result;
+    }
+
+    public async Task EditAttachment()
+    {
+        var dialogParameter = new DialogParameters
+            {
+                ["PdfUrl"] = SignatureAttachment.AttachmentUrl,
+                ["ReadOnly"] = false
             };
 
         var dialogResult = await DialogService.Show<AttachmentPreviewModal>(SignatureAttachment.FileName, dialogParameter).Result;
         if (!dialogResult.Canceled)
         {
             editedDocumentBase64 = dialogResult.Data as string ?? null;
+        }
+    }
+
+    public async Task UpdateAttachment()
+    {
+        if (editedDocumentBase64 != null)
+        {
+            isLoading = true;
+            if (SignatureAttachment.SenderId == CurrentUserId)
+            {
+                SignatureAttachment.RequiresSignature = true;
+            } else
+            {
+                SignatureAttachment.RequiresSignature = false;
+            }
+
+            var result = await imageService.UpdateAttachment(SignatureAttachment, editedDocumentBase64);
+            isLoading = false;
+            editedDocumentBase64 = null;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using InternshipChat.BLL.Services.Contracts;
+﻿using InternshipChat.Api.Extensions;
+using InternshipChat.BLL.Services.Contracts;
 using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
 using InternshipChat.Shared.Models;
@@ -32,18 +33,32 @@ namespace InternshipChat.Api.Controllers
         [Route("upload/document")]
         public async Task<IActionResult> UploadDocument(ChatAttachment chatAttachment)
         {
-            await Console.Out.WriteLineAsync("Requires sign " + chatAttachment.RequiresSignature);
-            await Console.Out.WriteLineAsync("SenderID " + chatAttachment.SenderId);
-            await Console.Out.WriteLineAsync("ChatID " + chatAttachment.ChatId);
-            await Console.Out.WriteLineAsync("ReceiverID " + chatAttachment.ReceiverId);
-            await Console.Out.WriteLineAsync("ATTACHMENT FILENAME " + chatAttachment.Attachment.FileName);
-            var blobUrl = await _fileService.UploadDocumentAsync(chatAttachment.Attachment);
-            chatAttachment.AttachmentUrl = blobUrl;
+            var uploadResult = await _fileService.UploadDocumentAsync(chatAttachment.Attachment);
+            chatAttachment.AttachmentUrl = uploadResult.AttachmentUrl;
+            chatAttachment.FileName = uploadResult.FileName;
             var saveAttachmentResult = await _chatService.AddChatAttachment(chatAttachment);
             if (saveAttachmentResult.IsFailure)
             {
                 return BadRequest();
             } 
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("document/{id}")]
+        public async Task<IActionResult> UpdateDocument(int id, [FromBody] ChatAttachment chatAttachment)
+        {
+            chatAttachment.Attachment.FileName = chatAttachment.FileName;
+            var updateResult = await _fileService.UploadDocumentAsync(chatAttachment.Attachment, update: true);
+            chatAttachment.AttachmentUrl = updateResult.AttachmentUrl;
+
+            var updateAttachmentResult = await _chatService.UpdateAttachment(id, chatAttachment);
+
+            if (updateAttachmentResult.IsFailure)
+            {
+                return this.FromError(updateAttachmentResult.Error);
+            }
 
             return Ok();
         }

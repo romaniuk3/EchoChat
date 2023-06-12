@@ -19,11 +19,13 @@ namespace InternshipChat.BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IFileService _fileService;
 
-        public ChatService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ChatService(IUnitOfWork unitOfWork, IMapper mapper, IFileService fileService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _fileService = fileService;
         }
 
         public async Task<Result> CreateChatAsync(CreateChatDTO chatDto)
@@ -101,8 +103,22 @@ namespace InternshipChat.BLL.Services
             }
 
             var signatureAttachments = await chatRepository.GetUserSignatureAttachments(chatId, userId);
+            //var attachmentsWithSasTokens = AppendSasTokenToAttachment(signatureAttachments);
 
             return Result.Success(signatureAttachments);
+        }
+
+        public IEnumerable<ChatAttachment> AppendSasTokenToAttachment(IEnumerable<ChatAttachment> attachments)
+        {
+            var containerName = "attachments-container";
+
+            foreach (var attachment in attachments)
+            {
+                var sasToken = _fileService.GenerateSasTokenForBlob(attachment.FileName, containerName);
+                attachment.AttachmentUrl = attachment.AttachmentUrl != null ? $"{attachment.AttachmentUrl}?{sasToken}" : attachment.AttachmentUrl!;
+            }
+
+            return attachments;
         }
 
         public async Task<Result<IEnumerable<Chat>>> GetUserChatsAsync(int userId)
@@ -139,6 +155,23 @@ namespace InternshipChat.BLL.Services
             _unitOfWork.Save();
 
             return Result.Success(chatAttachment);
+        }
+
+        public async Task<Result> UpdateAttachment(int attachmentId, ChatAttachment newAttachment)
+        {
+            var repository = _unitOfWork.GetRepository<IChatRepository>();
+            var chatAttachment = await repository.GetChatAttachment(attachmentId);
+
+            if (chatAttachment == null )
+            {
+                return Result.Failure(DomainErrors.Chat.NotFound);
+            }
+
+            chatAttachment.AttachmentUrl = newAttachment.AttachmentUrl;
+            chatAttachment.RequiresSignature = newAttachment.RequiresSignature;
+            _unitOfWork.Save();
+
+            return Result.Success();
         }
 
         public async Task<Result> AddUserToChatAsync(int chatId, int userId)
