@@ -34,6 +34,12 @@ namespace InternshipChat.Api.Hubs
          
         }
 
+        //Attachments
+        public async Task NotifyAboutAttachment(string receiverUserName, int chatId)
+        {
+            await Clients.All.SendAsync("ReceiveAttachmentStatus", receiverUserName, chatId);
+        }
+
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             await base.OnDisconnectedAsync(exception);

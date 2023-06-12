@@ -10,6 +10,8 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IDialogService DialogService
 @inject IAuthService AuthService
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
 @implements IDisposable
 
 @code {
@@ -98,9 +100,36 @@
         });
     }
 
+    private IDisposable SubscribeToSignatureAttachments()
+    {
+        return hubConnection.On<string, int>("ReceiveAttachmentStatus", async (string receiverUserName, int chatId) =>
+        {
+            if (CurrentUserName == receiverUserName)
+            {
+                ShowNavigationSnackbar("You have received a document to sign.", chatId);
+            }
+        });
+    }
+
+    private void ShowNavigationSnackbar(string snackbarText, int chatId)
+    {
+        Snackbar.Add(snackbarText, Severity.Info, config =>
+        {
+            config.Action = "Navigate to the document";
+            config.ActionColor = Color.Tertiary;
+            config.Onclick = snackbar =>
+            {
+                Navigation.NavigateTo($"/chats/{chatId}");
+                return Task.CompletedTask;
+            };
+
+        });
+    }
+
     private void SubscribeToHubSignals()
     {
         subscriptions.Add(SubscribeToCallOffer());
+        subscriptions.Add(SubscribeToSignatureAttachments());
     }
 
     public void Dispose()
