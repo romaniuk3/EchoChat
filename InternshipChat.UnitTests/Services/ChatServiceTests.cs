@@ -27,11 +27,13 @@ namespace InternshipChat.UnitTests.Services
         private Mock<IUserRepository> _mockUserRepository;
         private Mock<IChatRepository> _mockChatRepository;
         private Mock<IUserChatsRepository> _mockUserChatsRepository;
+        private Mock<IFileService> _mockFileService;
         private Mock<IMapper> _mockMapper;
 
         [SetUp]
         public void SetUp()
         {
+            _mockFileService = new Mock<IFileService>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockUserRepository = new Mock<IUserRepository>();
             _mockChatRepository = new Mock<IChatRepository>();
@@ -40,7 +42,7 @@ namespace InternshipChat.UnitTests.Services
             _mockUnitOfWork.Setup(uow => uow.GetRepository<IChatRepository>()).Returns(_mockChatRepository.Object);
             _mockUnitOfWork.Setup(uow => uow.GetRepository<IUserChatsRepository>()).Returns(_mockUserChatsRepository.Object);
             _mockMapper = new Mock<IMapper>();
-            _chatService = new ChatService(_mockUnitOfWork.Object, _mockMapper.Object);
+            _chatService = new ChatService(_mockUnitOfWork.Object, _mockMapper.Object, _mockFileService.Object);
         }
 
         [Test]
