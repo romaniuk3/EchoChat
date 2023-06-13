@@ -103,7 +103,7 @@ namespace InternshipChat.BLL.Services
             }
 
             var signatureAttachments = await chatRepository.GetUserSignatureAttachments(chatId, userId);
-            //var attachmentsWithSasTokens = AppendSasTokenToAttachment(signatureAttachments);
+            var attachmentsWithSasTokens = AppendSasTokenToAttachment(signatureAttachments);
 
             return Result.Success(signatureAttachments);
         }

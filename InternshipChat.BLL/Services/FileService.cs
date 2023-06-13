@@ -66,7 +66,7 @@ namespace InternshipChat.BLL.Services
 
             var containerName = "attachments-container";
 
-            BlobContainerClient blobContainer = new BlobContainerClient("DefaultEndpointsProtocol=https;AccountName=chatstoragein1;AccountKey=s4rOf/d89DqHX4XJrgRaYdsSqF+woeFNH+cFrdhOsnunE0c9h0OBveE6xsKtfWQPDe1LUtS27VUU+AStkPc7Ag==;EndpointSuffix=core.windows.net", containerName);
+            BlobContainerClient blobContainer = new BlobContainerClient(StorageConnectionString, containerName);
             BlobClient client = blobContainer.GetBlobClient(fileName);
             Stream fileStream = new MemoryStream(fileModel.Content);
             await client.UploadAsync(fileStream, overwrite: update);
