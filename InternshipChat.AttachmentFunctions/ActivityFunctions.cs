@@ -67,6 +67,7 @@ namespace InternshipChat.AttachmentFunctions
         [FunctionName(nameof(SaveTextToDatabase))]
         public async Task<ChatAttachment> SaveTextToDatabase([ActivityTrigger] ChatAttachment chatAttachment, ILogger log)
         {
+            chatAttachment.ReceiverId = null;
             await _chatContext.ChatAttachments.AddAsync(chatAttachment);
             await _chatContext.SaveChangesAsync();
 

@@ -4,7 +4,7 @@
 <div class="d-flex flex-column gap-3 pb-3" style="max-height:65vh;min-height:65vh; overflow:scroll;">
     @foreach (var chatAttachment in attachments)
     {
-        <ChatAttachmentCard chatAttachment="chatAttachment"></ChatAttachmentCard>
+        <ChatAttachmentCard chatAttachment="chatAttachment" OnDeleteAttachment="@HandleDeleteAttachment"></ChatAttachmentCard>
     }
     <div>
         <DocumentAttachment ChatId="@ChatId" UserId="@CurrentUserId" OnAttachmentProcessed="@HandleNewAttachment"></DocumentAttachment>
@@ -16,17 +16,23 @@
     [Parameter] public int CurrentUserId { get; set; }
     [Parameter] public List<ChatAttachment> attachments { get; set; }
     [Parameter] public EventCallback<int> OnDocumentUploaded { get; set; }
+    [Parameter] public EventCallback<int> OnDeleteAttachment { get; set; }
 
     private async Task HandleNewAttachment(ChatAttachment chatAttachment)
     {
-        if (chatAttachment.ReceiverId == 0)
+        if (chatAttachment.ReceiverId == null)
         {
             attachments.Add(chatAttachment);
             StateHasChanged();
             await OnDocumentUploaded.InvokeAsync();
         } else
         {
-            await OnDocumentUploaded.InvokeAsync(chatAttachment.ReceiverId);
+            await OnDocumentUploaded.InvokeAsync(chatAttachment.ReceiverId.GetValueOrDefault());
         }
+    }
+
+    private async Task HandleDeleteAttachment(int attachmentId)
+    {
+        await OnDeleteAttachment.InvokeAsync(attachmentId);
     }
 }

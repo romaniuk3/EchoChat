@@ -8,7 +8,7 @@
     <MudSwitch CheckedChanged="ShowCompletedChanged" T=bool Label="Show completed" Color="Color.Info" />
     @foreach (var signatureAttachment in SignatureAttachments)
     {
-        <SignatureAttachmentCard SignatureAttachment="signatureAttachment" CurrentUserId="CurrentUserId"></SignatureAttachmentCard>
+        <SignatureAttachmentCard SignatureAttachment="signatureAttachment" OnDeleteAttachment="@HandleDeleteAttachment" CurrentUserId="CurrentUserId"></SignatureAttachmentCard>
     }
 </div>
 
@@ -16,10 +16,16 @@
     [Parameter] public List<ChatAttachment> SignatureAttachments { get; set; }
     [Parameter] public int CurrentUserId { get; set; }
     [Parameter] public EventCallback<bool> OnShowCompletedPressed { get; set; }
+    [Parameter] public EventCallback<int> OnDeleteAttachment { get; set; }
     private bool ShowCompleted;
 
     private async Task ShowCompletedChanged(bool isChecked)
     {
         await OnShowCompletedPressed.InvokeAsync(isChecked);
+    }
+
+    private async Task HandleDeleteAttachment(int attachmentId)
+    {
+        await OnDeleteAttachment.InvokeAsync(attachmentId);
     }
 }

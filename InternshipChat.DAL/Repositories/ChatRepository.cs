@@ -59,9 +59,14 @@ namespace InternshipChat.DAL.Repositories
 
         public async Task<IEnumerable<ChatAttachment>> GetAllChatAttachments(int chatId)
         {
-            var attachments = await _chatContext.ChatAttachments.Where(ca => ca.ChatId == chatId && ca.ReceiverId == 0).ToListAsync();
+            var attachments = await _chatContext.ChatAttachments.Where(ca => ca.ChatId == chatId && ca.ReceiverId == null).ToListAsync();
 
             return attachments;
+        }
+
+        public async Task DeleteAttachment(ChatAttachment chatAttachment)
+        {
+            _chatContext.ChatAttachments.Remove(chatAttachment);
         }
     }
 }

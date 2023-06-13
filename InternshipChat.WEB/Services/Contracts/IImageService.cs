@@ -11,5 +11,6 @@ namespace InternshipChat.WEB.Services.Contracts
         Task<ChatAttachment?> UploadAttachment(ChatAttachmentDTO attachmentDto);
         Task<ChatAttachment?> UploadPdf(ChatAttachmentDTO attachmentDto, string base64);
         Task<string?> UpdateAttachment(ChatAttachment attachment, string base64);
+        Task DeleteAttachment(int attachmentId);
     }
 }

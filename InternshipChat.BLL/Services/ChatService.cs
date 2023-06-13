@@ -174,6 +174,23 @@ namespace InternshipChat.BLL.Services
             return Result.Success();
         }
 
+        public async Task<Result> DeleteAttachment(int attachmentId)
+        {
+            var repository = _unitOfWork.GetRepository<IChatRepository>();
+            var attachment = await repository.GetChatAttachment(attachmentId);
+
+            if (attachment == null)
+            {
+                return Result.Failure(DomainErrors.Chat.NotFound);
+            }
+
+            await repository.DeleteAttachment(attachment);
+            _unitOfWork.Save();
+            await _fileService.RemoveAttachmentDocument(attachment.FileName);
+
+            return Result.Success();
+        }
+
         public async Task<Result> AddUserToChatAsync(int chatId, int userId)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();

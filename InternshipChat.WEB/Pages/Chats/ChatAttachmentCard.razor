@@ -10,30 +10,41 @@
             <MudText Class="text-break" Typo="Typo.body2">@chatAttachment.FileText.Substring(0, 150) ...</MudText>
         }
     </MudCardContent>
-    <MudCardActions>
-        @if (chatAttachment.FileText.Length > 150)
-        {
-            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="ToggleExpand">
-                @if (isExpanded)
-                {
-                    <span>Collapse</span>
-                }
-                else
-                {
-                    <span>Read more</span>
-                }
-            </MudButton>
-        }
+    <MudCardActions Class="d-flex justify-content-between">
+        <div>
+            @if (chatAttachment.FileText.Length > 150)
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="ToggleExpand">
+                    @if (isExpanded)
+                    {
+                        <span>Collapse</span>
+                    }
+                    else
+                    {
+                        <span>Read more</span>
+                    }
+                </MudButton>
+            }
+        </div>
+        <div style="margin-right: 8px;">
+            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Error" Style="cursor: pointer;" @onclick="DeleteAttachment"></MudIcon>
+        </div>
     </MudCardActions>
 </MudCard>
 
 @code {
     [Parameter] public ChatAttachment chatAttachment { get; set; }
+    [Parameter] public EventCallback<int> OnDeleteAttachment { get; set; }
     private bool isExpanded;
 
     private void ToggleExpand()
     {
         isExpanded = !isExpanded;
         StateHasChanged();
+    }
+
+    public async Task DeleteAttachment()
+    {
+        await OnDeleteAttachment.InvokeAsync(chatAttachment.Id);
     }
 }

@@ -16,5 +16,6 @@ namespace InternshipChat.DAL.Repositories.Interfaces
         Task SaveAttachment(ChatAttachment chatAttachment);
         Task<IEnumerable<ChatAttachment>> GetUserSignatureAttachments(int chatId, int userId);
         Task<ChatAttachment?> GetChatAttachment(int id);
+        Task DeleteAttachment(ChatAttachment chatAttachment);
     }
 }

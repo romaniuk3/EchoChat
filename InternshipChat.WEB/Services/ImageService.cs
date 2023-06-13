@@ -129,5 +129,10 @@ namespace InternshipChat.WEB.Services
 
             return null;
         }
+
+        public async Task DeleteAttachment(int attachmentId)
+        {
+            await _httpClient.DeleteAsync($"api/chat/attachment/{attachmentId}");
+        }
     }
 }

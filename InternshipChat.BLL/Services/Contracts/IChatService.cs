@@ -20,5 +20,6 @@ namespace InternshipChat.BLL.Services.Contracts
         Task<Result<ChatAttachment>> AddChatAttachment(ChatAttachment chatAttachment);
         Task<Result<IEnumerable<ChatAttachment>>> GetUserSignatureAttachments(int chatId, int userId);
         Task<Result> UpdateAttachment(int attachmentId, ChatAttachment chatAttachment);
+        Task<Result> DeleteAttachment(int attachmentId);
     }
 }

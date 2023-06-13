@@ -25,31 +25,37 @@
             }
         </div>
     </MudCardContent>
-    <MudCardActions>
-        <MudButton Variant="Variant.Text" Color="Color.Surface" OnClick="ShowAttachment">Preview</MudButton>
-        @if (SignatureAttachment.RequiresSignature)
-        {
-            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="EditAttachment">
-                @if (CurrentUserId == SignatureAttachment.SenderId)
-                {
-                    <span>Edit</span>
-                }
-                else
-                {
-                    <span>Sign</span>
-                }
-            </MudButton>
-            @if (editedDocumentBase64 != null)
+    <MudCardActions Class="d-flex justify-content-between">
+        <div>
+            <MudButton Variant="Variant.Text" Color="Color.Surface" OnClick="ShowAttachment">Preview</MudButton>
+            @if (SignatureAttachment.RequiresSignature)
             {
-                <MudButton Variant="Variant.Text" Disabled="isLoading" Color="Color.Success" OnClick="UpdateAttachment">Save</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="EditAttachment">
+                    @if (CurrentUserId == SignatureAttachment.SenderId)
+                    {
+                        <span>Edit</span>
+                    }
+                    else
+                    {
+                        <span>Sign</span>
+                    }
+                </MudButton>
+                @if (editedDocumentBase64 != null)
+                {
+                    <MudButton Variant="Variant.Text" Disabled="isLoading" Color="Color.Success" OnClick="UpdateAttachment">Save</MudButton>
+                }
             }
-        }
+        </div>
+        <div style="margin-right: 8px;">
+            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Error" Style="cursor: pointer;" @onclick="DeleteAttachment"></MudIcon>
+        </div>
     </MudCardActions>
 </MudCard>
 
 @code {
     [Parameter] public ChatAttachment SignatureAttachment { get; set; }
     [Parameter] public int CurrentUserId { get; set; }
+    [Parameter] public EventCallback<int> OnDeleteAttachment { get; set; }
     private string? editedDocumentBase64;
     private bool isLoading;
 
@@ -96,5 +102,10 @@
             isLoading = false;
             editedDocumentBase64 = null;
         }
+    }
+
+    public async Task DeleteAttachment()
+    {
+        await OnDeleteAttachment.InvokeAsync(SignatureAttachment.Id);
     }
 }

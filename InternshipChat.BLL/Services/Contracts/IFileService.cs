@@ -15,5 +15,6 @@ namespace InternshipChat.BLL.Services.Contracts
         Task<UploadAttachmentResult> UploadDocumentAsync(FileModel fileModel, bool update = false);
         string GenerateSasTokenForBlobContainer();
         string GenerateSasTokenForBlob(string blobName, string? containerName = null);
+        Task RemoveAttachmentDocument(string blobName);
     }
 }
