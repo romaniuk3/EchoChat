@@ -66,7 +66,7 @@ namespace InternshipChat.BLL.Services
 
             var containerName = "attachments-container";
 
-            BlobContainerClient blobContainer = new BlobContainerClient("DefaultEndpointsProtocol=https;AccountName=chatstoragein1;AccountKey=s4rOf/d89DqHX4XJrgRaYdsSqF+woeFNH+cFrdhOsnunE0c9h0OBveE6xsKtfWQPDe1LUtS27VUU+AStkPc7Ag==;EndpointSuffix=core.windows.net", containerName);
+            BlobContainerClient blobContainer = new BlobContainerClient(StorageConnectionString, containerName);
             BlobClient client = blobContainer.GetBlobClient(fileName);
             Stream fileStream = new MemoryStream(fileModel.Content);
             await client.UploadAsync(fileStream, overwrite: update);
@@ -81,7 +81,7 @@ namespace InternshipChat.BLL.Services
         public async Task RemoveAttachmentDocument(string blobName)
         {
             var containerName = "attachments-container";
-            BlobContainerClient blobContainerClient = new BlobContainerClient("DefaultEndpointsProtocol=https;AccountName=chatstoragein1;AccountKey=s4rOf/d89DqHX4XJrgRaYdsSqF+woeFNH+cFrdhOsnunE0c9h0OBveE6xsKtfWQPDe1LUtS27VUU+AStkPc7Ag==;EndpointSuffix=core.windows.net", containerName);
+            BlobContainerClient blobContainerClient = new BlobContainerClient(StorageConnectionString, containerName);
             await blobContainerClient.DeleteBlobIfExistsAsync(blobName);
         }
 
@@ -89,7 +89,6 @@ namespace InternshipChat.BLL.Services
         {
             var azureStorageAccount = _configuration["StorageAccountName"];
             var blobContainer = containerName != null ? containerName : BlobContainerName;
-            var storageAccessKey = "s4rOf/d89DqHX4XJrgRaYdsSqF+woeFNH+cFrdhOsnunE0c9h0OBveE6xsKtfWQPDe1LUtS27VUU+AStkPc7Ag==";
 
             var sasBuilder = new BlobSasBuilder()
             {
@@ -100,7 +99,7 @@ namespace InternshipChat.BLL.Services
             };
 
             sasBuilder.SetPermissions(BlobSasPermissions.Read);
-            var sasToken = sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(azureStorageAccount, storageAccessKey)).ToString();
+            var sasToken = sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(azureStorageAccount, StorageAccessKey)).ToString();
 
             return sasToken;
         }
