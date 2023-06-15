@@ -33,16 +33,22 @@ async function onActivate(event) {
 }
 
 async function onFetch(event) {
-    let cachedResponse = null;
     if (event.request.method === 'GET') {
+        const cache = await caches.open(cacheName);
+        let cachedResponse = null;
         // For all navigation requests, try to serve index.html from cache
         // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
         const shouldServeIndexHtml = event.request.mode === 'navigate';
 
         const request = shouldServeIndexHtml ? 'index.html' : event.request;
-        const cache = await caches.open(cacheName);
         cachedResponse = await cache.match(request);
+
+        if (cachedResponse === undefined) {
+            const fetchResponse = await fetch(event.request.url); // Fetch from network...
+            cache.put(event.request.url, fetchResponse.clone()); // ...then put in cache to be served next time 
+            return fetchResponse;
+        }
     }
 
-    return cachedResponse || fetch(event.request);
+    return cachedResponse;
 }
