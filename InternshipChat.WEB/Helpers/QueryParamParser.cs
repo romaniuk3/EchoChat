@@ -1,5 +1,4 @@
-﻿using InternshipChat.DAL.Entities;
-using InternshipChat.Shared.Models;
+﻿using InternshipChat.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;

@@ -1,5 +1,4 @@
 ﻿using Blazored.LocalStorage;
-using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO;
 using InternshipChat.Shared.DTO.UserDtos;
 using InternshipChat.Shared.Models;

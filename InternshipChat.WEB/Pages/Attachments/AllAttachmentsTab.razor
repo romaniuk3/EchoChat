@@ -1,4 +1,4 @@
-﻿@using InternshipChat.DAL.Entities;
+﻿@using InternshipChat.Shared.DTO.ChatDtos;
 @using InternshipChat.WEB.Pages.Chats
 
 <div class="d-flex flex-column gap-3 pb-3" style="max-height:65vh;min-height:65vh; overflow:scroll;">
@@ -14,11 +14,11 @@
 @code {
     [Parameter] public int ChatId { get; set; }
     [Parameter] public int CurrentUserId { get; set; }
-    [Parameter] public List<ChatAttachment> attachments { get; set; }
+    [Parameter] public List<ChatAttachmentDTO> attachments { get; set; }
     [Parameter] public EventCallback<int> OnDocumentUploaded { get; set; }
     [Parameter] public EventCallback<int> OnDeleteAttachment { get; set; }
 
-    private async Task HandleNewAttachment(ChatAttachment chatAttachment)
+    private async Task HandleNewAttachment(ChatAttachmentDTO chatAttachment)
     {
         if (chatAttachment.ReceiverId == null)
         {

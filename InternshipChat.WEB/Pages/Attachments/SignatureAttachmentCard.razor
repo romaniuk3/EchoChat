@@ -1,4 +1,4 @@
-﻿@using InternshipChat.DAL.Entities;
+﻿@using InternshipChat.Shared.DTO.ChatDtos;
 @using InternshipChat.WEB.Services.Contracts;
 @inject IDialogService DialogService
 @inject IImageService imageService
@@ -53,7 +53,7 @@
 </MudCard>
 
 @code {
-    [Parameter] public ChatAttachment SignatureAttachment { get; set; }
+    [Parameter] public ChatAttachmentDTO SignatureAttachment { get; set; }
     [Parameter] public int CurrentUserId { get; set; }
     [Parameter] public EventCallback<int> OnDeleteAttachment { get; set; }
     private string? editedDocumentBase64;

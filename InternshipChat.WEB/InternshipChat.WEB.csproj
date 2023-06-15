@@ -18,13 +18,11 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.7" />
     <PackageReference Include="MudBlazor" Version="6.2.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InternshipChat.DAL\InternshipChat.DAL.csproj" />
     <ProjectReference Include="..\InternshipChat.Shared\InternshipChat.Shared.csproj" />
   </ItemGroup>
 

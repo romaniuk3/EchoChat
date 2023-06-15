@@ -1,5 +1,4 @@
-﻿@using InternshipChat.DAL.Entities;
-@using InternshipChat.Shared.DTO.ChatDtos;
+﻿@using InternshipChat.Shared.DTO.ChatDtos;
 @using InternshipChat.Shared.DTO.UserDtos;
 @using InternshipChat.WEB.Services.Contracts;
 @inject IImageService _imageService
@@ -39,7 +38,7 @@
 @code {
     [Parameter] public int ChatId { get; set; }
     [Parameter] public int UserId { get; set; }
-    [Parameter] public EventCallback<ChatAttachment> OnAttachmentProcessed { get; set; }
+    [Parameter] public EventCallback<ChatAttachmentDTO> OnAttachmentProcessed { get; set; }
 
     private IBrowserFile? document;
     private string? editedDocumentBase64;
@@ -68,7 +67,7 @@
     {
         if (document != null)
         {
-            var attachmentDto = new ChatAttachmentDTO
+            var attachmentDto = new CreateChatAttachmentDTO
                 {
                     ChatId = ChatId,
                     SenderId = UserId,

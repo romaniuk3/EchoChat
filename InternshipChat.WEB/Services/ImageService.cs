@@ -1,5 +1,4 @@
 ﻿using Blazored.LocalStorage;
-using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
 using InternshipChat.Shared.Models;
 using InternshipChat.WEB.Services.Base;
@@ -55,7 +54,7 @@ namespace InternshipChat.WEB.Services
             return null;
         }
 
-        public async Task<ChatAttachment?> UploadAttachment(ChatAttachmentDTO attachmentDto)
+        public async Task<ChatAttachmentDTO?> UploadAttachment(CreateChatAttachmentDTO attachmentDto)
         {
             await GetBearerToken();
 
@@ -70,7 +69,7 @@ namespace InternshipChat.WEB.Services
             var response = await _httpClient.PostAsync($"{functionBaseUrl}api/AttachmentStarter", formData);
             if(response.StatusCode == HttpStatusCode.OK)
             {
-                var readyAttachment = await response.Content.ReadFromJsonAsync<ChatAttachment>();
+                var readyAttachment = await response.Content.ReadFromJsonAsync<ChatAttachmentDTO>();
 
                 return readyAttachment;
             } else if (response.StatusCode == HttpStatusCode.Accepted)
@@ -81,7 +80,7 @@ namespace InternshipChat.WEB.Services
             return null;
         }
 
-        public async Task<ChatAttachment?> UploadPdf(ChatAttachmentDTO attachmentDto, string base64)
+        public async Task<ChatAttachmentDTO?> UploadPdf(CreateChatAttachmentDTO attachmentDto, string base64)
         {
             await GetBearerToken();
             
@@ -91,7 +90,7 @@ namespace InternshipChat.WEB.Services
                 FileName = attachmentDto.FileName,
                 Content = byteArray,
             };
-            var res = new ChatAttachment()
+            var res = new ChatAttachmentDTO()
             {
                 Attachment = fm,
                 FileName = attachmentDto.FileName,
@@ -112,7 +111,7 @@ namespace InternshipChat.WEB.Services
             return null;
         }
 
-        public async Task<string?> UpdateAttachment(ChatAttachment attachment, string base64)
+        public async Task<string?> UpdateAttachment(ChatAttachmentDTO attachment, string base64)
         {
             await GetBearerToken();
 

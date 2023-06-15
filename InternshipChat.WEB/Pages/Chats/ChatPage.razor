@@ -1,5 +1,4 @@
 ﻿@page "/chats/{Id:int}"
-@using InternshipChat.DAL.Entities;
 @using InternshipChat.Shared.DTO.ChatDtos;
 @using InternshipChat.Shared.DTO.UserDtos;
 @using InternshipChat.WEB.Services.Contracts;
@@ -86,8 +85,8 @@
     private bool IsPageLoaded { get; set; }
     private string? Error { get; set; }
     private IDisposable MessageSubscription { get; set; }
-    private List<ChatAttachment> attachments = new();
-    private List<ChatAttachment> SignatureAttachments = new();
+    private List<ChatAttachmentDTO> attachments = new();
+    private List<ChatAttachmentDTO> SignatureAttachments = new();
 
     protected async override Task OnInitializedAsync()
     {

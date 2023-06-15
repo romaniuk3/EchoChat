@@ -1,5 +1,4 @@
 ﻿using Blazored.LocalStorage;
-using InternshipChat.DAL.Entities;
 using InternshipChat.Shared.DTO.ChatDtos;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
@@ -43,13 +42,13 @@ namespace InternshipChat.WEB.Services
             return await _httpClient.GetFromJsonAsync<IEnumerable<ChatInfoDTO>>("api/chat/all", _options);
         }
 
-        public async Task<List<ChatAttachment>> GetChatAttachments(int chatId)
+        public async Task<List<ChatAttachmentDTO>> GetChatAttachments(int chatId)
         {
             await GetBearerToken();
-            return await _httpClient.GetFromJsonAsync<List<ChatAttachment>>($"api/chat/attachments/{chatId}");
+            return await _httpClient.GetFromJsonAsync<List<ChatAttachmentDTO>>($"api/chat/attachments/{chatId}");
         }
 
-        public async Task<List<ChatAttachment>> GetUserSignatureAttachments(int chatId, int userId)
+        public async Task<List<ChatAttachmentDTO>> GetUserSignatureAttachments(int chatId, int userId)
         {
             await GetBearerToken();
             var queryParameters = new Dictionary<string, string>
@@ -59,7 +58,7 @@ namespace InternshipChat.WEB.Services
 
             var urlWithQuery = QueryHelpers.AddQueryString($"api/chat/signature-attachments/{chatId}", queryParameters);
 
-            return await _httpClient.GetFromJsonAsync<List<ChatAttachment>>(urlWithQuery);
+            return await _httpClient.GetFromJsonAsync<List<ChatAttachmentDTO>>(urlWithQuery);
         }
     }
 }

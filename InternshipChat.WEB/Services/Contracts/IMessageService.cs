@@ -1,5 +1,4 @@
-﻿using InternshipChat.DAL.Entities;
-using InternshipChat.Shared.DTO.ChatDtos;
+﻿using InternshipChat.Shared.DTO.ChatDtos;
 
 namespace InternshipChat.WEB.Services.Contracts
 {
