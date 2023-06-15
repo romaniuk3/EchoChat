@@ -54,7 +54,7 @@ namespace InternshipChat.WEB.Services
                 ["pageNumber"] = userParameters.PageNumber.ToString(),
                 ["pageSize"] = userParameters.PageSize.ToString(),
                 ["searchTerm"] = userParameters.SearchTerm ?? string.Empty,
-                ["orderBy"] = userParameters.OrderBy
+                ["orderBy"] = userParameters.OrderBy ?? "email"
             };
         }
     }
