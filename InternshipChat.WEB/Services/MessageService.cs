@@ -2,6 +2,7 @@
 using InternshipChat.Shared.DTO.ChatDtos;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
+using System.Net.Http.Json;
 
 namespace InternshipChat.WEB.Services
 {

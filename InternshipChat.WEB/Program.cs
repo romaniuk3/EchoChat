@@ -1,20 +1,23 @@
 using Blazored.LocalStorage;
+using InternshipChat.WEB;
 using InternshipChat.WEB.Services;
 using InternshipChat.WEB.Services.Auth;
 using InternshipChat.WEB.Services.Contracts;
 using InternshipChat.WEB.StateContainers;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using IMessageService = InternshipChat.WEB.Services.Contracts.IMessageService;
 
-var builder = WebApplication.CreateBuilder(args);
-string appBase = builder.Configuration["AppBase"];
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
+
+string appBase = builder.Configuration["AppBase"]!;
 
 // Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+//builder.Services.AddRazorPages();
+//builder.Services.AddServerSideBlazor();
 builder.Services.AddTransient<IMessageService, MessageService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddBlazoredLocalStorage();
@@ -31,8 +34,10 @@ builder.Services.AddScoped(serviceProvider => new HttpClient
 });
 
 builder.Services.AddMudServices();
-var app = builder.Build();
 
+await builder.Build().RunAsync();
+
+/*
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -51,3 +56,4 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
+*/

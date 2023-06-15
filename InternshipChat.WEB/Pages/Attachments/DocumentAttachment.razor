@@ -136,12 +136,4 @@
         await Task.Delay(100);
         StateHasChanged();
     }
-
-    private async Task<IFormFile> ConvertToFormFile(IBrowserFile file)
-    {
-        using (var stream = file.OpenReadStream())
-        {
-            return new FormFile(stream, 0, file.Size, file.Name, file.Name);
-        }
-    }
 }

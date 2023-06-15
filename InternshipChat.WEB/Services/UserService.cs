@@ -6,7 +6,7 @@ using InternshipChat.WEB.Services.Auth;
 using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.WebUtilities;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace InternshipChat.WEB.Services

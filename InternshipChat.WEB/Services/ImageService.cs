@@ -5,6 +5,7 @@ using InternshipChat.WEB.Services.Base;
 using InternshipChat.WEB.Services.Contracts;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace InternshipChat.WEB.Services
