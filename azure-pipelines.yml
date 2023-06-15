@@ -3,6 +3,9 @@ trigger:
 
 pool:
   vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Debug'
   
 steps:
 - task: UseDotNet@2
@@ -23,6 +26,7 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: MSBuild@1
   displayName: 'DB project build'
