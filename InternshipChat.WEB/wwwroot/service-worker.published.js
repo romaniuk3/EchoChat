@@ -48,7 +48,7 @@ async function onFetch(event) {
             cache.put(event.request.url, fetchResponse.clone()); // ...then put in cache to be served next time 
             return fetchResponse;
         }
-    }
 
-    return cachedResponse;
+        return cachedResponse;
+    }
 }
