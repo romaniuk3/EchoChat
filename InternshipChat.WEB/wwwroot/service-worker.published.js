@@ -4,33 +4,7 @@
 self.importScripts('./service-worker-assets.js');
 self.addEventListener('install', event => event.waitUntil(onInstall(event)));
 self.addEventListener('activate', event => event.waitUntil(onActivate(event)));
-//self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
-
-self.addEventListener('fetch', function (event) {
-    event.respondWith(
-        caches.match(event.request)
-            .then(function (response) {
-                if (response) {
-                    return response; // Cache hit
-                }
-
-                return fetch(event.request.clone())
-                    .then(function (response) {
-                        if (!isSuccessful(response)) {
-                            return response;
-                        }
-
-                        caches.open(CACHE_NAME)
-                            .then(function (cache) {
-                                cache.put(event.request, response.clone());
-                            });
-
-                        return response;
-                    }
-                    );
-            })
-    );
-});
+self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
 
 const cacheNamePrefix = 'offline-cache-';
 const cacheName = `${cacheNamePrefix}${self.assetsManifest.version}`;
@@ -58,26 +32,33 @@ async function onActivate(event) {
         .map(key => caches.delete(key)));
 }
 
-/*
 async function onFetch(event) {
     let cachedResponse = null;
     if (event.request.method === 'GET') {
-        if (event.request.url.includes("/api/")) {
-            event.respondWith(caches.match(event.request));
-            // response to API requests, Cache Update Refresh strategy
+        // Check if the request URL matches the API endpoint
+        if (event.request.url.includes('/api/')) {
+            const cache = await caches.open(cacheName);
+            // Check if the API response is already cached
+            cachedResponse = await cache.match(event.request);
+            if (cachedResponse) {
+                // If cached response exists, return it immediately
+                return cachedResponse;
+            } else {
+                // If not cached, fetch the response from the network and cache it
+                const response = await fetch(event.request.clone());
+                if (response && response.status === 200) {
+                    cache.put(event.request, response.clone());
+                }
+                return response;
+            }
         } else {
-            // response to static files requests, Cache-First strategy
+            // For all other navigation and static file requests, serve from cache
+            const shouldServeIndexHtml = event.request.mode === 'navigate';
+            const request = shouldServeIndexHtml ? 'index.html' : event.request;
+            const cache = await caches.open(cacheName);
+            cachedResponse = await cache.match(request);
         }
-
-        // For all navigation requests, try to serve index.html from cache
-        // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
-        const shouldServeIndexHtml = event.request.mode === 'navigate';
-
-        const request = shouldServeIndexHtml ? 'index.html' : event.request;
-        const cache = await caches.open(cacheName);
-        cachedResponse = await cache.match(request);
     }
 
     return cachedResponse || fetch(event.request);
 }
-*/
