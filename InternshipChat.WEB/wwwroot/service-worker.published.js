@@ -4,7 +4,33 @@
 self.importScripts('./service-worker-assets.js');
 self.addEventListener('install', event => event.waitUntil(onInstall(event)));
 self.addEventListener('activate', event => event.waitUntil(onActivate(event)));
-self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
+//self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
+
+self.addEventListener('fetch', function (event) {
+    event.respondWith(
+        caches.match(event.request)
+            .then(function (response) {
+                if (response) {
+                    return response; // Cache hit
+                }
+
+                return fetch(event.request.clone())
+                    .then(function (response) {
+                        if (!isSuccessful(response)) {
+                            return response;
+                        }
+
+                        caches.open(CACHE_NAME)
+                            .then(function (cache) {
+                                cache.put(event.request, response.clone());
+                            });
+
+                        return response;
+                    }
+                    );
+            })
+    );
+});
 
 const cacheNamePrefix = 'offline-cache-';
 const cacheName = `${cacheNamePrefix}${self.assetsManifest.version}`;
@@ -55,20 +81,3 @@ async function onFetch(event) {
     return cachedResponse || fetch(event.request);
 }
 */
-async function onFetch(event) {
-    if (event.request.method === 'GET') {
-        if (event.request.url.includes("/api/")) {
-            // response to API requests, Cache Update Refresh strategy
-            event.respondWith(caches.match(event.request));
-            event.waitUntil(update(event.request)); //TODO: refresh
-        }
-    }
-}
-
-function update(request) {
-    return fetch(request.url).then(
-        response =>
-            cache(request, response) // we can put response in cache
-                .then(() => response) // resolve promise with the Response object
-    );
-}
