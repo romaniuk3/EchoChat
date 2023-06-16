@@ -32,11 +32,17 @@ async function onActivate(event) {
         .map(key => caches.delete(key)));
 }
 
-
 /*
 async function onFetch(event) {
     let cachedResponse = null;
     if (event.request.method === 'GET') {
+        if (event.request.url.includes("/api/")) {
+            event.respondWith(caches.match(event.request));
+            // response to API requests, Cache Update Refresh strategy
+        } else {
+            // response to static files requests, Cache-First strategy
+        }
+
         // For all navigation requests, try to serve index.html from cache
         // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
         const shouldServeIndexHtml = event.request.mode === 'navigate';
@@ -49,34 +55,20 @@ async function onFetch(event) {
     return cachedResponse || fetch(event.request);
 }
 */
-
 async function onFetch(event) {
-    let cachedResponse = null;
-
     if (event.request.method === 'GET') {
-        // For all navigation requests, try to serve index.html from cache
-        // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
-        const shouldServeIndexHtml = event.request.mode === 'navigate';
-
-        const request = shouldServeIndexHtml ? 'index.html' : event.request;
-        const cache = await caches.open(cacheName);
-
-        // Try to match the request against the cache
-        cachedResponse = await cache.match(request);
-
-        if (navigator.onLine) {
-            // If the user is online, fetch from the network and cache the response
-            const networkResponse = await fetch(event.request);
-            if (networkResponse && networkResponse.ok) {
-                await cache.put(request, networkResponse.clone());
-            }
-            return networkResponse;
-        } else if (cachedResponse) {
-            // If the user is offline and a cached response exists, return it
-            return cachedResponse;
+        if (event.request.url.includes("/api/")) {
+            // response to API requests, Cache Update Refresh strategy
+            event.respondWith(caches.match(event.request));
+            event.waitUntil(update(event.request)); //TODO: refresh
         }
     }
+}
 
-    // If the request method is not 'GET' or no cached response is available, fetch from the network
-    return fetch(event.request);
+function update(request) {
+    return fetch(request.url).then(
+        response =>
+            cache(request, response) // we can put response in cache
+                .then(() => response) // resolve promise with the Response object
+    );
 }
