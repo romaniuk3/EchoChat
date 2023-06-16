@@ -32,23 +32,51 @@ async function onActivate(event) {
         .map(key => caches.delete(key)));
 }
 
+
+/*
 async function onFetch(event) {
+    let cachedResponse = null;
     if (event.request.method === 'GET') {
-        const cache = await caches.open(cacheName);
-        let cachedResponse = null;
         // For all navigation requests, try to serve index.html from cache
         // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
         const shouldServeIndexHtml = event.request.mode === 'navigate';
 
         const request = shouldServeIndexHtml ? 'index.html' : event.request;
+        const cache = await caches.open(cacheName);
+        cachedResponse = await cache.match(request);
+    }
+
+    return cachedResponse || fetch(event.request);
+}
+*/
+
+async function onFetch(event) {
+    let cachedResponse = null;
+
+    if (event.request.method === 'GET') {
+        // For all navigation requests, try to serve index.html from cache
+        // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
+        const shouldServeIndexHtml = event.request.mode === 'navigate';
+
+        const request = shouldServeIndexHtml ? 'index.html' : event.request;
+        const cache = await caches.open(cacheName);
+
+        // Try to match the request against the cache
         cachedResponse = await cache.match(request);
 
-        if (cachedResponse === undefined) {
-            const fetchResponse = await fetch(event.request.url); // Fetch from network...
-            cache.put(event.request.url, fetchResponse.clone()); // ...then put in cache to be served next time 
-            return fetchResponse;
+        if (navigator.onLine) {
+            // If the user is online, fetch from the network and cache the response
+            const networkResponse = await fetch(event.request);
+            if (networkResponse && networkResponse.ok) {
+                await cache.put(request, networkResponse.clone());
+            }
+            return networkResponse;
+        } else if (cachedResponse) {
+            // If the user is offline and a cached response exists, return it
+            return cachedResponse;
         }
-
-        return cachedResponse;
     }
+
+    // If the request method is not 'GET' or no cached response is available, fetch from the network
+    return fetch(event.request);
 }
