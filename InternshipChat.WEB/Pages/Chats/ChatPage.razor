@@ -9,7 +9,7 @@
 @inject IMessageService messageService
 @inject IUserService userService
 @inject IConfiguration Configuration
-@inject IImageService _imageService
+@inject IFileService _fileService
 @inject AuthenticationStateProvider AuthState
 @implements IDisposable
 
@@ -94,6 +94,11 @@
         await LoadChat();
         CheckIfUserHasAccessToChat();
         if (IsAccessGranted) LoadChatItems();
+        await SetHubConnection();
+    }
+
+    private async Task SetHubConnection()
+    {
         if (hubConnection == null)
         {
             var url = Configuration["AppBase"] + "chathub";
@@ -226,7 +231,7 @@
 
     public async Task HandleDeleteAttachment(int attachmentId)
     {
-        await _imageService.DeleteAttachment(attachmentId);
+        await _fileService.DeleteAttachment(attachmentId);
         await LoadAttachments();
     }
 

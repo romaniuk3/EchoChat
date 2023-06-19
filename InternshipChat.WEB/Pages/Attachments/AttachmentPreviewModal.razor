@@ -1,6 +1,6 @@
 ﻿@using InternshipChat.WEB.Services.Contracts;
 @inject IJSRuntime JS
-@inject IImageService _imageService
+@inject IFileService _fileService
 
 <MudDialog>
     <DialogContent>
@@ -34,7 +34,7 @@
     private async Task ShowDocument()
     {
         string url = string.Empty;
-        url = PdfUrl != null ? PdfUrl : await _imageService.ToBase64(PdfDocument);
+        url = PdfUrl != null ? PdfUrl : await _fileService.ToBase64(PdfDocument);
 
         await JS.InvokeVoidAsync("loadPDF", "#container", url, ReadOnly);
     }

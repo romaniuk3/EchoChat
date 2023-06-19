@@ -28,6 +28,11 @@ namespace InternshipChat.BLL.Errors
             public static readonly Error IncorrectData = new Error(ResultType.Invalid, "Incorrect login or password.");
         }
 
+        public static class Attachment
+        {
+            public static readonly Error NotFound = new Error(ResultType.NotFound, "There is no attachment with given id.");
+        }
+
         public static class Validation
         {
             public static Error ValidationError(List<ValidationFailure> errors) => new Error(ResultType.ValidationErrors, ValidationErrorsToMessages(errors));

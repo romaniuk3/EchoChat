@@ -1,7 +1,7 @@
 ﻿@using InternshipChat.Shared.DTO.ChatDtos;
 @using InternshipChat.Shared.DTO.UserDtos;
 @using InternshipChat.WEB.Services.Contracts;
-@inject IImageService _imageService
+@inject IFileService _fileService
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject IUserService UsersService
@@ -79,11 +79,11 @@
             {
                 attachmentDto.RequiresSignature = true;
                 attachmentDto.ReceiverId = selectedUser.Id;
-                var pdfResult = await _imageService.UploadPdf(attachmentDto, editedDocumentBase64);
+                var pdfResult = await _fileService.UploadPdf(attachmentDto, editedDocumentBase64);
                 await OnAttachmentProcessed.InvokeAsync(pdfResult);
             } else
             {
-                var attachmentResult = await _imageService.UploadAttachment(attachmentDto);
+                var attachmentResult = await _fileService.UploadAttachment(attachmentDto);
                 if (attachmentResult != null)
                 {
                     await OnAttachmentProcessed.InvokeAsync(attachmentResult);

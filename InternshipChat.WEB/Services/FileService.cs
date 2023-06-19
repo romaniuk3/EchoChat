@@ -10,12 +10,12 @@ using System.Text.Json;
 
 namespace InternshipChat.WEB.Services
 {
-    public class ImageService : BaseHttpService, IImageService
+    public class FileService : BaseHttpService, IFileService
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
 
-        public ImageService(HttpClient httpClient, ILocalStorageService localStorage, IConfiguration configuration) : base(httpClient, localStorage)
+        public FileService(HttpClient httpClient, ILocalStorageService localStorage, IConfiguration configuration) : base(httpClient, localStorage)
         {
             _httpClient = httpClient;
             _configuration = configuration;
@@ -37,14 +37,14 @@ namespace InternshipChat.WEB.Services
             return dataUri;
         }
 
-        public async Task<string?> Upload(IBrowserFile file)
+        public async Task<string?> UploadImage(IBrowserFile file)
         {
             var formData = new MultipartFormDataContent
             {
                 { new StreamContent(file.OpenReadStream()), "file", file.Name }
             };
 
-            var response = await _httpClient.PostAsync($"api/file/upload", formData);
+            var response = await _httpClient.PostAsync($"api/file/upload/image", formData);
 
             if (response.IsSuccessStatusCode)
             {
@@ -86,14 +86,14 @@ namespace InternshipChat.WEB.Services
             await GetBearerToken();
             
             var byteArray = Convert.FromBase64String(base64);
-            var fm = new FileModel
+            var fileModel = new FileModel
             {
                 FileName = attachmentDto.FileName,
                 Content = byteArray,
             };
-            var res = new ChatAttachmentDTO()
+            var newAttachment = new ChatAttachmentDTO()
             {
-                Attachment = fm,
+                Attachment = fileModel,
                 FileName = attachmentDto.FileName,
                 SenderId = attachmentDto.SenderId,
                 ChatId = attachmentDto.ChatId,
@@ -101,12 +101,12 @@ namespace InternshipChat.WEB.Services
                 ReceiverId = attachmentDto.ReceiverId,
             };
 
-            var response = await _httpClient.PostAsJsonAsync($"api/file/upload/document", res);
+            var response = await _httpClient.PostAsJsonAsync($"api/file/upload/document", newAttachment);
 
             if (response.IsSuccessStatusCode)
             {
                 var pdfUrl = await response.Content.ReadAsStringAsync();
-                return res;
+                return newAttachment;
             }
 
             return null;
@@ -132,7 +132,7 @@ namespace InternshipChat.WEB.Services
 
         public async Task DeleteAttachment(int attachmentId)
         {
-            await _httpClient.DeleteAsync($"api/chat/attachment/{attachmentId}");
+            await _httpClient.DeleteAsync($"api/chat/attachments/{attachmentId}");
         }
     }
 }

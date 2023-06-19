@@ -1,7 +1,7 @@
 ﻿@using InternshipChat.Shared.DTO.ChatDtos;
 @using InternshipChat.WEB.Services.Contracts;
 @inject IDialogService DialogService
-@inject IImageService imageService
+@inject IFileService _fileService
 
 <MudCard Outlined="true">
     <MudCardContent Class="d-flex justify-content-between">
@@ -98,7 +98,7 @@
                 SignatureAttachment.RequiresSignature = false;
             }
 
-            var result = await imageService.UpdateAttachment(SignatureAttachment, editedDocumentBase64);
+            var result = await _fileService.UpdateAttachment(SignatureAttachment, editedDocumentBase64);
             isLoading = false;
             editedDocumentBase64 = null;
         }

@@ -44,21 +44,6 @@ namespace InternshipChat.DAL.UnitOfWork
 
         public void Dispose()
         {
-            //Dispose(true);
         }
-
-        /*
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_isDisposed)
-            {
-                if (disposing)
-                {
-                    _chatContext.Dispose();
-                }
-            }
-            _isDisposed = true;
-        }
-        */
     }
 }

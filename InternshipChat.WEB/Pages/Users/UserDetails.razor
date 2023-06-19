@@ -10,7 +10,7 @@
 @inject AuthenticationStateProvider AuthState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
-@inject IImageService imageService
+@inject IFileService _fileService
 @inject CallStateContainer CallContainer
 
 <div class="d-flex align-items-center">
@@ -95,7 +95,7 @@
     {
         if (ImageToUpload != null)
         {
-            UpdateDTO.Avatar = await imageService.Upload(ImageToUpload) ?? UpdateDTO.Avatar;
+            UpdateDTO.Avatar = await _fileService.UploadImage(ImageToUpload) ?? UpdateDTO.Avatar;
         }
 
         await userService.UpdateUserAsync(UserId, UpdateDTO);
@@ -120,7 +120,7 @@
 
     private async Task UploadImage(IBrowserFile image)
     {
-        AvatarPreview = await imageService.ToBase64(image);
+        AvatarPreview = await _fileService.ToBase64(image);
         ImageToUpload = image;
         StateHasChanged();
     }

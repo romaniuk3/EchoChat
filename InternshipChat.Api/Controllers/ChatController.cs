@@ -115,7 +115,7 @@ namespace InternshipChat.Api.Controllers
         }
 
         [HttpDelete]
-        [Route("attachment/{attachmentId}")]
+        [Route("attachments/{attachmentId}")]
         public async Task<IActionResult> DeleteAttachment(int attachmentId)
         {
             var deleteResult = await _chatService.DeleteAttachment(attachmentId);
