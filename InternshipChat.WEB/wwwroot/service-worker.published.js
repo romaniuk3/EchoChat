@@ -31,31 +31,6 @@ async function onActivate(event) {
         .filter(key => key.startsWith(cacheNamePrefix) && key !== cacheName)
         .map(key => caches.delete(key)));
 }
-
-async function onFetch(event) {
-    let cachedResponse = null;
-    if (event.request.method === 'GET') {
-        // Check if the request URL matches the API endpoint
-        if (event.request.url.includes('/api/')) {
-            const response = await fetch(event.request.clone());
-            if (response && response.status === 200) {
-                cache.put(event.request, response.clone());
-            }
-            return response;
-
-
-        } else {
-            // For all other navigation and static file requests, serve from cache
-            const shouldServeIndexHtml = event.request.mode === 'navigate';
-            const request = shouldServeIndexHtml ? 'index.html' : event.request;
-            const cache = await caches.open(cacheName);
-            cachedResponse = await cache.match(request);
-        }
-    }
-
-    return cachedResponse || fetch(event.request);
-}
-
 async function onFetch(event) {
     let cachedResponse = null;
     if (event.request.method === 'GET') {
