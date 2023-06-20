@@ -164,7 +164,7 @@ namespace InternshipChat.BLL.Services
 
             if (chatAttachment == null )
             {
-                return Result.Failure(DomainErrors.Chat.NotFound);
+                return Result.Failure(DomainErrors.Attachment.NotFound);
             }
 
             chatAttachment.AttachmentUrl = newAttachment.AttachmentUrl;
